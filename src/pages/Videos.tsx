@@ -1,74 +1,82 @@
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/PageHero";
 import { AnimateOnScroll } from "@/components/AnimateOnScroll";
-import { Heart, Play, Video } from "lucide-react";
+import { Heart, Play, Video, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { getYoutubeId } from "@/lib/youtube";
 
-// Generate or retrieve device UUID
 function getDeviceId(): string {
   let id = localStorage.getItem("levillepet_user_id");
-  if (!id) {
-    id = crypto.randomUUID();
-    localStorage.setItem("levillepet_user_id", id);
-  }
+  if (!id) { id = crypto.randomUUID(); localStorage.setItem("levillepet_user_id", id); }
   return id;
 }
 
-const placeholderVideos = [
-  { id: "1", title: "Dia de banho no Le Ville Pet", thumbnail: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=480&h=270&fit=crop", date: "25/03/2026", likes: 47 },
-  { id: "2", title: "Brincadeiras no hotelzinho", thumbnail: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=480&h=270&fit=crop", date: "20/03/2026", likes: 32 },
-  { id: "3", title: "Gatinhos relaxando", thumbnail: "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=480&h=270&fit=crop", date: "15/03/2026", likes: 28 },
-];
-
 const Videos = () => {
+  const [videos, setVideos] = useState<any[]>([]);
   const [likedVideos, setLikedVideos] = useState<Set<string>>(new Set());
-  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+  const [playerVideo, setPlayerVideo] = useState<any>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem("levillepet_liked_videos");
-    if (stored) setLikedVideos(new Set(JSON.parse(stored)));
-    const counts: Record<string, number> = {};
-    placeholderVideos.forEach((v) => (counts[v.id] = v.likes));
-    setLikeCounts(counts);
+    loadData();
   }, []);
 
-  const toggleLike = (videoId: string) => {
+  const loadData = async () => {
+    const { data } = await supabase.from("videos").select("*").eq("is_active", true).order("published_at", { ascending: false });
+    setVideos(data || []);
+    setLoading(false);
+
+    const deviceId = getDeviceId();
+    const { data: likes } = await supabase.from("video_likes").select("video_id").eq("device_id", deviceId);
+    if (likes) setLikedVideos(new Set(likes.map(l => l.video_id)));
+  };
+
+  const toggleLike = async (videoId: string) => {
+    const deviceId = getDeviceId();
+    const isLiked = likedVideos.has(videoId);
     const newLiked = new Set(likedVideos);
-    const newCounts = { ...likeCounts };
-    if (newLiked.has(videoId)) {
+
+    if (isLiked) {
       newLiked.delete(videoId);
-      newCounts[videoId] = (newCounts[videoId] || 1) - 1;
+      await supabase.from("video_likes").delete().eq("video_id", videoId).eq("device_id", deviceId);
+      await supabase.from("videos").update({ likes_count: Math.max(0, (videos.find(v => v.id === videoId)?.likes_count || 1) - 1) }).eq("id", videoId);
     } else {
       newLiked.add(videoId);
-      newCounts[videoId] = (newCounts[videoId] || 0) + 1;
+      await supabase.from("video_likes").insert({ video_id: videoId, device_id: deviceId });
+      await supabase.from("videos").update({ likes_count: (videos.find(v => v.id === videoId)?.likes_count || 0) + 1 }).eq("id", videoId);
     }
     setLikedVideos(newLiked);
-    setLikeCounts(newCounts);
-    localStorage.setItem("levillepet_liked_videos", JSON.stringify([...newLiked]));
+    loadData();
+  };
+
+  const getThumbnail = (video: any) => {
+    if (video.thumbnail_url) return video.thumbnail_url;
+    const ytId = getYoutubeId(video.video_url);
+    return ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+  };
+
+  const getEmbedUrl = (url: string) => {
+    const ytId = getYoutubeId(url);
+    return ytId ? `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0` : url;
   };
 
   return (
     <PublicLayout>
-      <PageHero
-        badge="🎥 Vídeos"
-        title="Nossos Vídeos"
-        subtitle="Assista e curta nossos vídeos"
-      />
-
+      <PageHero badge="🎥 Vídeos" title="Nossos Vídeos" subtitle="Assista e curta nossos melhores momentos" />
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
-          {placeholderVideos.length > 0 ? (
+          {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {placeholderVideos.map((video, i) => (
+              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="aspect-video skeleton-light rounded-2xl" />)}
+            </div>
+          ) : videos.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {videos.map((video, i) => (
                 <AnimateOnScroll key={video.id} delay={i * 0.1}>
-                  <div className="group rounded-2xl overflow-hidden bg-card border border-border/50 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-200">
-                    <div className="relative aspect-video cursor-pointer">
-                      <img
-                        src={video.thumbnail}
-                        alt={video.title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
+                  <div className="group rounded-[20px] overflow-hidden bg-card border border-border/50 hover:-translate-y-1.5 hover:shadow-[0_12px_32px_rgba(245,192,0,0.12)] transition-all duration-300">
+                    <div className="relative aspect-video cursor-pointer" onClick={() => setPlayerVideo(video)}>
+                      <img src={getThumbnail(video)} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-14 h-14 bg-primary/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                           <Play className="w-6 h-6 text-primary-foreground ml-1" fill="currentColor" />
@@ -77,21 +85,10 @@ const Videos = () => {
                     </div>
                     <div className="p-4">
                       <h3 className="font-heading font-semibold text-foreground text-base mb-1">{video.title}</h3>
-                      <p className="text-text-muted text-xs font-body mb-3">{video.date}</p>
-                      <button
-                        onClick={() => toggleLike(video.id)}
-                        className="flex items-center gap-2 group/like"
-                      >
-                        <Heart
-                          className={`w-5 h-5 transition-all ${
-                            likedVideos.has(video.id)
-                              ? "text-primary fill-primary animate-heart-beat"
-                              : "text-text-muted hover:text-primary"
-                          }`}
-                        />
-                        <span className="text-sm font-body text-text-muted">
-                          {likeCounts[video.id] || 0}
-                        </span>
+                      <p className="text-text-muted text-xs font-body mb-3">{new Date(video.published_at).toLocaleDateString('pt-BR')}</p>
+                      <button onClick={() => toggleLike(video.id)} className="flex items-center gap-2">
+                        <Heart className={`w-5 h-5 transition-all ${likedVideos.has(video.id) ? "text-primary fill-primary animate-heart-beat" : "text-text-muted hover:text-primary"}`} />
+                        <span className="text-sm font-body text-text-muted">{video.likes_count || 0}</span>
                       </button>
                     </div>
                   </div>
@@ -101,13 +98,32 @@ const Videos = () => {
           ) : (
             <div className="text-center py-20">
               <Video className="w-16 h-16 text-primary mx-auto mb-4" />
-              <p className="text-text-muted font-body text-lg">
-                Nenhum vídeo ainda. Os primeiros vídeos aparecem aqui em breve!
-              </p>
+              <p className="text-text-muted font-body text-lg">Nenhum vídeo ainda.</p>
             </div>
           )}
         </div>
       </section>
+
+      {/* Player Modal */}
+      {playerVideo && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/95 backdrop-blur-sm" onClick={() => setPlayerVideo(null)}>
+          <div className="w-full max-w-4xl mx-4" onClick={e => e.stopPropagation()} style={{ animation: 'lightboxOpen 0.3s ease both' }}>
+            <button onClick={() => setPlayerVideo(null)} className="absolute top-4 right-4 text-white/70 hover:text-white">
+              <X className="w-8 h-8" />
+            </button>
+            <div className="aspect-video rounded-2xl overflow-hidden">
+              <iframe src={getEmbedUrl(playerVideo.video_url)} className="w-full h-full" allowFullScreen allow="autoplay" />
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <h3 className="text-white font-heading font-semibold text-lg">{playerVideo.title}</h3>
+              <button onClick={() => toggleLike(playerVideo.id)} className="flex items-center gap-2">
+                <Heart className={`w-5 h-5 ${likedVideos.has(playerVideo.id) ? "text-primary fill-primary" : "text-white/60 hover:text-primary"}`} />
+                <span className="text-sm text-white/60">{playerVideo.likes_count || 0}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </PublicLayout>
   );
 };
