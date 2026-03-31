@@ -1,3 +1,5 @@
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+
 interface PageHeroProps {
   badge: string;
   title: string;
@@ -7,27 +9,70 @@ interface PageHeroProps {
 }
 
 export function PageHero({ badge, title, subtitle, bgImage, tall }: PageHeroProps) {
+  useScrollAnimation();
+
   return (
     <section
-      className={`relative flex items-center justify-center text-center ${
-        tall ? "min-h-[400px] lg:min-h-[400px]" : "min-h-[220px] lg:min-h-[280px]"
-      } bg-surface-dark overflow-hidden`}
+      className={`relative flex items-center justify-center text-center overflow-hidden ${
+        tall ? "min-h-[400px] lg:min-h-[420px]" : "min-h-[260px] lg:min-h-[320px]"
+      }`}
+      style={{
+        background: bgImage
+          ? undefined
+          : 'radial-gradient(ellipse at 50% 120%, rgba(245,192,0,0.07) 0%, #000000 55%)',
+      }}
     >
       {bgImage && (
         <>
           <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-          <div className="absolute inset-0 bg-gradient-to-b from-surface-dark/70 to-surface-dark/50" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/65 to-black/45" />
         </>
       )}
-      <div className="relative z-10 container mx-auto px-4 py-16">
-        <span className="inline-block bg-primary/15 border border-primary text-primary text-sm font-body px-4 py-1.5 rounded-full mb-4">
-          {badge}
-        </span>
-        <h1 className="font-heading font-extrabold text-text-on-dark text-3xl lg:text-5xl mb-3">
+
+      {/* Decorative left line */}
+      <div
+        className="absolute hidden lg:block"
+        style={{
+          left: '5%', top: '20%', bottom: '20%', width: '1px',
+          background: 'linear-gradient(to bottom, transparent, rgba(245,192,0,0.25), transparent)',
+        }}
+      />
+      {/* Decorative right line */}
+      <div
+        className="absolute hidden lg:block"
+        style={{
+          right: '5%', top: '20%', bottom: '20%', width: '1px',
+          background: 'linear-gradient(to bottom, transparent, rgba(245,192,0,0.25), transparent)',
+        }}
+      />
+
+      <div className="relative z-10 container mx-auto px-4 py-20 lg:py-24">
+        <div
+          data-animate="fade-up"
+          className="inline-flex items-center gap-2 rounded-full px-5 py-2 mb-6"
+          style={{ background: 'rgba(245,192,0,0.12)', border: '1px solid rgba(245,192,0,0.4)' }}
+        >
+          <span className="font-heading font-semibold text-xs text-primary tracking-[0.08em] uppercase">
+            {badge}
+          </span>
+        </div>
+
+        <h1
+          data-animate="fade-up"
+          data-delay="1"
+          className="font-heading font-extrabold text-white mb-4"
+          style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', letterSpacing: '-0.03em', lineHeight: 1.1 }}
+        >
           {title}
         </h1>
+
         {subtitle && (
-          <p className="text-text-on-dark-muted text-base lg:text-lg max-w-2xl mx-auto font-body">
+          <p
+            data-animate="fade-up"
+            data-delay="2"
+            className="text-[#AAAAAA] max-w-[500px] mx-auto"
+            style={{ fontFamily: 'Inter', fontSize: '1.1rem' }}
+          >
             {subtitle}
           </p>
         )}
