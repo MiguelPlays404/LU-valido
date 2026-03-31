@@ -1,101 +1,121 @@
 import { PublicLayout } from "@/components/PublicLayout";
 import { PageHero } from "@/components/PageHero";
-import { AnimateOnScroll } from "@/components/AnimateOnScroll";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { Shield, Heart, CheckCircle, MessageCircle } from "lucide-react";
-
-const highlights = [
-  { icon: Shield, title: "Ambiente Seguro", text: "Espaço projetado para o conforto e segurança do seu pet, com supervisão constante da nossa equipe." },
-  { icon: Heart, title: "Carinho e Atenção", text: "Cada pet recebe atenção individual e muito carinho da nossa equipe especializada." },
-  { icon: CheckCircle, title: "Serviço Confiável", text: "Anos de experiência cuidando dos pets de Bauru com dedicação e profissionalismo." },
-];
-
-const hotelPhotos = [
-  "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=500&h=375&fit=crop",
-  "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500&h=375&fit=crop",
-  "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=500&h=375&fit=crop",
-];
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Lightbox } from "@/components/Lightbox";
 
 const Hotelzinho = () => {
+  const [content, setContent] = useState<any>(null);
+  const [photos, setPhotos] = useState<any[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  useScrollAnimation();
+
+  useEffect(() => {
+    supabase.from("hotelzinho_content").select("*").limit(1).single().then(({ data }) => setContent(data));
+    supabase.from("photos").select("*").eq("is_active", true).eq("category", "hotelzinho").order("display_order").then(({ data }) => setPhotos(data || []));
+  }, []);
+
+  const iconMap: Record<string, typeof Shield> = { '🛡️': Shield, '❤️': Heart, '🍽️': CheckCircle };
+  const highlights = content ? [
+    { icon: iconMap[content.highlight_1_icon] || Shield, title: content.highlight_1_title, text: content.highlight_1_text },
+    { icon: iconMap[content.highlight_2_icon] || Heart, title: content.highlight_2_title, text: content.highlight_2_text },
+    { icon: iconMap[content.highlight_3_icon] || CheckCircle, title: content.highlight_3_title, text: content.highlight_3_text },
+  ] : [];
+
+  const waMsg = encodeURIComponent(content?.whatsapp_message || 'Olá! Gostaria de agendar o hotelzinho para o meu pet.');
+
   return (
     <PublicLayout>
       <PageHero
         badge="🏨 Hotelzinho"
-        title="Nosso Hotelzinho"
-        subtitle="O lar temporário do seu pet"
+        title={content?.page_title || "Nosso Hotelzinho"}
+        subtitle={content?.page_subtitle || "O lar temporário do seu pet"}
+        bgImage={photos[0]?.image_url}
         tall
       />
 
-      {/* Intro */}
-      <section className="py-16 bg-background">
+      {/* Intro — WHITE */}
+      <section className="py-20" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4 max-w-3xl">
-          <AnimateOnScroll>
-            <p className="text-text-secondary text-lg leading-[1.8] font-body text-center">
-              Sabemos que deixar seu pet pode ser uma decisão difícil. É por isso que criamos um espaço
-              especialmente pensado para que ele se sinta em casa, seguro, confortável e amado.
-              No Le Ville Pet, seu companheiro terá todo o cuidado e atenção que merece durante sua estadia.
-            </p>
-          </AnimateOnScroll>
+          <p data-animate="fade-up" className="text-[#444] text-lg leading-[1.8] text-center" style={{ fontFamily: 'Inter' }}>
+            {content?.intro_text || 'Sabemos que deixar seu pet pode ser uma decisão difícil. É por isso que criamos um espaço especialmente pensado para que ele se sinta em casa.'}
+          </p>
         </div>
       </section>
 
-      {/* Highlights */}
-      <section className="py-16 bg-muted">
+      {/* Highlights — PEARL */}
+      <section className="py-20" style={{ background: '#F8F8F6' }}>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {highlights.map((h, i) => (
-              <AnimateOnScroll key={h.title} delay={i * 0.1}>
-                <div className="bg-card rounded-2xl p-8 text-center border border-border/50">
-                  <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <h.icon className="w-8 h-8 text-primary-foreground" />
+              <div key={i} data-animate="card" data-delay={String(i)} className="card-light p-8 text-center">
+                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <h.icon className="w-8 h-8 text-black" />
+                </div>
+                <h3 className="font-heading font-bold text-lg text-black mb-2">{h.title}</h3>
+                <p className="text-[#666] text-sm leading-relaxed" style={{ fontFamily: 'Inter' }}>{h.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Description Blocks — WHITE */}
+      {(content?.description_block_1 || content?.description_block_2 || content?.description_block_3) && (
+        <section className="py-20" style={{ background: '#FFFFFF' }}>
+          <div className="container mx-auto px-4 max-w-3xl space-y-6">
+            {[content?.description_block_1, content?.description_block_2, content?.description_block_3].filter(Boolean).map((block: string, i: number) => (
+              <p key={i} data-animate="fade-up" data-delay={String(i)} className="text-[#444] text-base leading-[1.8]" style={{ fontFamily: 'Inter' }}>{block}</p>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Gallery — DARK */}
+      {photos.length > 0 && (
+        <section className="py-20" style={{ background: '#0D0D0D' }}>
+          <div className="container mx-auto px-4">
+            <h2 data-animate="fade-up" className="section-title text-white text-center mb-10">Nosso Espaço</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {photos.map((photo, i) => (
+                <button key={photo.id} data-animate="fade-scale" data-delay={String(i)} onClick={() => setLightboxIndex(i)}
+                  className="group relative aspect-[4/3] rounded-[14px] overflow-hidden">
+                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500" loading="lazy" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
+                    <span className="text-primary text-2xl opacity-0 group-hover:opacity-100 transition-opacity">🔍</span>
                   </div>
-                  <h3 className="font-heading font-semibold text-lg text-foreground mb-2">{h.title}</h3>
-                  <p className="text-text-muted text-sm font-body leading-relaxed">{h.text}</p>
-                </div>
-              </AnimateOnScroll>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Gallery */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <AnimateOnScroll className="text-center mb-10">
-            <h2 className="font-heading font-bold text-foreground text-2xl lg:text-3xl">
-              Nosso Espaço
-            </h2>
-          </AnimateOnScroll>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {hotelPhotos.map((url, i) => (
-              <AnimateOnScroll key={i} delay={i * 0.1}>
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                  <img src={url} alt={`Hotelzinho ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
-                </div>
-              </AnimateOnScroll>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-16 bg-primary">
+      {/* CTA — YELLOW */}
+      <section className="py-20" style={{ background: '#F5C000' }}>
         <div className="container mx-auto px-4 text-center">
-          <AnimateOnScroll>
-            <h2 className="font-heading font-bold text-primary-foreground text-2xl lg:text-3xl mb-6">
-              Quer agendar uma estadia para o seu pet?
-            </h2>
-            <a
-              href="https://wa.me/5514997145610?text=Ol%C3%A1!%20Gostaria%20de%20agendar%20o%20hotelzinho%20para%20o%20meu%20pet.%20Pode%20me%20passar%20as%20informa%C3%A7%C3%B5es%3F"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-surface-dark text-primary font-heading font-bold text-lg px-8 py-4 rounded-xl hover:bg-surface-dark-soft transition-colors min-h-[56px]"
-            >
-              <MessageCircle className="w-6 h-6" />
-              Agendar pelo WhatsApp
-            </a>
-          </AnimateOnScroll>
+          <h2 data-animate="fade-up" className="font-heading font-extrabold text-black text-2xl lg:text-3xl mb-6">
+            Quer agendar uma estadia para o seu pet?
+          </h2>
+          <a
+            data-animate="fade-up"
+            data-delay="1"
+            href={`https://wa.me/5514997145610?text=${waMsg}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-dark inline-flex items-center gap-2 text-lg"
+          >
+            <MessageCircle className="w-6 h-6" />
+            {content?.cta_text || 'Agendar pelo WhatsApp 🐾'}
+          </a>
         </div>
       </section>
+
+      {lightboxIndex !== null && (
+        <Lightbox images={photos.map(p => ({ url: p.image_url, title: p.title }))} initialIndex={lightboxIndex} onClose={() => setLightboxIndex(null)} />
+      )}
     </PublicLayout>
   );
 };
