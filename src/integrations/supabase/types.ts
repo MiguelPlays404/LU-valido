@@ -19,6 +19,7 @@ export type Database = {
           about_text: string | null
           id: string
           intro_text: string | null
+          page_subtitle: string | null
           page_title: string | null
           updated_at: string | null
         }
@@ -26,6 +27,7 @@ export type Database = {
           about_text?: string | null
           id?: string
           intro_text?: string | null
+          page_subtitle?: string | null
           page_title?: string | null
           updated_at?: string | null
         }
@@ -33,6 +35,7 @@ export type Database = {
           about_text?: string | null
           id?: string
           intro_text?: string | null
+          page_subtitle?: string | null
           page_title?: string | null
           updated_at?: string | null
         }
@@ -77,48 +80,63 @@ export type Database = {
           description_block_1: string | null
           description_block_2: string | null
           description_block_3: string | null
+          highlight_1_icon: string | null
           highlight_1_text: string | null
           highlight_1_title: string | null
+          highlight_2_icon: string | null
           highlight_2_text: string | null
           highlight_2_title: string | null
+          highlight_3_icon: string | null
           highlight_3_text: string | null
           highlight_3_title: string | null
           id: string
           intro_text: string | null
+          page_subtitle: string | null
           page_title: string | null
           updated_at: string | null
+          whatsapp_message: string | null
         }
         Insert: {
           cta_text?: string | null
           description_block_1?: string | null
           description_block_2?: string | null
           description_block_3?: string | null
+          highlight_1_icon?: string | null
           highlight_1_text?: string | null
           highlight_1_title?: string | null
+          highlight_2_icon?: string | null
           highlight_2_text?: string | null
           highlight_2_title?: string | null
+          highlight_3_icon?: string | null
           highlight_3_text?: string | null
           highlight_3_title?: string | null
           id?: string
           intro_text?: string | null
+          page_subtitle?: string | null
           page_title?: string | null
           updated_at?: string | null
+          whatsapp_message?: string | null
         }
         Update: {
           cta_text?: string | null
           description_block_1?: string | null
           description_block_2?: string | null
           description_block_3?: string | null
+          highlight_1_icon?: string | null
           highlight_1_text?: string | null
           highlight_1_title?: string | null
+          highlight_2_icon?: string | null
           highlight_2_text?: string | null
           highlight_2_title?: string | null
+          highlight_3_icon?: string | null
           highlight_3_text?: string | null
           highlight_3_title?: string | null
           id?: string
           intro_text?: string | null
+          page_subtitle?: string | null
           page_title?: string | null
           updated_at?: string | null
+          whatsapp_message?: string | null
         }
         Relationships: []
       }
@@ -161,6 +179,9 @@ export type Database = {
       site_config: {
         Row: {
           address_full: string | null
+          address_line1: string | null
+          address_line2: string | null
+          address_line3: string | null
           admin_code: string
           created_at: string | null
           facebook_active: boolean | null
@@ -189,6 +210,9 @@ export type Database = {
         }
         Insert: {
           address_full?: string | null
+          address_line1?: string | null
+          address_line2?: string | null
+          address_line3?: string | null
           admin_code?: string
           created_at?: string | null
           facebook_active?: boolean | null
@@ -217,6 +241,9 @@ export type Database = {
         }
         Update: {
           address_full?: string | null
+          address_line1?: string | null
+          address_line2?: string | null
+          address_line3?: string | null
           admin_code?: string
           created_at?: string | null
           facebook_active?: boolean | null
@@ -250,18 +277,21 @@ export type Database = {
           created_at: string | null
           device_id: string
           id: string
+          user_identifier: string | null
           video_id: string
         }
         Insert: {
           created_at?: string | null
           device_id: string
           id?: string
+          user_identifier?: string | null
           video_id: string
         }
         Update: {
           created_at?: string | null
           device_id?: string
           id?: string
+          user_identifier?: string | null
           video_id?: string
         }
         Relationships: [
