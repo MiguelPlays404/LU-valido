@@ -8,7 +8,6 @@ function AnimatedCounter({ end, duration = 1200 }: { end: number; duration?: num
   const [count, setCount] = useState(0);
   const ref = useRef<number>();
   useEffect(() => {
-    let start = 0;
     const startTime = performance.now();
     const animate = (now: number) => {
       const elapsed = now - startTime;
@@ -28,9 +27,7 @@ export default function AdminDashboard() {
   const [topVideos, setTopVideos] = useState<any[]>([]);
   const [recentPhotos, setRecentPhotos] = useState<any[]>([]);
 
-  useEffect(() => {
-    loadStats();
-  }, []);
+  useEffect(() => { loadStats(); }, []);
 
   const loadStats = async () => {
     const [photos, videos, hotelPhotos] = await Promise.all([
@@ -43,7 +40,6 @@ export default function AdminDashboard() {
 
     const { data: top } = await supabase.from("videos").select("*").order("likes_count", { ascending: false }).limit(5);
     setTopVideos(top || []);
-
     const { data: recent } = await supabase.from("photos").select("*").order("created_at", { ascending: false }).limit(8);
     setRecentPhotos(recent || []);
   };
@@ -65,27 +61,23 @@ export default function AdminDashboard() {
 
   return (
     <AdminLayout title="Dashboard">
-      {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {statCards.map((s, i) => (
-          <div key={s.label} className="bg-[#1A1A1A] rounded-2xl p-6 border border-[#222] animate-admin-card-pop" style={{ animationDelay: `${i * 0.1}s` }}>
+          <div key={s.label} className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] animate-admin-card-pop" style={{ animationDelay: `${i * 0.1}s` }}>
             <div className="flex items-center gap-3 mb-3">
               <s.icon className={`w-5 h-5 ${s.color}`} />
-              <span className="text-[#666] text-sm font-body">{s.label}</span>
+              <span className="text-[#A1A1AA] text-sm font-body">{s.label}</span>
             </div>
-            <div className="font-heading font-extrabold text-3xl text-white">
-              <AnimatedCounter end={s.value} />
-            </div>
+            <div className="font-heading font-extrabold text-3xl text-white"><AnimatedCounter end={s.value} /></div>
           </div>
         ))}
       </div>
 
-      {/* Quick Actions */}
       <div className="mb-8">
-        <h2 className="font-heading font-semibold text-base mb-4 text-[#999]">Ações Rápidas</h2>
+        <h2 className="font-heading font-semibold text-base mb-4 text-[#A1A1AA]">Ações Rápidas</h2>
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
           {quickActions.map((a) => (
-            <Link key={a.path} to={a.path} className="bg-[#1A1A1A] border border-[#222] rounded-xl p-4 text-center hover:border-primary/40 hover:bg-primary/5 transition-all">
+            <Link key={a.path} to={a.path} className="bg-[#18181B] border border-white/[0.07] rounded-xl p-4 text-center hover:border-primary/40 hover:bg-primary/5 transition-all">
               <a.icon className="w-6 h-6 text-primary mx-auto mb-2" />
               <span className="text-sm font-body text-[#ccc]">{a.label}</span>
             </Link>
@@ -93,18 +85,17 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Top Videos */}
       <div className="mb-8">
-        <h2 className="font-heading font-semibold text-base mb-4 text-[#999]">Vídeos Mais Curtidos</h2>
-        <div className="bg-[#1A1A1A] rounded-2xl border border-[#222] overflow-hidden">
+        <h2 className="font-heading font-semibold text-base mb-4 text-[#A1A1AA]">Vídeos Mais Curtidos</h2>
+        <div className="bg-[#18181B] rounded-2xl border border-white/[0.07] overflow-hidden">
           <table className="w-full text-sm">
-            <thead><tr className="border-b border-[#222]">
-              <th className="text-left p-4 text-[#666] font-body">Título</th>
-              <th className="text-right p-4 text-[#666] font-body">Curtidas</th>
+            <thead><tr className="border-b border-[#27272A]">
+              <th className="text-left p-4 text-[#71717A] font-body">Título</th>
+              <th className="text-right p-4 text-[#71717A] font-body">Curtidas</th>
             </tr></thead>
             <tbody>
               {topVideos.map((v) => (
-                <tr key={v.id} className="border-b border-[#222] last:border-0">
+                <tr key={v.id} className="border-b border-[#27272A] last:border-0">
                   <td className="p-4 text-[#ccc] font-body">{v.title}</td>
                   <td className="p-4 text-right text-primary font-heading font-bold">{v.likes_count}</td>
                 </tr>
@@ -114,12 +105,11 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Recent Photos */}
       <div>
-        <h2 className="font-heading font-semibold text-base mb-4 text-[#999]">Fotos Recentes</h2>
+        <h2 className="font-heading font-semibold text-base mb-4 text-[#A1A1AA]">Fotos Recentes</h2>
         <div className="flex gap-3 overflow-x-auto pb-2">
           {recentPhotos.map((p) => (
-            <div key={p.id} className="w-24 h-24 rounded-xl overflow-hidden shrink-0 border border-[#222]">
+            <div key={p.id} className="w-24 h-24 rounded-xl overflow-hidden shrink-0 border border-[#27272A]">
               <img src={p.image_url} alt={p.title} className="w-full h-full object-cover" />
             </div>
           ))}

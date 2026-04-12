@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
   Hotel, Camera, Video, MapPin, MessageCircle, Share2,
-  ChevronDown, Search, Heart
+  Search, Heart
 } from "lucide-react";
 
 const iconMap: Record<string, any> = { Home: Hotel, Camera, Video, MapPin, MessageCircle, Heart: Share2 };
@@ -16,14 +16,20 @@ const Index = () => {
   const [sections, setSections] = useState<any[]>([]);
   const [photos, setPhotos] = useState<any[]>([]);
   const [featuredVideo, setFeaturedVideo] = useState<any>(null);
+  const [config, setConfig] = useState<any>(null);
 
   useScrollAnimation();
 
   useEffect(() => {
+    supabase.from("site_config").select("*").limit(1).single().then(({ data }) => setConfig(data));
     supabase.from("home_sections").select("*").eq("is_active", true).order("display_order").then(({ data }) => setSections(data || []));
     supabase.from("photos").select("*").eq("is_active", true).eq("category", "galeria").order("display_order").limit(6).then(({ data }) => setPhotos(data || []));
     supabase.from("videos").select("*").eq("is_active", true).eq("is_featured", true).limit(1).single().then(({ data }) => setFeaturedVideo(data));
   }, []);
+
+  const c = config || {};
+  const waNum = c.whatsapp_number || '5514997145610';
+  const waMsg = encodeURIComponent(c.whatsapp_message || 'Olá! Vim pelo site Le Ville Pet! 🐾');
 
   return (
     <PublicLayout>
@@ -49,27 +55,45 @@ const Index = () => {
             </div>
 
             <h1 data-animate="fade-up" data-delay="1" className="hero-title text-white mb-7">
-              Porque seu pet<br />merece o{' '}
-              <span className="relative inline-block" style={{ color: '#F5C000' }}>
-                melhor.
-                <span className="absolute -bottom-[5px] left-0 w-full h-1 rounded" style={{ background: 'linear-gradient(90deg, #F5C000, #FFD700, #F5C000)', transformOrigin: 'left', transform: 'scaleX(0)', animation: 'lineGrow 0.7s ease 1.3s forwards' }} />
-              </span>
+              {(() => {
+                const title = c.hero_title || 'Porque seu pet merece o melhor.';
+                const highlight = c.hero_highlight_word || 'melhor.';
+                const idx = title.toLowerCase().lastIndexOf(highlight.toLowerCase());
+                if (idx === -1) return title;
+                const before = title.slice(0, idx);
+                const word = title.slice(idx, idx + highlight.length);
+                const after = title.slice(idx + highlight.length);
+                return (
+                  <>
+                    {before}
+                    <span className="relative inline-block" style={{ color: '#F5C000' }}>
+                      {word}
+                      <span className="absolute -bottom-[5px] left-0 w-full h-1 rounded" style={{ background: 'linear-gradient(90deg, #F5C000, #FFD700, #F5C000)', transformOrigin: 'left', transform: 'scaleX(0)', animation: 'lineGrow 0.7s ease 1.3s forwards' }} />
+                    </span>
+                    {after}
+                  </>
+                );
+              })()}
             </h1>
 
             <p data-animate="fade-up" data-delay="2" className="text-[#BBBBBB] text-lg leading-relaxed mb-11 max-w-[520px]" style={{ fontFamily: 'Inter' }}>
-              No Le Ville Pet, cuidamos do seu companheiro com todo o carinho, amor e profissionalismo que ele merece.{' '}
-              <em className="text-primary italic">"a gente se entende"</em> 🐾
+              {c.hero_subtitle || 'No Le Ville Pet, cuidamos do seu companheiro com todo o carinho, amor e profissionalismo que ele merece.'}{' '}
+              <em className="text-primary italic">"{c.site_slogan || 'a gente se entende'}"</em> 🐾
             </p>
 
             <div data-animate="fade-up" data-delay="3" className="flex flex-col sm:flex-row gap-4 mb-[72px]">
-              <a href="https://wa.me/5514997145610?text=Ol%C3%A1!%20Vim%20pelo%20site%20Le%20Ville%20Pet!%20%F0%9F%90%BE" target="_blank" rel="noopener noreferrer" className="btn-primary text-base py-4 px-8">
-                💬 Fale no WhatsApp
+              <a href={`https://wa.me/${waNum}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="btn-primary text-base py-4 px-8">
+                {c.hero_btn_primary_text || '💬 Fale no WhatsApp'}
               </a>
-              <Link to="/hotelzinho" className="btn-ghost">Conheça o Hotelzinho →</Link>
+              <Link to="/hotelzinho" className="btn-ghost">{c.hero_btn_secondary_text || 'Conheça o Hotelzinho →'}</Link>
             </div>
 
             <div data-animate="fade-up" data-delay="4" className="flex gap-12 flex-wrap pt-9" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-              {[{ num: '500+', label: 'Pets Atendidos' }, { num: '5★', label: 'Avaliação Google' }, { num: '3+', label: 'Anos de Experiência' }, { num: 'Bauru', label: 'Nossa Cidade' }].map((s, i) => (
+              {[
+                { num: c.hero_stat_1_num || '500+', label: c.hero_stat_1_label || 'Pets Atendidos' },
+                { num: c.hero_stat_2_num || '5★', label: c.hero_stat_2_label || 'Avaliação Google' },
+                { num: c.hero_stat_3_num || '3+', label: c.hero_stat_3_label || 'Anos de Experiência' },
+              ].map((s, i) => (
                 <div key={i}>
                   <div className="font-heading font-extrabold text-[1.85rem] text-primary leading-none">{s.num}</div>
                   <div style={{ fontFamily: 'Inter', fontSize: '12px', color: '#666', marginTop: '5px' }}>{s.label}</div>
@@ -88,22 +112,21 @@ const Index = () => {
             <div className="lg:col-span-3">
               <span data-animate="fade-up" className="inline-block text-primary text-sm font-body px-4 py-1.5 rounded-full mb-4" style={{ background: 'var(--yellow-badge)' }}>Quem Somos</span>
               <h2 data-animate="fade-up" data-delay="1" className="section-title text-black mb-5">
-                O Le Ville Pet — onde seu pet se sente <span className="text-primary relative inline-block">em casa<span className="absolute -bottom-1 left-0 w-full h-[3px] rounded" style={{ background: 'var(--yellow-brand)', transformOrigin: 'left', transform: 'scaleX(0)', animation: 'lineGrow 0.6s ease 0.5s forwards' }} /></span>
+                {c.sobre_title || 'O Le Ville Pet — onde seu pet se sente em casa'}
               </h2>
               <p data-animate="fade-up" data-delay="2" className="text-[#444] text-lg leading-[1.8] mb-5" style={{ fontFamily: 'Inter' }}>
-                Somos um petshop em Bauru-SP dedicado a oferecer os melhores cuidados para o seu companheiro de quatro patas.
-                Com uma equipe apaixonada por animais, oferecemos serviços de qualidade em um ambiente confortável e seguro.
+                {c.sobre_text || 'Somos um petshop em Bauru-SP dedicado a oferecer os melhores cuidados para o seu companheiro de quatro patas.'}
               </p>
-              <p data-animate="fade-up" data-delay="3" className="text-primary italic text-xl font-heading mb-5">"a gente se entende"</p>
+              <p data-animate="fade-up" data-delay="3" className="text-primary italic text-xl font-heading mb-5">"{c.site_slogan || 'a gente se entende'}"</p>
               <Link data-animate="fade-up" data-delay="4" to="/venha-nos-conhecer" className="text-primary font-heading font-semibold hover:underline transition-all inline-flex items-center gap-1 group">
-                Venha nos conhecer <span className="group-hover:translate-x-1 transition-transform">→</span>
+                {c.sobre_cta_text || 'Venha nos conhecer'} <span className="group-hover:translate-x-1 transition-transform">→</span>
               </Link>
             </div>
             <div className="lg:col-span-2" data-animate="fade-right" data-delay="2">
               <div className="relative">
                 <div className="absolute -inset-4 bg-primary/15 rounded-3xl rotate-3" />
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-[3px] border-primary shadow-xl">
-                  <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop" alt="Pets no Le Ville Pet" className="w-full h-full object-cover" loading="lazy" />
+                  <img src={c.sobre_image_url || "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop"} alt="Pets no Le Ville Pet" className="w-full h-full object-cover" loading="lazy" />
                 </div>
               </div>
             </div>
@@ -148,8 +171,8 @@ const Index = () => {
       <section className="py-20 lg:py-24" style={{ background: '#0D0D0D' }}>
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 data-animate="fade-up" className="section-title text-white mb-3">Momentos Especiais</h2>
-            <p data-animate="fade-up" data-delay="1" className="section-subtitle text-[#888] mx-auto">Confira alguns dos nossos pets favoritos</p>
+            <h2 data-animate="fade-up" className="section-title text-white mb-3">{c.gallery_section_title || 'Momentos Especiais'}</h2>
+            <p data-animate="fade-up" data-delay="1" className="section-subtitle text-[#888] mx-auto">{c.gallery_section_subtitle || 'Confira alguns dos nossos pets favoritos'}</p>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
             {photos.map((photo: any, i: number) => (
@@ -173,8 +196,8 @@ const Index = () => {
         <section className="py-20 lg:py-24" style={{ background: '#FAFAF8' }}>
           <div className="container mx-auto px-6">
             <div className="text-center mb-10">
-              <h2 data-animate="fade-up" className="section-title text-black mb-3">Em Destaque</h2>
-              <p data-animate="fade-up" data-delay="1" className="section-subtitle mx-auto">{featuredVideo.title}</p>
+              <h2 data-animate="fade-up" className="section-title text-black mb-3">{c.video_section_title || 'Em Destaque'}</h2>
+              <p data-animate="fade-up" data-delay="1" className="section-subtitle mx-auto">{c.video_section_subtitle || featuredVideo.title}</p>
             </div>
             <div data-animate="fade-scale" data-delay="2" className="max-w-3xl mx-auto">
               <div className="aspect-video rounded-[20px] overflow-hidden" style={{ boxShadow: 'var(--shadow-xl)' }}>
@@ -197,18 +220,18 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <span data-animate="fade-up" className="inline-flex items-center gap-2 text-black/60 text-sm font-body mb-3"><Hotel className="w-5 h-5" /> Nosso Hotelzinho</span>
-              <h2 data-animate="fade-up" data-delay="1" className="font-heading font-extrabold text-black text-3xl lg:text-4xl mb-5">Vai viajar? Deixe seu pet com a gente!</h2>
-              <p data-animate="fade-up" data-delay="2" className="text-black/70 text-base lg:text-lg leading-relaxed mb-8" style={{ fontFamily: 'Inter' }}>Nosso hotelzinho oferece um ambiente seguro, confortável e cheio de carinho para o seu pet enquanto você viaja com tranquilidade.</p>
+              <h2 data-animate="fade-up" data-delay="1" className="font-heading font-extrabold text-black text-3xl lg:text-4xl mb-5">{c.cta_hotel_title || 'Vai viajar? Deixe seu pet com a gente!'}</h2>
+              <p data-animate="fade-up" data-delay="2" className="text-black/70 text-base lg:text-lg leading-relaxed mb-8" style={{ fontFamily: 'Inter' }}>{c.cta_hotel_text || 'Nosso hotelzinho oferece um ambiente seguro, confortável e cheio de carinho para o seu pet enquanto você viaja com tranquilidade.'}</p>
               <div data-animate="fade-up" data-delay="3" className="flex flex-col sm:flex-row gap-3">
-                <Link to="/hotelzinho" className="btn-dark">Saiba Mais</Link>
-                <a href="https://wa.me/5514997145610?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20o%20hotelzinho." target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 border-2 border-black text-black font-heading font-bold px-7 py-3.5 rounded-xl hover:bg-black/10 transition-colors min-h-[44px]">
-                  Agendar pelo WhatsApp
+                <Link to="/hotelzinho" className="btn-dark">{c.cta_hotel_btn1_text || '🐾 Conhecer Hotelzinho'}</Link>
+                <a href={`https://wa.me/${waNum}?text=${encodeURIComponent('Olá! Gostaria de informações sobre o hotelzinho.')}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 border-2 border-black text-black font-heading font-bold px-7 py-3.5 rounded-xl hover:bg-black/10 transition-colors min-h-[44px]">
+                  {c.cta_hotel_btn2_text || '💬 Agendar pelo WhatsApp'}
                 </a>
               </div>
             </div>
             <div data-animate="fade-right" data-delay="2">
               <div className="aspect-[4/3] rounded-[20px] overflow-hidden shadow-2xl">
-                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop" alt="Hotelzinho Le Ville Pet" className="w-full h-full object-cover" loading="lazy" />
+                <img src={c.cta_hotel_image_url || "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop"} alt="Hotelzinho Le Ville Pet" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
           </div>
@@ -223,18 +246,18 @@ const Index = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: <MessageCircle className="w-7 h-7 text-[#25D366]" />, bg: 'rgba(37,211,102,0.15)', title: 'WhatsApp', value: '(14) 99714-5610', color: '#F5C000', btnText: 'Chamar no WhatsApp', btnBg: '#25D366', href: 'https://wa.me/5514997145610' },
-              { icon: <MapPin className="w-7 h-7 text-primary" />, bg: 'rgba(245,192,0,0.15)', title: 'Localização', value: 'Villaggio Mall Center\nBauru-SP', color: '#999', btnText: 'Ver no Mapa', btnBg: '#F5C000', href: '/localizacao', internal: true },
-              { icon: <svg className="w-7 h-7 text-pink-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>, bg: 'rgba(236,72,153,0.15)', title: 'Instagram', value: '@levillepetbauru', color: '#F5C000', btnText: 'Seguir', btnBg: 'linear-gradient(135deg, #F56040, #E1306C, #833AB4)', href: 'https://www.instagram.com/levillepetbauru/' },
-            ].map((c, i) => (
+              { icon: <MessageCircle className="w-7 h-7 text-[#25D366]" />, bg: 'rgba(37,211,102,0.15)', title: 'WhatsApp', value: `(${(waNum || '').slice(2,4)}) ${(waNum || '').slice(4,9)}-${(waNum || '').slice(9)}`, color: '#F5C000', btnText: c.contact_whatsapp_btn_text || 'Chamar no WhatsApp', btnBg: '#25D366', href: `https://wa.me/${waNum}` },
+              { icon: <MapPin className="w-7 h-7 text-primary" />, bg: 'rgba(245,192,0,0.15)', title: 'Localização', value: `${c.address_line1 || 'Villaggio Mall Center'}\n${c.address_line3 || 'Bauru-SP'}`, color: '#999', btnText: c.contact_maps_btn_text || 'Ver no Mapa', btnBg: '#F5C000', href: '/localizacao', internal: true },
+              { icon: <svg className="w-7 h-7 text-pink-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>, bg: 'rgba(236,72,153,0.15)', title: 'Instagram', value: c.instagram_handle || '@levillepetbauru', color: '#F5C000', btnText: c.contact_instagram_btn_text || 'Seguir', btnBg: 'linear-gradient(135deg, #F56040, #E1306C, #833AB4)', href: c.instagram_url || 'https://www.instagram.com/levillepetbauru/' },
+            ].map((card, i) => (
               <div key={i} data-animate="card" data-delay={String(i)} className="rounded-[20px] p-8 text-center border border-white/5" style={{ background: '#1A1A1A' }}>
-                <div className="w-14 h-14 rounded-[14px] flex items-center justify-center mx-auto mb-4" style={{ background: c.bg }}>{c.icon}</div>
-                <h3 className="font-heading font-semibold text-white text-lg mb-1">{c.title}</h3>
-                <p className="font-heading font-bold text-lg mb-4 whitespace-pre-line" style={{ color: c.color }}>{c.value}</p>
-                {c.internal ? (
-                  <Link to={c.href} className="inline-flex items-center justify-center gap-2 text-black font-heading font-bold px-6 py-3 rounded-xl transition-colors min-h-[44px]" style={{ background: c.btnBg }}>{c.btnText}</Link>
+                <div className="w-14 h-14 rounded-[14px] flex items-center justify-center mx-auto mb-4" style={{ background: card.bg }}>{card.icon}</div>
+                <h3 className="font-heading font-semibold text-white text-lg mb-1">{card.title}</h3>
+                <p className="font-heading font-bold text-lg mb-4 whitespace-pre-line" style={{ color: card.color }}>{card.value}</p>
+                {card.internal ? (
+                  <Link to={card.href} className="inline-flex items-center justify-center gap-2 text-black font-heading font-bold px-6 py-3 rounded-xl transition-colors min-h-[44px]" style={{ background: card.btnBg }}>{card.btnText}</Link>
                 ) : (
-                  <a href={c.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 text-white font-heading font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all min-h-[44px]" style={{ background: c.btnBg }}>{c.btnText}</a>
+                  <a href={card.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 text-white font-heading font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all min-h-[44px]" style={{ background: card.btnBg }}>{card.btnText}</a>
                 )}
               </div>
             ))}
