@@ -10,11 +10,19 @@ const VenhaNosConhecer = () => {
   const [content, setContent] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [waNum, setWaNum] = useState('5514997145610');
+  const [waMsg, setWaMsg] = useState('Olá! Vim pelo site e gostaria de conhecer o Le Ville Pet.');
   useScrollAnimation();
 
   useEffect(() => {
-    supabase.from("conhecer_content").select("*").limit(1).single().then(({ data }) => setContent(data));
+    supabase.from("conhecer_content").select("*").limit(1).maybeSingle().then(({ data }) => setContent(data));
     supabase.from("photos").select("*").eq("is_active", true).eq("category", "conhecer").order("display_order").then(({ data }) => setPhotos(data || []));
+    supabase.from("site_config").select("whatsapp_number,whatsapp_message").limit(1).maybeSingle().then(({ data }) => {
+      if (data) {
+        setWaNum(data.whatsapp_number);
+        setWaMsg(data.whatsapp_message || waMsg);
+      }
+    });
   }, []);
 
   return (
@@ -23,7 +31,6 @@ const VenhaNosConhecer = () => {
         badge="📍 Venha Nos Conhecer"
         title={content?.page_title || "Conheça o Nosso Espaço"}
         subtitle={content?.page_subtitle || "Um ambiente preparado com amor para você e seu pet"}
-        tall
       />
 
       {/* About — WHITE */}
@@ -42,10 +49,10 @@ const VenhaNosConhecer = () => {
               {photos.slice(0, 3).map((photo, i) => (
                 <button
                   key={photo.id}
-                  className={`rounded-xl overflow-hidden cursor-pointer group ${i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-square"}`}
+                  className={`rounded-xl overflow-hidden cursor-pointer group bg-[#E5E5E5] ${i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-square"}`}
                   onClick={() => setLightboxIndex(i)}
                 >
-                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                 </button>
               ))}
             </div>
@@ -54,23 +61,25 @@ const VenhaNosConhecer = () => {
       </section>
 
       {/* Gallery — PEARL */}
-      <section className="py-20" style={{ background: '#F8F8F6' }}>
-        <div className="container mx-auto px-4">
-          <h2 data-animate="fade-up" className="section-title text-black text-center mb-10">Galeria do Espaço</h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {photos.map((photo, i) => (
-              <button key={photo.id} data-animate="fade-scale" data-delay={String(i)}
-                onClick={() => setLightboxIndex(i)}
-                className="group relative aspect-square rounded-xl overflow-hidden">
-                <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                  <span className="text-primary text-xl opacity-0 group-hover:opacity-100 transition-opacity">🔍</span>
-                </div>
-              </button>
-            ))}
+      {photos.length > 0 && (
+        <section className="py-20" style={{ background: '#F8F8F6' }}>
+          <div className="container mx-auto px-4">
+            <h2 data-animate="fade-up" className="section-title text-black text-center mb-10">Galeria do Espaço</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {photos.map((photo, i) => (
+                <button key={photo.id} data-animate="fade-scale" data-delay={String(Math.min(i, 7))}
+                  onClick={() => setLightboxIndex(i)}
+                  className="group relative aspect-square rounded-xl overflow-hidden bg-[#E5E5E5]">
+                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
+                    <span className="text-primary text-xl opacity-0 group-hover:opacity-100 transition-opacity">🔍</span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* CTA — YELLOW */}
       <section className="py-20" style={{ background: '#F5C000' }}>
@@ -81,7 +90,7 @@ const VenhaNosConhecer = () => {
           <a
             data-animate="fade-up"
             data-delay="1"
-            href="https://wa.me/5514997145610?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20conhecer%20o%20Le%20Ville%20Pet."
+            href={`https://wa.me/${waNum}?text=${encodeURIComponent(waMsg)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-dark inline-flex items-center gap-2"
