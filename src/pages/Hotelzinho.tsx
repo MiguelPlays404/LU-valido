@@ -10,11 +10,13 @@ const Hotelzinho = () => {
   const [content, setContent] = useState<any>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [waNum, setWaNum] = useState('5514997145610');
   useScrollAnimation();
 
   useEffect(() => {
     supabase.from("hotelzinho_content").select("*").limit(1).single().then(({ data }) => setContent(data));
     supabase.from("photos").select("*").eq("is_active", true).eq("category", "hotelzinho").order("display_order").then(({ data }) => setPhotos(data || []));
+    supabase.from("site_config").select("whatsapp_number").limit(1).single().then(({ data }) => { if (data) setWaNum(data.whatsapp_number); });
   }, []);
 
   const iconMap: Record<string, typeof Shield> = { '🛡️': Shield, '❤️': Heart, '🍽️': CheckCircle };
@@ -32,8 +34,6 @@ const Hotelzinho = () => {
         badge="🏨 Hotelzinho"
         title={content?.page_title || "Nosso Hotelzinho"}
         subtitle={content?.page_subtitle || "O lar temporário do seu pet"}
-        bgImage={photos[0]?.image_url}
-        tall
       />
 
       {/* Intro — WHITE */}
@@ -99,14 +99,7 @@ const Hotelzinho = () => {
           <h2 data-animate="fade-up" className="font-heading font-extrabold text-black text-2xl lg:text-3xl mb-6">
             Quer agendar uma estadia para o seu pet?
           </h2>
-          <a
-            data-animate="fade-up"
-            data-delay="1"
-            href={`https://wa.me/5514997145610?text=${waMsg}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-dark inline-flex items-center gap-2 text-lg"
-          >
+          <a data-animate="fade-up" data-delay="1" href={`https://wa.me/${waNum}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="btn-dark inline-flex items-center gap-2 text-lg">
             <MessageCircle className="w-6 h-6" />
             {content?.cta_text || 'Agendar pelo WhatsApp 🐾'}
           </a>
