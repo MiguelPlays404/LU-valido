@@ -183,29 +183,73 @@ export type Database = {
           address_line2: string | null
           address_line3: string | null
           admin_code: string
+          contact_instagram_btn_text: string | null
+          contact_maps_btn_text: string | null
+          contact_whatsapp_btn_text: string | null
+          copyright_text: string | null
           created_at: string | null
+          cta_hotel_btn1_text: string | null
+          cta_hotel_btn2_text: string | null
+          cta_hotel_image_url: string | null
+          cta_hotel_text: string | null
+          cta_hotel_title: string | null
           facebook_active: boolean | null
+          facebook_btn_text: string | null
+          facebook_handle: string | null
           facebook_url: string | null
+          faleconosco_btn_text: string | null
+          faleconosco_card_text: string | null
+          faleconosco_card_title: string | null
+          faleconosco_subtitle: string | null
+          faleconosco_title: string | null
+          footer_description: string | null
+          gallery_section_subtitle: string | null
+          gallery_section_title: string | null
           google_maps_embed: string | null
           google_maps_url: string | null
           hero_bg_image_url: string | null
+          hero_btn_primary_text: string | null
+          hero_btn_secondary_text: string | null
+          hero_highlight_word: string | null
+          hero_stat_1_label: string | null
+          hero_stat_1_num: string | null
+          hero_stat_2_label: string | null
+          hero_stat_2_num: string | null
+          hero_stat_3_label: string | null
+          hero_stat_3_num: string | null
           hero_subtitle: string | null
           hero_title: string | null
           id: string
           instagram_active: boolean | null
+          instagram_btn_text: string | null
+          instagram_handle: string | null
           instagram_url: string | null
+          localizacao_howto_text: string | null
+          localizacao_maps_btn_text: string | null
+          localizacao_route_btn_text: string | null
+          localizacao_subtitle: string | null
+          localizacao_title: string | null
           logo_url: string | null
           site_name: string | null
           site_slogan: string | null
+          sobre_cta_text: string | null
+          sobre_image_url: string | null
           sobre_text: string | null
           sobre_title: string | null
           tiktok_active: boolean | null
+          tiktok_btn_text: string | null
+          tiktok_handle: string | null
           tiktok_url: string | null
           updated_at: string | null
+          video_section_subtitle: string | null
+          video_section_title: string | null
           whatsapp_active: boolean | null
+          whatsapp_btn_text: string | null
           whatsapp_message: string | null
           whatsapp_number: string
           youtube_active: boolean | null
+          youtube_btn_text: string | null
+          youtube_handle: string | null
           youtube_url: string | null
         }
         Insert: {
@@ -214,29 +258,73 @@ export type Database = {
           address_line2?: string | null
           address_line3?: string | null
           admin_code?: string
+          contact_instagram_btn_text?: string | null
+          contact_maps_btn_text?: string | null
+          contact_whatsapp_btn_text?: string | null
+          copyright_text?: string | null
           created_at?: string | null
+          cta_hotel_btn1_text?: string | null
+          cta_hotel_btn2_text?: string | null
+          cta_hotel_image_url?: string | null
+          cta_hotel_text?: string | null
+          cta_hotel_title?: string | null
           facebook_active?: boolean | null
+          facebook_btn_text?: string | null
+          facebook_handle?: string | null
           facebook_url?: string | null
+          faleconosco_btn_text?: string | null
+          faleconosco_card_text?: string | null
+          faleconosco_card_title?: string | null
+          faleconosco_subtitle?: string | null
+          faleconosco_title?: string | null
+          footer_description?: string | null
+          gallery_section_subtitle?: string | null
+          gallery_section_title?: string | null
           google_maps_embed?: string | null
           google_maps_url?: string | null
           hero_bg_image_url?: string | null
+          hero_btn_primary_text?: string | null
+          hero_btn_secondary_text?: string | null
+          hero_highlight_word?: string | null
+          hero_stat_1_label?: string | null
+          hero_stat_1_num?: string | null
+          hero_stat_2_label?: string | null
+          hero_stat_2_num?: string | null
+          hero_stat_3_label?: string | null
+          hero_stat_3_num?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
           id?: string
           instagram_active?: boolean | null
+          instagram_btn_text?: string | null
+          instagram_handle?: string | null
           instagram_url?: string | null
+          localizacao_howto_text?: string | null
+          localizacao_maps_btn_text?: string | null
+          localizacao_route_btn_text?: string | null
+          localizacao_subtitle?: string | null
+          localizacao_title?: string | null
           logo_url?: string | null
           site_name?: string | null
           site_slogan?: string | null
+          sobre_cta_text?: string | null
+          sobre_image_url?: string | null
           sobre_text?: string | null
           sobre_title?: string | null
           tiktok_active?: boolean | null
+          tiktok_btn_text?: string | null
+          tiktok_handle?: string | null
           tiktok_url?: string | null
           updated_at?: string | null
+          video_section_subtitle?: string | null
+          video_section_title?: string | null
           whatsapp_active?: boolean | null
+          whatsapp_btn_text?: string | null
           whatsapp_message?: string | null
           whatsapp_number?: string
           youtube_active?: boolean | null
+          youtube_btn_text?: string | null
+          youtube_handle?: string | null
           youtube_url?: string | null
         }
         Update: {
@@ -245,29 +333,73 @@ export type Database = {
           address_line2?: string | null
           address_line3?: string | null
           admin_code?: string
+          contact_instagram_btn_text?: string | null
+          contact_maps_btn_text?: string | null
+          contact_whatsapp_btn_text?: string | null
+          copyright_text?: string | null
           created_at?: string | null
+          cta_hotel_btn1_text?: string | null
+          cta_hotel_btn2_text?: string | null
+          cta_hotel_image_url?: string | null
+          cta_hotel_text?: string | null
+          cta_hotel_title?: string | null
           facebook_active?: boolean | null
+          facebook_btn_text?: string | null
+          facebook_handle?: string | null
           facebook_url?: string | null
+          faleconosco_btn_text?: string | null
+          faleconosco_card_text?: string | null
+          faleconosco_card_title?: string | null
+          faleconosco_subtitle?: string | null
+          faleconosco_title?: string | null
+          footer_description?: string | null
+          gallery_section_subtitle?: string | null
+          gallery_section_title?: string | null
           google_maps_embed?: string | null
           google_maps_url?: string | null
           hero_bg_image_url?: string | null
+          hero_btn_primary_text?: string | null
+          hero_btn_secondary_text?: string | null
+          hero_highlight_word?: string | null
+          hero_stat_1_label?: string | null
+          hero_stat_1_num?: string | null
+          hero_stat_2_label?: string | null
+          hero_stat_2_num?: string | null
+          hero_stat_3_label?: string | null
+          hero_stat_3_num?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
           id?: string
           instagram_active?: boolean | null
+          instagram_btn_text?: string | null
+          instagram_handle?: string | null
           instagram_url?: string | null
+          localizacao_howto_text?: string | null
+          localizacao_maps_btn_text?: string | null
+          localizacao_route_btn_text?: string | null
+          localizacao_subtitle?: string | null
+          localizacao_title?: string | null
           logo_url?: string | null
           site_name?: string | null
           site_slogan?: string | null
+          sobre_cta_text?: string | null
+          sobre_image_url?: string | null
           sobre_text?: string | null
           sobre_title?: string | null
           tiktok_active?: boolean | null
+          tiktok_btn_text?: string | null
+          tiktok_handle?: string | null
           tiktok_url?: string | null
           updated_at?: string | null
+          video_section_subtitle?: string | null
+          video_section_title?: string | null
           whatsapp_active?: boolean | null
+          whatsapp_btn_text?: string | null
           whatsapp_message?: string | null
           whatsapp_number?: string
           youtube_active?: boolean | null
+          youtube_btn_text?: string | null
+          youtube_handle?: string | null
           youtube_url?: string | null
         }
         Relationships: []
