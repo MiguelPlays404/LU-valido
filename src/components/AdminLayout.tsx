@@ -72,7 +72,7 @@ export function AdminLayout({ children, title }: { children: React.ReactNode; ti
       </aside>
 
       {/* Content */}
-      <main className="flex-1 min-h-screen">
+      <main className="flex-1 min-h-screen" style={{ background: '#09090B' }}>
         <header className="h-16 flex items-center px-8" style={{ background: '#111113', borderBottom: '1px solid rgba(245,192,0,0.15)' }}>
           <h1 className="font-heading font-bold text-lg">{title}</h1>
         </header>

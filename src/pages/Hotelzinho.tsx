@@ -14,9 +14,9 @@ const Hotelzinho = () => {
   useScrollAnimation();
 
   useEffect(() => {
-    supabase.from("hotelzinho_content").select("*").limit(1).single().then(({ data }) => setContent(data));
+    supabase.from("hotelzinho_content").select("*").limit(1).maybeSingle().then(({ data }) => setContent(data));
     supabase.from("photos").select("*").eq("is_active", true).eq("category", "hotelzinho").order("display_order").then(({ data }) => setPhotos(data || []));
-    supabase.from("site_config").select("whatsapp_number").limit(1).single().then(({ data }) => { if (data) setWaNum(data.whatsapp_number); });
+    supabase.from("site_config").select("whatsapp_number").limit(1).maybeSingle().then(({ data }) => { if (data) setWaNum(data.whatsapp_number); });
   }, []);
 
   const iconMap: Record<string, typeof Shield> = { '🛡️': Shield, '❤️': Heart, '🍽️': CheckCircle };
@@ -46,21 +46,23 @@ const Hotelzinho = () => {
       </section>
 
       {/* Highlights — PEARL */}
-      <section className="py-20" style={{ background: '#F8F8F6' }}>
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {highlights.map((h, i) => (
-              <div key={i} data-animate="card" data-delay={String(i)} className="card-light p-8 text-center">
-                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <h.icon className="w-8 h-8 text-black" />
+      {highlights.length > 0 && (
+        <section className="py-20" style={{ background: '#F8F8F6' }}>
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {highlights.map((h, i) => (
+                <div key={i} data-animate="card" data-delay={String(i)} className="bg-white rounded-[18px] p-8 text-center border border-[#E8E8E8] shadow-sm">
+                  <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <h.icon className="w-8 h-8 text-black" />
+                  </div>
+                  <h3 className="font-heading font-bold text-lg text-black mb-2">{h.title}</h3>
+                  <p className="text-[#666] text-sm leading-relaxed" style={{ fontFamily: 'Inter' }}>{h.text}</p>
                 </div>
-                <h3 className="font-heading font-bold text-lg text-black mb-2">{h.title}</h3>
-                <p className="text-[#666] text-sm leading-relaxed" style={{ fontFamily: 'Inter' }}>{h.text}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Description Blocks — WHITE */}
       {(content?.description_block_1 || content?.description_block_2 || content?.description_block_3) && (
@@ -80,9 +82,13 @@ const Hotelzinho = () => {
             <h2 data-animate="fade-up" className="section-title text-white text-center mb-10">Nosso Espaço</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {photos.map((photo, i) => (
-                <button key={photo.id} data-animate="fade-scale" data-delay={String(i)} onClick={() => setLightboxIndex(i)}
-                  className="group relative aspect-[4/3] rounded-[14px] overflow-hidden">
-                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500" loading="lazy" />
+                <button key={photo.id} data-animate="fade-scale" data-delay={String(Math.min(i, 5))} onClick={() => setLightboxIndex(i)}
+                  className="group relative aspect-[4/3] rounded-[14px] overflow-hidden bg-[#333]">
+                  <img src={photo.image_url} alt={photo.title}
+                    className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+                  />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
                     <span className="text-primary text-2xl opacity-0 group-hover:opacity-100 transition-opacity">🔍</span>
                   </div>

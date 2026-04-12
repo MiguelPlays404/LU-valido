@@ -21,7 +21,6 @@ const Videos = () => {
 
   useEffect(() => {
     loadData();
-    // Load local likes
     const localLikes = JSON.parse(localStorage.getItem("lvp_likes") || "[]");
     setLikedSet(new Set(localLikes));
   }, []);
@@ -52,7 +51,6 @@ const Videos = () => {
 
     setLikedSet(newLiked);
     localStorage.setItem("lvp_likes", JSON.stringify([...newLiked]));
-    // Update local state
     setVideos(prev => prev.map(v =>
       v.id === videoId ? { ...v, likes_count: isLiked ? Math.max(0, (v.likes_count || 1) - 1) : (v.likes_count || 0) + 1 } : v
     ));
@@ -61,7 +59,7 @@ const Videos = () => {
   const getThumbnail = (video: any) => {
     if (video.thumbnail_url) return video.thumbnail_url;
     const ytId = getYoutubeId(video.video_url);
-    return ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '';
+    return ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : '/placeholder.svg';
   };
 
   const getEmbedUrl = (url: string) => {
@@ -80,21 +78,24 @@ const Videos = () => {
     <PublicLayout>
       <PageHero badge="🎥 Vídeos" title="Nossos Vídeos" subtitle="Curta, compartilhe, sorria!" />
 
-      {/* Grid — WHITE */}
       <section className="py-16" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4">
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="aspect-video skeleton-light rounded-[14px]" />)}
+              {Array.from({ length: 6 }).map((_, i) => <div key={i} className="aspect-video bg-[#E5E5E5] rounded-[14px] animate-pulse" />)}
             </div>
           ) : videos.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {videos.map((video, i) => {
                 const isLiked = likedSet.has(video.id);
                 return (
-                  <div key={video.id} data-animate="card" data-delay={String(Math.min(i, 5))} className="card-light group">
-                    <div className="relative aspect-video cursor-pointer overflow-hidden" onClick={() => setPlayerVideo(video)}>
-                      <img src={getThumbnail(video)} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  <div key={video.id} data-animate="card" data-delay={String(Math.min(i, 5))} className="bg-white rounded-[14px] overflow-hidden border border-[#E5E5E5] shadow-sm group">
+                    <div className="relative aspect-video cursor-pointer overflow-hidden bg-[#E5E5E5]" onClick={() => setPlayerVideo(video)}>
+                      <img src={getThumbnail(video)} alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+                      />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
                         <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"
                           style={{ background: 'rgba(245,192,0,0.92)' }}>
@@ -126,7 +127,6 @@ const Videos = () => {
         </div>
       </section>
 
-      {/* Player Modal */}
       {playerVideo && (
         <div className="fixed inset-0 z-[10000] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.96)', backdropFilter: 'blur(8px)' }} onClick={() => setPlayerVideo(null)}>
           <div className="w-full max-w-[920px] mx-4" onClick={e => e.stopPropagation()} style={{ animation: 'lightboxOpen 0.25s ease both' }}>

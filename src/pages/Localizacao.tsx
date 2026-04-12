@@ -5,21 +5,25 @@ import { MapPin, Navigation } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+const DEFAULT_EMBED = "https://maps.google.com/maps?q=Villaggio+Mall+Center+Bauru+SP&t=&z=15&ie=UTF8&iwloc=&output=embed";
+
 const Localizacao = () => {
   useScrollAnimation();
   const [c, setC] = useState<any>(null);
 
   useEffect(() => {
-    supabase.from("site_config").select("*").limit(1).single().then(({ data }) => setC(data));
+    supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => setC(data));
   }, []);
 
   const mapsUrl = c?.google_maps_url || "https://maps.app.goo.gl/nkuDnVyBe6ZHYNbS8";
+  const embedUrl = c?.google_maps_embed || DEFAULT_EMBED;
+  // If someone pasted a short link instead of embed URL, use the query fallback
+  const safeEmbed = embedUrl.includes('output=embed') || embedUrl.includes('/embed') ? embedUrl : DEFAULT_EMBED;
 
   return (
     <PublicLayout>
       <PageHero badge="📍 Nossa Localização" title={c?.localizacao_title || "Nossa Localização"} subtitle={c?.localizacao_subtitle || "Venha nos visitar em Bauru-SP"} />
 
-      {/* Card — WHITE bg */}
       <section className="py-20" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4 max-w-[700px]">
           <div data-animate="fade-scale" className="rounded-[24px] p-10 lg:p-12 text-center" style={{ background: '#F5C000', boxShadow: 'var(--shadow-yellow-lg)' }}>
@@ -44,12 +48,11 @@ const Localizacao = () => {
         </div>
       </section>
 
-      {/* Map — CREAM */}
       <section className="py-10" style={{ background: '#FAFAF8' }}>
         <div className="container mx-auto px-4 max-w-4xl">
           <div data-animate="fade-up" className="rounded-[20px] overflow-hidden" style={{ boxShadow: 'var(--shadow-xl)' }}>
             <iframe
-              src={c?.google_maps_embed || "https://maps.google.com/maps?q=Le+Ville+Pet+Bauru+SP+Villaggio+Mall+Center&output=embed"}
+              src={safeEmbed}
               width="100%"
               style={{ border: 0 }}
               allowFullScreen
@@ -62,7 +65,6 @@ const Localizacao = () => {
         </div>
       </section>
 
-      {/* How to get there */}
       {c?.localizacao_howto_text && (
         <section className="py-16" style={{ background: '#FFFFFF' }}>
           <div className="container mx-auto px-4 max-w-3xl">

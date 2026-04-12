@@ -35,7 +35,6 @@ const Fotos = () => {
     <PublicLayout>
       <PageHero badge="📸 Fotos" title="Galeria de Momentos" subtitle="Os pets mais lindos de Bauru" />
 
-      {/* Filters + Grid — WHITE */}
       <section className="py-16" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap gap-2 justify-center mb-10">
@@ -53,7 +52,7 @@ const Fotos = () => {
 
           {loading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-square skeleton-light rounded-xl" />)}
+              {Array.from({ length: 8 }).map((_, i) => <div key={i} className="aspect-square bg-[#E5E5E5] rounded-xl animate-pulse" />)}
             </div>
           ) : visible.length > 0 ? (
             <>
@@ -64,8 +63,12 @@ const Fotos = () => {
                 {visible.map((photo, i) => (
                   <button key={photo.id} data-animate="fade-scale" data-delay={String(Math.min(i, 6))}
                     onClick={() => setLightboxIndex(i)}
-                    className="group relative aspect-square rounded-[12px] overflow-hidden">
-                    <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500" loading="lazy" />
+                    className="group relative aspect-square rounded-[12px] overflow-hidden bg-[#E5E5E5]">
+                    <img src={photo.image_url} alt={photo.title}
+                      className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
+                      loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
+                    />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all flex items-center justify-center">
                       <Search className="w-7 h-7 text-primary opacity-0 group-hover:opacity-100 transition-all scale-0 group-hover:scale-100" />
                     </div>

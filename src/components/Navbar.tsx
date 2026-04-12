@@ -18,7 +18,6 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [config, setConfig] = useState<any>(null);
   const location = useLocation();
-  const isHome = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -29,24 +28,20 @@ export function Navbar() {
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   useEffect(() => {
-    supabase.from("site_config").select("site_name,logo_url,whatsapp_number,whatsapp_message").limit(1).single().then(({ data }) => setConfig(data));
+    supabase.from("site_config").select("site_name,logo_url,whatsapp_number,whatsapp_message").limit(1).maybeSingle().then(({ data }) => setConfig(data));
   }, []);
 
-  const navBg = isHome && !scrolled ? "bg-transparent" : "bg-black/95 backdrop-blur-[20px] shadow-lg";
-  const borderClass = scrolled || !isHome ? "border-b border-[rgba(245,192,0,0.15)]" : "";
   const waNum = config?.whatsapp_number || '5514997145610';
   const waMsg = encodeURIComponent(config?.whatsapp_message || 'Olá! Vim pelo site Le Ville Pet!');
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg} ${borderClass}`}>
+    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black/95 backdrop-blur-[20px] shadow-lg border-b border-[rgba(245,192,0,0.15)]">
       <div className="container mx-auto flex items-center justify-between h-16 lg:h-[72px] px-4">
         <Link to="/" className="flex items-center gap-2 hover:scale-[1.04] transition-transform">
           {config?.logo_url ? (
             <img src={config.logo_url} alt={config?.site_name || 'Le Ville Pet'} className="h-10 lg:h-[46px] rounded-lg" />
           ) : (
-            <div className="h-10 lg:h-[46px] flex items-center gap-2">
-              <img src="/images/logo-levillepet.png" alt="Le Ville Pet" className="h-10 lg:h-[46px] rounded-lg" />
-            </div>
+            <img src="/images/logo-levillepet.png" alt="Le Ville Pet" className="h-10 lg:h-[46px] rounded-lg" />
           )}
         </Link>
 

@@ -21,10 +21,10 @@ const Index = () => {
   useScrollAnimation();
 
   useEffect(() => {
-    supabase.from("site_config").select("*").limit(1).single().then(({ data }) => setConfig(data));
+    supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => setConfig(data));
     supabase.from("home_sections").select("*").eq("is_active", true).order("display_order").then(({ data }) => setSections(data || []));
-    supabase.from("photos").select("*").eq("is_active", true).eq("category", "galeria").order("display_order").limit(6).then(({ data }) => setPhotos(data || []));
-    supabase.from("videos").select("*").eq("is_active", true).eq("is_featured", true).limit(1).single().then(({ data }) => setFeaturedVideo(data));
+    supabase.from("photos").select("*").eq("is_active", true).eq("is_featured", true).order("display_order").limit(6).then(({ data }) => setPhotos(data || []));
+    supabase.from("videos").select("*").eq("is_active", true).eq("is_featured", true).limit(1).maybeSingle().then(({ data }) => setFeaturedVideo(data));
   }, []);
 
   const c = config || {};
@@ -125,8 +125,8 @@ const Index = () => {
             <div className="lg:col-span-2" data-animate="fade-right" data-delay="2">
               <div className="relative">
                 <div className="absolute -inset-4 bg-primary/15 rounded-3xl rotate-3" />
-                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-[3px] border-primary shadow-xl">
-                  <img src={c.sobre_image_url || "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop"} alt="Pets no Le Ville Pet" className="w-full h-full object-cover" loading="lazy" />
+                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-[3px] border-primary shadow-xl bg-[#E5E5E5]">
+                  <img src={c.sobre_image_url || "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop"} alt="Pets no Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                 </div>
               </div>
             </div>
@@ -168,28 +168,30 @@ const Index = () => {
       </section>
 
       {/* ═══ GALERIA — ESCURO (#0D0D0D) ═══ */}
-      <section className="py-20 lg:py-24" style={{ background: '#0D0D0D' }}>
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 data-animate="fade-up" className="section-title text-white mb-3">{c.gallery_section_title || 'Momentos Especiais'}</h2>
-            <p data-animate="fade-up" data-delay="1" className="section-subtitle text-[#888] mx-auto">{c.gallery_section_subtitle || 'Confira alguns dos nossos pets favoritos'}</p>
+      {photos.length > 0 && (
+        <section className="py-20 lg:py-24" style={{ background: '#0D0D0D' }}>
+          <div className="container mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 data-animate="fade-up" className="section-title text-white mb-3">{c.gallery_section_title || 'Momentos Especiais'}</h2>
+              <p data-animate="fade-up" data-delay="1" className="section-subtitle text-[#888] mx-auto">{c.gallery_section_subtitle || 'Confira alguns dos nossos pets favoritos'}</p>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {photos.map((photo: any, i: number) => (
+                <button key={photo.id} data-animate="fade-scale" data-delay={String(i)} onClick={() => setLightboxIndex(i)}
+                  className="group relative aspect-square rounded-[14px] overflow-hidden bg-[#333]">
+                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
+                    <Search className="w-8 h-8 text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100" />
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="text-center mt-10" data-animate="fade-up">
+              <Link to="/fotos" className="btn-secondary">Ver Todas as Fotos</Link>
+            </div>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {photos.map((photo: any, i: number) => (
-              <button key={photo.id} data-animate="fade-scale" data-delay={String(i)} onClick={() => setLightboxIndex(i)}
-                className="group relative aspect-square rounded-[14px] overflow-hidden">
-                <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" loading="lazy" />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
-                  <Search className="w-8 h-8 text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100" />
-                </div>
-              </button>
-            ))}
-          </div>
-          <div className="text-center mt-10" data-animate="fade-up">
-            <Link to="/fotos" className="btn-secondary">Ver Todas as Fotos</Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ═══ VÍDEO DESTAQUE — CLARO (#FAFAF8) ═══ */}
       {featuredVideo && (
@@ -230,8 +232,8 @@ const Index = () => {
               </div>
             </div>
             <div data-animate="fade-right" data-delay="2">
-              <div className="aspect-[4/3] rounded-[20px] overflow-hidden shadow-2xl">
-                <img src={c.cta_hotel_image_url || "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop"} alt="Hotelzinho Le Ville Pet" className="w-full h-full object-cover" loading="lazy" />
+              <div className="aspect-[4/3] rounded-[20px] overflow-hidden shadow-2xl bg-[#E5E5E5]">
+                <img src={c.cta_hotel_image_url || "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop"} alt="Hotelzinho Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
               </div>
             </div>
           </div>
