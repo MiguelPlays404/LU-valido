@@ -1,163 +1,85 @@
 
 
-# Le Ville Pet — Phase 3 Completion Plan
+# Fix Plan — Le Ville Pet: Broken Pages & Missing Admin Controls
 
-## Overview
-Complete the site with full admin configurability, logo integration, lighter design, and data-driven pages. The admin must control every piece of text, image, and setting visible on the site.
+## Issues Found
 
----
+1. **Photos/Videos appear empty on all pages** — Data exists in DB (22 photos, 6 videos) with valid Unsplash URLs and YouTube links. The images render as invisible boxes. Root cause: the image URLs are valid but the grid items may have CSS/rendering issues OR images fail silently. Need to add `bg-gray-200` fallback backgrounds and `onError` handlers to all `<img>` tags so broken images are visible. Also ensure the `aspect-*` containers have min-height.
 
-## 1. Database Migration — Add Missing Configurable Fields
+2. **Home "Momentos Especiais" + "Em Destaque"** — Photos load but appear invisible. Videos section depends on `is_featured=true` (one video qualifies). Need to add "Ver Mais" buttons linking to `/fotos` and `/videos`.
 
-Add columns to `site_config` for all the new configurable content the admin map requires:
+3. **Navbar on Home appears all-white** — The hero has dark bg but `PublicLayout` adds `pt-16` pushing content below the navbar. The transparent navbar shows the page's white `body` background behind it, not the hero. Fix: add a dark pseudo-element or set the `body`/`html` bg to black when on Home, or make the navbar always have a dark bg fallback.
 
-**Hero section extras:**
-- `hero_highlight_word` (text, default 'melhor.') — the yellow word in the hero title
-- `hero_btn_primary_text` (text, default '💬 Fale no WhatsApp')
-- `hero_btn_secondary_text` (text, default 'Conheça o Hotelzinho →')
-- `hero_stat_1_num`, `hero_stat_1_label`, `hero_stat_2_num`, `hero_stat_2_label`, `hero_stat_3_num`, `hero_stat_3_label` (6 text fields for decorative stats)
-- `sobre_image_url` (text) — image for the "About" section
-- `sobre_cta_text` (text, default 'Venha nos conhecer →')
+4. **Map broken on Localização** — The `google_maps_embed` DB field contains the short link (`https://maps.app.goo.gl/...`) instead of a proper embed URL. Fix: update the DB value to a working embed URL: `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.8!2d-49.0706!3d-22.3155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94bf67b5b0e1c1a1%3A0x1234567890abcdef!2sVillaggio%20Mall%20Center!5e0!3m2!1sen!2sbr!4v1` and also use a proper query-based fallback in code.
 
-**CTA Hotel section:**
-- `cta_hotel_title`, `cta_hotel_text`, `cta_hotel_btn1_text`, `cta_hotel_btn2_text`, `cta_hotel_image_url`
+5. **Siga-nos social buttons missing** — Config shows instagram_active=true, whatsapp_active=true. The code logic looks correct. Issue may be that the `socialLinks` array is built with `filter(Boolean)` but the falsy check on `c.instagram_active && {...}` returns `false` for inactive items correctly. Debugging needed — likely the config fetch returns null initially causing empty render. Fix: add loading state and ensure socialLinks builds after config loads.
 
-**Contact section:**
-- `contact_whatsapp_btn_text` (text, default 'Chamar no WhatsApp')
-- `contact_maps_btn_text` (text, default 'Ver no Mapa')
-- `contact_instagram_btn_text` (text, default 'Seguir')
+6. **Admin panel transparency** — AdminLayout uses inline `background: '#09090B'` which should work. The issue may be that the `min-h-screen` flex layout doesn't cover the full viewport. Fix: ensure `html, body` and the admin container have proper opaque backgrounds.
 
-**Gallery/Video section titles:**
-- `gallery_section_title`, `gallery_section_subtitle`
-- `video_section_title`, `video_section_subtitle`
-
-**Footer:**
-- `footer_description` (text)
-- `copyright_text` (text)
-
-**Social handles (for Siga-nos display):**
-- `instagram_handle`, `facebook_handle`, `tiktok_handle`, `youtube_handle`
-- `instagram_btn_text`, `whatsapp_btn_text`, `facebook_btn_text`, `tiktok_btn_text`, `youtube_btn_text`
-
-**Fale Conosco page:**
-- `faleconosco_title`, `faleconosco_subtitle`, `faleconosco_card_title`, `faleconosco_card_text`, `faleconosco_btn_text`
-
-**Localização page:**
-- `localizacao_title`, `localizacao_subtitle`, `localizacao_maps_btn_text`, `localizacao_route_btn_text`, `localizacao_howto_text`
+7. **Missing admin configurability** — Many text fields on pages are still hardcoded and not editable. Need full audit and connection.
 
 ---
 
-## 2. Copy Logo to Project
+## Implementation Steps
 
-Copy the uploaded logo (`user-uploads://image-4.png`) to `public/images/logo-levillepet.png` so the Navbar, Footer, Admin sidebar, and Siga-nos page can display it.
+### Step 1: Fix image rendering across all pages
+- Add `bg-[#E5E5E5]` (light) or `bg-[#333]` (dark sections) placeholder backgrounds to all image containers
+- Add `onError` fallback to show a paw icon placeholder when images fail
+- Ensure `object-cover` and proper aspect ratios are set
 
----
+### Step 2: Fix Navbar transparency bug on Home
+- Change approach: instead of `bg-transparent` on Home, use `bg-black/90 backdrop-blur` always, or add a gradient overlay at the top of the hero that ensures the navbar area is never white
+- Simplest fix: remove the transparent logic, always use dark navbar
 
-## 3. Update All Public Pages to Fetch from DB
+### Step 3: Fix Google Maps embed
+- Update the DB `google_maps_embed` value via migration to a proper embed URL using the query format: `https://www.google.com/maps/embed/v1/place?key=...` or the free format `https://maps.google.com/maps?q=Villaggio+Mall+Center+Bauru+SP&t=&z=15&ie=UTF8&iwloc=&output=embed`
+- Update fallback in `Localizacao.tsx` code to use this working URL
 
-### Index.tsx (Home)
-- Fetch `site_config` and use ALL configurable fields for Hero text, stats, buttons, Sobre section, CTA Hotel section, Contact section, Gallery titles, Video titles
-- Replace hardcoded strings with `config?.field || 'fallback'`
+### Step 4: Fix Siga-nos social buttons
+- Add a loading state check — don't render the empty list while config is loading
+- Ensure the socialLinks array builds correctly with proper null checks
 
-### Hotelzinho.tsx
-- Change hero to standard dark PageHero (no background photo — per user request "fundo preto com branco padrão")
-- Already fetches from `hotelzinho_content` — keep as-is
+### Step 5: Fix Admin panel opacity
+- Add explicit background to `html` and root elements for admin routes
+- Ensure AdminLayout sidebar and main area have fully opaque backgrounds with no transparency inheritance
 
-### VenhaNosConhecer.tsx
-- Already fetches from DB — working correctly
+### Step 6: Add "Ver Mais" buttons to Home sections
+- Gallery section: already has "Ver Todas as Fotos" button — verify it's visible
+- Video section: already has "Ver Todos os Vídeos" — verify visibility
+- Add videos section to Hotelzinho page (showing hotelzinho-category videos)
 
-### FaleConosco.tsx
-- Fetch `site_config` for WhatsApp number, message, address, Instagram, and page texts
+### Step 7: Complete admin configurability audit
+Add admin editors for ALL remaining hardcoded text:
+- **AdminHome**: Add editors for Sobre section CTA text, image URL with upload
+- **AdminConfig**: Add footer_description, copyright_text editors; logo upload with preview; google_maps_embed field
+- **Fotos/Videos page titles**: Add hero title/subtitle fields to AdminConfig or dedicated editors
+- **Hotelzinho**: Ensure all 17 fields are editable (already done)
+- **Conhecer**: Ensure page_title, page_subtitle, intro_text, about_text are editable (already done)
+- **FaleConosco**: Add admin fields for faleconosco_title, subtitle, card_title, card_text, btn_text
+- **Localização**: Add admin fields for localizacao_title, subtitle, maps_btn_text, route_btn_text, howto_text
 
-### Localizacao.tsx
-- Fetch `site_config` for address, maps URL, page titles
-
-### SigaNos.tsx
-- Fetch `site_config` for all social networks, handles, active toggles, logo, name, slogan
-- Show only active networks
-
-### Fotos.tsx / Videos.tsx
-- Already data-driven — no major changes needed
-
----
-
-## 4. Expand AdminHome Module
-
-Add editors for ALL configurable Home sections:
-- **Hero**: title, highlight word, subtitle, btn texts, stats (6 fields), bg image upload
-- **Sobre**: title, text, CTA text, image upload
-- **Gallery section**: title, subtitle
-- **Video section**: title, subtitle  
-- **CTA Hotel**: title, text, btn1 text, btn2 text, image upload
-- **Contact**: WhatsApp btn text, Maps btn text, Instagram btn text
-- **Cards**: already editable (title, description, toggle) — add inline editing of title/description
+### Step 8: Ensure all public pages use DB values
+- Review each page and replace any remaining hardcoded strings with `config?.field || 'fallback'`
+- Ensure VenhaNosConhecer fetches site_config for WhatsApp number
+- Ensure FaleConosco uses all configurable fields
 
 ---
 
-## 5. Expand AdminConfig Module
+## Files to Modify
 
-Add all missing fields:
-- Address line 1/2/3 (separate fields instead of `address_full`)
-- Footer description, copyright text
-- Logo upload with live preview
-- "Test Maps link" button (already exists)
-- Google Maps embed URL
-
----
-
-## 6. Expand AdminSocial Module
-
-Add for each network:
-- Handle field (e.g., `@levillepetbauru`)
-- Button text field (e.g., "Seguir no Instagram")
-- Active/inactive toggle (already exists)
-- URL field (already exists)
-
----
-
-## 7. Refine Admin UI Colors
-
-Update all admin modules consistently:
-- Cards: `bg-[#18181B]` instead of `bg-[#1A1A1A]`
-- Inputs: `bg-[#27272A]` with `border-[#3F3F46]`
-- Text labels: `text-[#A1A1AA]`
-- Consistent rounded-2xl, border-white/[0.07]
-
----
-
-## 8. Update Navbar & Footer with Logo
-
-- **Navbar**: Show logo image if `logo_url` exists, otherwise show text badge
-- **Footer**: Same logo treatment + use configurable description/copyright from DB
-
----
-
-## 9. Hotelzinho Hero Change
-
-Remove `bgImage` and `tall` props from PageHero in Hotelzinho — use the standard dark gradient hero pattern matching other pages.
-
----
-
-## Files to Create/Modify
-
-| File | Action |
-|------|--------|
-| Migration SQL | New columns in site_config |
-| `public/images/logo-levillepet.png` | Copy from upload |
-| `src/pages/Index.tsx` | Fetch config, use all fields |
-| `src/pages/Hotelzinho.tsx` | Standard dark hero |
-| `src/pages/FaleConosco.tsx` | Fetch config |
-| `src/pages/Localizacao.tsx` | Fetch config |
-| `src/pages/SigaNos.tsx` | Fetch config, show active networks |
-| `src/pages/admin/AdminHome.tsx` | Full hero/sobre/gallery/video/cta/contact editors |
-| `src/pages/admin/AdminConfig.tsx` | Add address lines, footer, logo upload |
-| `src/pages/admin/AdminSocial.tsx` | Add handles, btn texts |
-| `src/pages/admin/AdminDashboard.tsx` | Update colors |
-| `src/pages/admin/AdminPhotos.tsx` | Update colors |
-| `src/pages/admin/AdminVideos.tsx` | Update colors |
-| `src/pages/admin/AdminHotelzinho.tsx` | Update colors |
-| `src/pages/admin/AdminConhecer.tsx` | Update colors |
-| `src/pages/admin/AdminSecurity.tsx` | Update colors |
-| `src/components/Navbar.tsx` | Use logo from config |
-| `src/components/Footer.tsx` | Use config for all text |
+| File | Changes |
+|------|---------|
+| `src/pages/Index.tsx` | Fix image placeholders, navbar area fix |
+| `src/pages/Fotos.tsx` | Add image fallbacks, loading placeholders |
+| `src/pages/Videos.tsx` | Add thumbnail fallbacks |
+| `src/pages/Hotelzinho.tsx` | Add image fallbacks, add videos section |
+| `src/pages/VenhaNosConhecer.tsx` | Add image fallbacks, fetch site_config |
+| `src/pages/Localizacao.tsx` | Fix map embed URL fallback |
+| `src/pages/SigaNos.tsx` | Fix loading state for social links |
+| `src/components/Navbar.tsx` | Always use dark background |
+| `src/components/AdminLayout.tsx` | Fix opacity |
+| `src/pages/admin/AdminConfig.tsx` | Add missing fields |
+| `src/pages/admin/AdminHome.tsx` | Verify all fields present |
+| `src/pages/admin/AdminSocial.tsx` | Verify handles/btn text fields |
+| Migration SQL | Fix google_maps_embed value |
 
