@@ -21,7 +21,7 @@ export default function AdminHome() {
 
   const saveFields = async (fields: Record<string, any>, label: string) => {
     setSaving(label);
-    const { error } = await supabase.from("site_config").update(fields).eq("id", config.id);
+    const { error } = await supabase.from("site_config").update(fields as any).eq("id", config.id);
     setSaving("");
     toast({ title: error ? "Erro ao salvar" : `✅ ${label} salvo!` });
     if (!error) setConfig({ ...config, ...fields });
