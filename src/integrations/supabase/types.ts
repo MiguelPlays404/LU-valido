@@ -41,6 +41,45 @@ export type Database = {
         }
         Relationships: []
       }
+      guia_articles: {
+        Row: {
+          category: string | null
+          content: string
+          created_at: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_pinned: boolean | null
+          keywords: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          content: string
+          created_at?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          keywords?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          content?: string
+          created_at?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          keywords?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       home_sections: {
         Row: {
           description: string | null
@@ -140,6 +179,42 @@ export type Database = {
         }
         Relationships: []
       }
+      nav_items: {
+        Row: {
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          label: string
+          path: string
+          show_in_footer: boolean | null
+          show_in_navbar: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          label: string
+          path: string
+          show_in_footer?: boolean | null
+          show_in_navbar?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          label?: string
+          path?: string
+          show_in_footer?: boolean | null
+          show_in_navbar?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       photos: {
         Row: {
           category: string
@@ -183,6 +258,8 @@ export type Database = {
           address_line2: string | null
           address_line3: string | null
           admin_code: string
+          conhecer_gallery_title: string | null
+          conhecer_hero_image_url: string | null
           contact_instagram_btn_text: string | null
           contact_maps_btn_text: string | null
           contact_whatsapp_btn_text: string | null
@@ -202,7 +279,19 @@ export type Database = {
           faleconosco_card_title: string | null
           faleconosco_subtitle: string | null
           faleconosco_title: string | null
+          favicon_url: string | null
+          featured_photos_btn_text: string | null
+          featured_videos_btn_text: string | null
+          font_body: string | null
+          font_heading: string | null
+          footer_contact_title: string | null
           footer_description: string | null
+          footer_nav_title: string | null
+          footer_show_instagram: boolean | null
+          footer_show_whatsapp: boolean | null
+          fotos_empty_text: string | null
+          fotos_page_subtitle: string | null
+          fotos_page_title: string | null
           gallery_section_subtitle: string | null
           gallery_section_title: string | null
           google_maps_embed: string | null
@@ -219,6 +308,10 @@ export type Database = {
           hero_stat_3_num: string | null
           hero_subtitle: string | null
           hero_title: string | null
+          home_section_order: Json | null
+          hotel_gallery_title: string | null
+          hotel_hero_image_url: string | null
+          hotel_videos_title: string | null
           id: string
           instagram_active: boolean | null
           instagram_btn_text: string | null
@@ -230,6 +323,18 @@ export type Database = {
           localizacao_subtitle: string | null
           localizacao_title: string | null
           logo_url: string | null
+          nav_label_conhecer: string | null
+          nav_label_fotos: string | null
+          nav_label_hotelzinho: string | null
+          nav_label_inicio: string | null
+          nav_label_localizacao: string | null
+          nav_label_siganos: string | null
+          nav_label_videos: string | null
+          nav_whatsapp_btn_text: string | null
+          primary_color: string | null
+          secondary_color: string | null
+          siganos_subtitle: string | null
+          siganos_title: string | null
           site_name: string | null
           site_slogan: string | null
           sobre_cta_text: string | null
@@ -243,6 +348,10 @@ export type Database = {
           updated_at: string | null
           video_section_subtitle: string | null
           video_section_title: string | null
+          videos_empty_text: string | null
+          videos_likes_label: string | null
+          videos_page_subtitle: string | null
+          videos_page_title: string | null
           whatsapp_active: boolean | null
           whatsapp_btn_text: string | null
           whatsapp_message: string | null
@@ -258,6 +367,8 @@ export type Database = {
           address_line2?: string | null
           address_line3?: string | null
           admin_code?: string
+          conhecer_gallery_title?: string | null
+          conhecer_hero_image_url?: string | null
           contact_instagram_btn_text?: string | null
           contact_maps_btn_text?: string | null
           contact_whatsapp_btn_text?: string | null
@@ -277,7 +388,19 @@ export type Database = {
           faleconosco_card_title?: string | null
           faleconosco_subtitle?: string | null
           faleconosco_title?: string | null
+          favicon_url?: string | null
+          featured_photos_btn_text?: string | null
+          featured_videos_btn_text?: string | null
+          font_body?: string | null
+          font_heading?: string | null
+          footer_contact_title?: string | null
           footer_description?: string | null
+          footer_nav_title?: string | null
+          footer_show_instagram?: boolean | null
+          footer_show_whatsapp?: boolean | null
+          fotos_empty_text?: string | null
+          fotos_page_subtitle?: string | null
+          fotos_page_title?: string | null
           gallery_section_subtitle?: string | null
           gallery_section_title?: string | null
           google_maps_embed?: string | null
@@ -294,6 +417,10 @@ export type Database = {
           hero_stat_3_num?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          home_section_order?: Json | null
+          hotel_gallery_title?: string | null
+          hotel_hero_image_url?: string | null
+          hotel_videos_title?: string | null
           id?: string
           instagram_active?: boolean | null
           instagram_btn_text?: string | null
@@ -305,6 +432,18 @@ export type Database = {
           localizacao_subtitle?: string | null
           localizacao_title?: string | null
           logo_url?: string | null
+          nav_label_conhecer?: string | null
+          nav_label_fotos?: string | null
+          nav_label_hotelzinho?: string | null
+          nav_label_inicio?: string | null
+          nav_label_localizacao?: string | null
+          nav_label_siganos?: string | null
+          nav_label_videos?: string | null
+          nav_whatsapp_btn_text?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          siganos_subtitle?: string | null
+          siganos_title?: string | null
           site_name?: string | null
           site_slogan?: string | null
           sobre_cta_text?: string | null
@@ -318,6 +457,10 @@ export type Database = {
           updated_at?: string | null
           video_section_subtitle?: string | null
           video_section_title?: string | null
+          videos_empty_text?: string | null
+          videos_likes_label?: string | null
+          videos_page_subtitle?: string | null
+          videos_page_title?: string | null
           whatsapp_active?: boolean | null
           whatsapp_btn_text?: string | null
           whatsapp_message?: string | null
@@ -333,6 +476,8 @@ export type Database = {
           address_line2?: string | null
           address_line3?: string | null
           admin_code?: string
+          conhecer_gallery_title?: string | null
+          conhecer_hero_image_url?: string | null
           contact_instagram_btn_text?: string | null
           contact_maps_btn_text?: string | null
           contact_whatsapp_btn_text?: string | null
@@ -352,7 +497,19 @@ export type Database = {
           faleconosco_card_title?: string | null
           faleconosco_subtitle?: string | null
           faleconosco_title?: string | null
+          favicon_url?: string | null
+          featured_photos_btn_text?: string | null
+          featured_videos_btn_text?: string | null
+          font_body?: string | null
+          font_heading?: string | null
+          footer_contact_title?: string | null
           footer_description?: string | null
+          footer_nav_title?: string | null
+          footer_show_instagram?: boolean | null
+          footer_show_whatsapp?: boolean | null
+          fotos_empty_text?: string | null
+          fotos_page_subtitle?: string | null
+          fotos_page_title?: string | null
           gallery_section_subtitle?: string | null
           gallery_section_title?: string | null
           google_maps_embed?: string | null
@@ -369,6 +526,10 @@ export type Database = {
           hero_stat_3_num?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          home_section_order?: Json | null
+          hotel_gallery_title?: string | null
+          hotel_hero_image_url?: string | null
+          hotel_videos_title?: string | null
           id?: string
           instagram_active?: boolean | null
           instagram_btn_text?: string | null
@@ -380,6 +541,18 @@ export type Database = {
           localizacao_subtitle?: string | null
           localizacao_title?: string | null
           logo_url?: string | null
+          nav_label_conhecer?: string | null
+          nav_label_fotos?: string | null
+          nav_label_hotelzinho?: string | null
+          nav_label_inicio?: string | null
+          nav_label_localizacao?: string | null
+          nav_label_siganos?: string | null
+          nav_label_videos?: string | null
+          nav_whatsapp_btn_text?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          siganos_subtitle?: string | null
+          siganos_title?: string | null
           site_name?: string | null
           site_slogan?: string | null
           sobre_cta_text?: string | null
@@ -393,6 +566,10 @@ export type Database = {
           updated_at?: string | null
           video_section_subtitle?: string | null
           video_section_title?: string | null
+          videos_empty_text?: string | null
+          videos_likes_label?: string | null
+          videos_page_subtitle?: string | null
+          videos_page_title?: string | null
           whatsapp_active?: boolean | null
           whatsapp_btn_text?: string | null
           whatsapp_message?: string | null
