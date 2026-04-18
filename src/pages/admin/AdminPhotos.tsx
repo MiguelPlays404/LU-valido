@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
+import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Trash2, Star, Eye, EyeOff, Pencil, X, Search } from "lucide-react";
+import { Trash2, Star, Eye, EyeOff, Pencil, X, Search } from "lucide-react";
 
 const categories = [
   { value: "galeria", label: "Galeria Geral" },
@@ -14,7 +15,7 @@ const categories = [
 export default function AdminPhotos() {
   const [photos, setPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
+  const [uploadCategory, setUploadCategory] = useState("galeria");
   const [filterCat, setFilterCat] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [editPhoto, setEditPhoto] = useState<any>(null);
@@ -29,19 +30,11 @@ export default function AdminPhotos() {
     setLoading(false);
   };
 
-  const handleUpload = async (files: FileList | null) => {
-    if (!files) return;
-    setUploading(true);
-    for (const file of Array.from(files)) {
-      if (file.size > 10 * 1024 * 1024) { toast({ title: "Erro", description: `${file.name} excede 10MB` }); continue; }
-      const path = `fotos/galeria/${Date.now()}_${file.name}`;
-      const { error: uploadError } = await supabase.storage.from("levillepet-media").upload(path, file);
-      if (uploadError) { toast({ title: "Erro no upload", description: uploadError.message }); continue; }
-      const { data: urlData } = supabase.storage.from("levillepet-media").getPublicUrl(path);
-      await supabase.from("photos").insert({ title: file.name.replace(/\.[^.]+$/, ''), image_url: urlData.publicUrl, category: "galeria" });
-    }
-    toast({ title: "✅ Upload concluído!" });
-    setUploading(false);
+  const handleUploaded = async (url: string) => {
+    if (!url) return;
+    const fileName = url.split("/").pop()?.split(".")[0] || "Foto";
+    await supabase.from("photos").insert({ title: fileName, image_url: url, category: uploadCategory });
+    toast({ title: "✅ Foto adicionada à galeria!" });
     fetchPhotos();
   };
 
@@ -81,14 +74,15 @@ export default function AdminPhotos() {
 
   return (
     <AdminLayout title="Gerenciar Fotos">
-      {/* Upload */}
-      <div className="bg-[#18181B] border-2 border-dashed border-[#3F3F46] rounded-2xl p-8 text-center mb-8 hover:border-primary/50 transition-colors">
-        <Upload className="w-8 h-8 text-primary mx-auto mb-3" />
-        <p className="text-[#A1A1AA] text-sm mb-3">Arraste fotos ou clique para fazer upload</p>
-        <label className="btn-primary text-sm px-6 py-2 cursor-pointer">
-          {uploading ? "Enviando..." : "Selecionar Arquivos"}
-          <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleUpload(e.target.files)} disabled={uploading} />
-        </label>
+      {/* Upload com barra de progresso */}
+      <div className="bg-[#18181B] rounded-2xl p-6 mb-8 border border-white/[0.07]">
+        <div className="flex items-center gap-3 mb-3">
+          <h3 className="font-heading font-semibold text-sm">Adicionar foto</h3>
+          <select value={uploadCategory} onChange={e => setUploadCategory(e.target.value)} className="bg-[#27272A] border border-[#3F3F46] rounded-lg px-2 py-1 text-xs text-white ml-auto">
+            {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+        </div>
+        <MediaUploader accept="image" pathPrefix={`fotos/${uploadCategory}`} onUploaded={handleUploaded} label="" />
       </div>
 
       {/* Filters */}
