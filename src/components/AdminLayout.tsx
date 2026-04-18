@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Image, Video, Hotel, Eye, Settings, Share2, Shield, LogOut, ExternalLink, Home } from "lucide-react";
+import { LayoutDashboard, Image, Video, Hotel, Eye, Settings, Share2, Shield, LogOut, ExternalLink, Home, Type, Palette, Compass, BookOpen } from "lucide-react";
 import { destroyAdminSession, getSessionAge } from "@/lib/adminSession";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,10 +12,16 @@ const navItems = [
   { label: "Vídeos", path: "/admin/videos", icon: Video },
   { label: "Hotelzinho", path: "/admin/hotelzinho", icon: Hotel },
   { label: "Venha Nos Conhecer", path: "/admin/conhecer", icon: Eye },
-  { type: "separator", label: "CONFIGURAÇÕES" },
+  { label: "Textos das Páginas", path: "/admin/textos-paginas", icon: Type },
+  { type: "separator", label: "APARÊNCIA" },
+  { label: "Branding", path: "/admin/branding", icon: Palette },
+  { label: "Navbar & Rodapé", path: "/admin/navbar-footer", icon: Compass },
   { label: "Configurações", path: "/admin/config", icon: Settings },
+  { type: "separator", label: "CONTATO" },
   { label: "Redes Sociais", path: "/admin/social", icon: Share2 },
+  { type: "separator", label: "SISTEMA" },
   { label: "Segurança", path: "/admin/seguranca", icon: Shield },
+  { label: "Guia & Ajuda", path: "/admin/guia", icon: BookOpen },
 ];
 
 export function AdminLayout({ children, title }: { children: React.ReactNode; title: string }) {

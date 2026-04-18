@@ -24,6 +24,33 @@ import AdminConfig from "./pages/admin/AdminConfig";
 import AdminSocial from "./pages/admin/AdminSocial";
 import AdminSecurity from "./pages/admin/AdminSecurity";
 import AdminHome from "./pages/admin/AdminHome";
+import AdminNavbarFooter from "./pages/admin/AdminNavbarFooter";
+import AdminBranding from "./pages/admin/AdminBranding";
+import AdminPageTexts from "./pages/admin/AdminPageTexts";
+import AdminGuia from "./pages/admin/AdminGuia";
+import { useEffect } from "react";
+import { supabase } from "./integrations/supabase/client";
+
+function BrandingApplier() {
+  useEffect(() => {
+    supabase.from("site_config").select("favicon_url,font_heading,font_body,primary_color").limit(1).maybeSingle().then(({ data }) => {
+      if (!data) return;
+      if (data.favicon_url) {
+        let link = document.querySelector("link[rel='icon']") as HTMLLinkElement | null;
+        if (!link) { link = document.createElement("link"); link.rel = "icon"; document.head.appendChild(link); }
+        link.href = data.favicon_url;
+      }
+      if (data.font_heading || data.font_body) {
+        const fams = [data.font_heading, data.font_body].filter(Boolean).map(f => `family=${encodeURIComponent(f!)}:wght@400;500;600;700&`).join("");
+        const id = "dynamic-fonts";
+        let s = document.getElementById(id) as HTMLLinkElement | null;
+        if (!s) { s = document.createElement("link"); s.id = id; s.rel = "stylesheet"; document.head.appendChild(s); }
+        s.href = `https://fonts.googleapis.com/css2?${fams}display=swap`;
+      }
+    });
+  }, []);
+  return null;
+}
 
 const queryClient = new QueryClient();
 
@@ -33,6 +60,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <BrandingApplier />
         <NavigationProgress />
         <Routes>
           <Route path="/" element={<PageTransition><Index /></PageTransition>} />
@@ -53,6 +81,10 @@ const App = () => (
           <Route path="/admin/config" element={<ProtectedRoute><AdminConfig /></ProtectedRoute>} />
           <Route path="/admin/social" element={<ProtectedRoute><AdminSocial /></ProtectedRoute>} />
           <Route path="/admin/seguranca" element={<ProtectedRoute><AdminSecurity /></ProtectedRoute>} />
+          <Route path="/admin/navbar-footer" element={<ProtectedRoute><AdminNavbarFooter /></ProtectedRoute>} />
+          <Route path="/admin/branding" element={<ProtectedRoute><AdminBranding /></ProtectedRoute>} />
+          <Route path="/admin/textos-paginas" element={<ProtectedRoute><AdminPageTexts /></ProtectedRoute>} />
+          <Route path="/admin/guia" element={<ProtectedRoute><AdminGuia /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
