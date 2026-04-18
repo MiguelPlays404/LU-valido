@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
-import { Image, Video, Heart, Hotel, Camera, Settings, Share2, Shield } from "lucide-react";
+import { Image, Video, Heart, Hotel, Camera, Settings, Share2, Shield, BookOpen, Palette, Compass, Type } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function AnimatedCounter({ end, duration = 1200 }: { end: number; duration?: number }) {
@@ -52,6 +52,10 @@ export default function AdminDashboard() {
   ];
 
   const quickActions = [
+    { label: "Guia & Ajuda", path: "/admin/guia", icon: BookOpen },
+    { label: "Branding", path: "/admin/branding", icon: Palette },
+    { label: "Navbar & Rodapé", path: "/admin/navbar-footer", icon: Compass },
+    { label: "Textos das Páginas", path: "/admin/textos-paginas", icon: Type },
     { label: "Gerenciar Fotos", path: "/admin/fotos", icon: Camera },
     { label: "Gerenciar Vídeos", path: "/admin/videos", icon: Video },
     { label: "Configurações", path: "/admin/config", icon: Settings },

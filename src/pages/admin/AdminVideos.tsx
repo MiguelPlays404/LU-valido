@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
+import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getYoutubeThumbnail } from "@/lib/youtube";
-import { Link2, Trash2, Eye, EyeOff, Heart } from "lucide-react";
+import { Link2, Trash2, Eye, EyeOff, Heart, Upload } from "lucide-react";
 
 export default function AdminVideos() {
   const [videos, setVideos] = useState<any[]>([]);
