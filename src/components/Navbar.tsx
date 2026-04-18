@@ -3,53 +3,40 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-const navLinks = [
-  { label: "Início", path: "/" },
-  { label: "Hotelzinho", path: "/hotelzinho" },
-  { label: "Venha Nos Conhecer", path: "/venha-nos-conhecer" },
-  { label: "Fotos", path: "/fotos" },
-  { label: "Vídeos", path: "/videos" },
-  { label: "Localização", path: "/localizacao" },
-  { label: "Siga-nos", path: "/siga-nos" },
-];
-
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [config, setConfig] = useState<any>(null);
+  const [navItems, setNavItems] = useState<any[]>([]);
   const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   useEffect(() => {
-    supabase.from("site_config").select("site_name,logo_url,whatsapp_number,whatsapp_message").limit(1).maybeSingle().then(({ data }) => setConfig(data));
+    Promise.all([
+      supabase.from("site_config").select("*").limit(1).maybeSingle(),
+      supabase.from("nav_items").select("*").eq("is_active", true).eq("show_in_navbar", true).order("display_order"),
+    ]).then(([c, n]) => {
+      setConfig(c.data);
+      setNavItems(n.data || []);
+    });
   }, []);
 
   const waNum = config?.whatsapp_number || '5514997145610';
   const waMsg = encodeURIComponent(config?.whatsapp_message || 'Olá! Vim pelo site Le Ville Pet!');
+  const waText = config?.nav_whatsapp_btn_text || '💬 WhatsApp';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black/95 backdrop-blur-[20px] shadow-lg border-b border-[rgba(245,192,0,0.15)]">
       <div className="container mx-auto flex items-center justify-between h-16 lg:h-[72px] px-4">
         <Link to="/" className="flex items-center gap-2 hover:scale-[1.04] transition-transform">
-          {config?.logo_url ? (
-            <img src={config.logo_url} alt={config?.site_name || 'Le Ville Pet'} className="h-10 lg:h-[46px] rounded-lg" />
-          ) : (
-            <img src="/images/logo-levillepet.png" alt="Le Ville Pet" className="h-10 lg:h-[46px] rounded-lg" />
-          )}
+          <img src={config?.logo_url || "/images/logo-levillepet.png"} alt={config?.site_name || 'Le Ville Pet'} className="h-10 lg:h-[46px] rounded-lg" />
         </Link>
 
         <div className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) => {
+          {navItems.map((link) => {
             const active = location.pathname === link.path;
             return (
-              <Link key={link.path} to={link.path}
+              <Link key={link.id} to={link.path}
                 className={`relative px-3 py-2 rounded-lg text-[15px] transition-colors duration-200 ${active ? "text-primary" : "text-white hover:text-primary"}`}
                 style={{ fontFamily: 'Inter', fontWeight: 500 }}>
                 {link.label}
@@ -60,7 +47,7 @@ export function Navbar() {
         </div>
 
         <a href={`https://wa.me/${waNum}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="hidden lg:flex btn-primary text-sm py-2.5 px-5">
-          💬 WhatsApp
+          {waText}
         </a>
 
         <button onClick={() => setIsOpen(true)} className="lg:hidden text-white p-2" aria-label="Abrir menu">
@@ -76,8 +63,8 @@ export function Navbar() {
           <button onClick={() => setIsOpen(false)} className="text-white p-2"><X className="w-6 h-6" /></button>
         </div>
         <div className="flex flex-col py-4">
-          {navLinks.map((link, i) => (
-            <Link key={link.path} to={link.path}
+          {navItems.map((link, i) => (
+            <Link key={link.id} to={link.path}
               className={`px-6 py-4 font-heading font-semibold text-xl transition-colors ${location.pathname === link.path ? "text-primary bg-primary/10 border-l-[3px] border-primary" : "text-white hover:text-primary hover:bg-primary/5"}`}
               style={{ animation: `fadeInLeft 0.3s ease ${i * 0.05}s both` }}>
               {link.label}
