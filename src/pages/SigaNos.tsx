@@ -83,14 +83,12 @@ const SigaNos = () => {
               </div>
 
               <div className="flex flex-col gap-3 mb-10 max-w-[440px] mx-auto">
-                {socialLinks.map((link: any, i: number) => (
+                {socialLinks.map((link: any) => (
                   <a
                     key={link.name}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    data-animate="bounce"
-                    data-delay={String(i + 1)}
                     className="flex items-center gap-4 w-full h-16 text-white font-heading font-semibold text-lg rounded-2xl px-6 transition-all hover:-translate-y-1 hover:shadow-lg min-h-[64px]"
                     style={{ background: link.bg }}
                   >
