@@ -12,15 +12,17 @@ const VenhaNosConhecer = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [waNum, setWaNum] = useState('5514997145610');
   const [waMsg, setWaMsg] = useState('Olá! Vim pelo site e gostaria de conhecer o Le Ville Pet.');
+  const [cfg, setCfg] = useState<any>(null);
   useScrollAnimation();
 
   useEffect(() => {
     supabase.from("conhecer_content").select("*").limit(1).maybeSingle().then(({ data }) => setContent(data));
     supabase.from("photos").select("*").eq("is_active", true).eq("category", "conhecer").order("display_order").then(({ data }) => setPhotos(data || []));
-    supabase.from("site_config").select("whatsapp_number,whatsapp_message").limit(1).maybeSingle().then(({ data }) => {
+    supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => {
       if (data) {
         setWaNum(data.whatsapp_number);
         setWaMsg(data.whatsapp_message || waMsg);
+        setCfg(data);
       }
     });
   }, []);
@@ -39,7 +41,7 @@ const VenhaNosConhecer = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
             <div>
               <h2 data-animate="fade-up" className="section-title text-black mb-5">
-                Sobre o <span className="text-primary">Le Ville Pet</span>
+                {cfg?.conhecer_about_title || 'Sobre o Le Ville Pet'}
               </h2>
               <div data-animate="fade-up" data-delay="1" className="text-[#444] text-base leading-relaxed whitespace-pre-line" style={{ fontFamily: 'Inter' }}>
                 {content?.about_text || 'O Le Ville Pet nasceu do amor pelos animais e da vontade de oferecer um espaço de confiança.'}
@@ -64,7 +66,7 @@ const VenhaNosConhecer = () => {
       {photos.length > 0 && (
         <section className="py-20" style={{ background: '#F8F8F6' }}>
           <div className="container mx-auto px-4">
-            <h2 data-animate="fade-up" className="section-title text-black text-center mb-10">Galeria do Espaço</h2>
+            <h2 data-animate="fade-up" className="section-title text-black text-center mb-10">{cfg?.conhecer_gallery_title || 'Galeria do Espaço'}</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {photos.map((photo, i) => (
                 <button key={photo.id} data-animate="fade-scale" data-delay={String(Math.min(i, 7))}
@@ -85,7 +87,7 @@ const VenhaNosConhecer = () => {
       <section className="py-20" style={{ background: '#F5C000' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 data-animate="fade-up" className="font-heading font-extrabold text-black text-2xl lg:text-3xl mb-6">
-            Venha nos visitar!
+            {cfg?.conhecer_cta_title || 'Venha nos visitar!'}
           </h2>
           <a
             data-animate="fade-up"
@@ -96,7 +98,7 @@ const VenhaNosConhecer = () => {
             className="btn-dark inline-flex items-center gap-2"
           >
             <MessageCircle className="w-6 h-6" />
-            Fale Conosco
+            {cfg?.conhecer_cta_btn_text || 'Fale Conosco'}
           </a>
         </div>
       </section>
