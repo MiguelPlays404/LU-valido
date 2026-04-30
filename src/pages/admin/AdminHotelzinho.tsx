@@ -1,21 +1,25 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
+import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 export default function AdminHotelzinho() {
   const [content, setContent] = useState<any>(null);
+  const [config, setConfig] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     supabase.from("hotelzinho_content").select("*").limit(1).single().then(({ data }) => { if (data) setContent(data); });
+    supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => { if (data) setConfig(data); });
   }, []);
 
   const handleSave = async () => {
     if (!content) return;
     setSaving(true);
     const { error } = await supabase.from("hotelzinho_content").update(content).eq("id", content.id);
+    if (config?.id) await supabase.from("site_config").update({ hotel_hero_image_url: config.hotel_hero_image_url, hotel_gallery_section_title: config.hotel_gallery_section_title, hotel_cta_title: config.hotel_cta_title }).eq("id", config.id);
     toast({ title: error ? "Erro ao salvar" : "✅ Conteúdo salvo!" });
     setSaving(false);
   };
@@ -45,6 +49,12 @@ export default function AdminHotelzinho() {
   return (
     <AdminLayout title="Hotelzinho">
       <div className="max-w-2xl space-y-6">
+        {config && (
+          <div>
+            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">Imagem ou vídeo do topo da página</label>
+            <MediaUploader accept="both" pathPrefix="hotelzinho/hero" currentUrl={config.hotel_hero_image_url} onUploaded={(url) => setConfig({ ...config, hotel_hero_image_url: url })} label="" />
+          </div>
+        )}
         {fields.map(f => (
           <div key={f.key}>
             <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">{f.label}</label>
