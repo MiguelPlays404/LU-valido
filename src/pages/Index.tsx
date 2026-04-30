@@ -239,7 +239,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <span data-animate="fade-up" className="inline-flex items-center gap-2 text-black/60 text-sm font-body mb-3"><Hotel className="w-5 h-5" /> Nosso Hotelzinho</span>
+              <span data-animate="fade-up" className="inline-flex items-center gap-2 text-black/60 text-sm font-body mb-3"><Hotel className="w-5 h-5" /> {c.cta_hotel_badge_text || 'Nosso Hotelzinho'}</span>
               <h2 data-animate="fade-up" data-delay="1" className="font-heading font-extrabold text-black text-3xl lg:text-4xl mb-5">{c.cta_hotel_title || 'Vai viajar? Deixe seu pet com a gente!'}</h2>
               <p data-animate="fade-up" data-delay="2" className="text-black/70 text-base lg:text-lg leading-relaxed mb-8" style={{ fontFamily: 'Inter' }}>{c.cta_hotel_text || 'Nosso hotelzinho oferece um ambiente seguro, confortável e cheio de carinho para o seu pet enquanto você viaja com tranquilidade.'}</p>
               <div data-animate="fade-up" data-delay="3" className="flex flex-col sm:flex-row gap-3">
@@ -251,7 +251,7 @@ const Index = () => {
             </div>
             <div data-animate="fade-right" data-delay="2">
               <div className="aspect-[4/3] rounded-[20px] overflow-hidden shadow-2xl bg-[#E5E5E5]">
-                <img src={c.cta_hotel_image_url || "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop"} alt="Hotelzinho Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                {renderMedia(c.cta_hotel_image_url, "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop", "Hotelzinho Le Ville Pet")}
               </div>
             </div>
           </div>
@@ -264,9 +264,10 @@ const Index = () => {
           <div className="text-center mb-12">
             <h2 data-animate="fade-up" className="section-title text-white">{c.contact_section_title || 'Entre em Contato'}</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { icon: <MessageCircle className="w-7 h-7 text-[#25D366]" />, bg: 'rgba(37,211,102,0.15)', title: 'WhatsApp', value: `(${(waNum || '').slice(2,4)}) ${(waNum || '').slice(4,9)}-${(waNum || '').slice(9)}`, color: '#F5C000', btnText: c.contact_whatsapp_btn_text || 'Chamar no WhatsApp', btnBg: '#25D366', href: `https://wa.me/${waNum}` },
+              { icon: <Phone className="w-7 h-7 text-primary" />, bg: 'rgba(245,192,0,0.15)', title: c.contact_fixed_phone_title || 'Telefone Fixo', value: c.fixed_phone || '(14) 3204-7040', color: '#F5C000', btnText: c.contact_fixed_phone_btn_text || 'Ligar agora', btnBg: '#F5C000', href: `tel:${(c.fixed_phone || '(14) 3204-7040').replace(/\D/g, '')}`, darkText: true },
               { icon: <MapPin className="w-7 h-7 text-primary" />, bg: 'rgba(245,192,0,0.15)', title: 'Localização', value: `${c.address_line1 || 'Villaggio Mall Center'}\n${c.address_line3 || 'Bauru-SP'}`, color: '#999', btnText: c.contact_maps_btn_text || 'Ver no Mapa', btnBg: '#F5C000', href: '/localizacao', internal: true },
               { icon: <svg className="w-7 h-7 text-pink-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>, bg: 'rgba(236,72,153,0.15)', title: 'Instagram', value: c.instagram_handle || '@levillepetbauru', color: '#F5C000', btnText: c.contact_instagram_btn_text || 'Seguir', btnBg: 'linear-gradient(135deg, #F56040, #E1306C, #833AB4)', href: c.instagram_url || 'https://www.instagram.com/levillepetbauru/' },
             ].map((card, i) => (
@@ -277,7 +278,7 @@ const Index = () => {
                 {card.internal ? (
                   <Link to={card.href} className="inline-flex items-center justify-center gap-2 text-black font-heading font-bold px-6 py-3 rounded-xl transition-colors min-h-[44px]" style={{ background: card.btnBg }}>{card.btnText}</Link>
                 ) : (
-                  <a href={card.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 text-white font-heading font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all min-h-[44px]" style={{ background: card.btnBg }}>{card.btnText}</a>
+                  <a href={card.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 font-heading font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all min-h-[44px] ${card.darkText ? 'text-black' : 'text-white'}`} style={{ background: card.btnBg }}>{card.btnText}</a>
                 )}
               </div>
             ))}
