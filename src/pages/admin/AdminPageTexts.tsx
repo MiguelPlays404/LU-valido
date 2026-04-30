@@ -7,7 +7,14 @@ import { Save } from "lucide-react";
 const TABS = [
   { key: "global", label: "🌐 Globais", fields: [
     { k: "hero_badge_text", l: "Badge do Hero (Home)" },
+    { k: "sobre_badge_text", l: "Badge da seção Quem Somos" },
+    { k: "home_explore_title", l: "Título dos cards da Home" },
+    { k: "home_explore_subtitle", l: "Subtítulo dos cards da Home" },
+    { k: "home_card_cta_text", l: "Texto do link nos cards" },
+    { k: "cta_hotel_badge_text", l: "Badge do CTA Hotelzinho" },
     { k: "contact_section_title", l: "Título da seção de contato (Home)" },
+    { k: "contact_fixed_phone_title", l: "Título do telefone fixo (Home)" },
+    { k: "contact_fixed_phone_btn_text", l: "Botão do telefone fixo (Home)" },
     { k: "siganos_footer_text", l: "Texto pé da página Siga-nos" },
   ]},
   { key: "fotos", label: "Fotos", fields: [
@@ -73,7 +80,7 @@ const TABS = [
 ];
 
 export default function AdminPageTexts() {
-  const [tab, setTab] = useState("fotos");
+  const [tab, setTab] = useState("global");
   const [c, setC] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
