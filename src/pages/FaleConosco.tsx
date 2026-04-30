@@ -16,6 +16,8 @@ const FaleConosco = () => {
   const waNum = c?.whatsapp_number || '5514997145610';
   const waMsg = encodeURIComponent(c?.whatsapp_message || 'Olá! Vim pelo site Le Ville Pet e gostaria de mais informações. 🐾');
   const phone = `(${waNum.slice(2,4)}) ${waNum.slice(4,9)}-${waNum.slice(9)}`;
+  const contactMedia = c?.faleconosco_image_url || "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=500&h=375&fit=crop";
+  const isContactVideo = /\.(mp4|webm|mov|m4v)(\?|$)/i.test(contactMedia);
 
   return (
     <PublicLayout>
@@ -74,7 +76,11 @@ const FaleConosco = () => {
               </div>
             </div>
             <div data-animate="fade-right" data-delay="2" className="aspect-[4/3] rounded-2xl overflow-hidden bg-[#E5E5E5]">
-              <img src={c?.faleconosco_image_url || "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=500&h=375&fit=crop"} alt="Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+              {isContactVideo ? (
+                <video src={contactMedia} className="w-full h-full object-cover" autoPlay muted loop playsInline />
+              ) : (
+                <img src={contactMedia} alt="Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+              )}
             </div>
           </div>
           <p data-animate="fade-up" className="text-center text-[#888] text-sm mt-10" style={{ fontFamily: 'Inter' }}>
