@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
   Hotel, Camera, Video, MapPin, MessageCircle, Share2,
-  Search, Heart
+  Search, Heart, Phone
 } from "lucide-react";
 
 const iconMap: Record<string, any> = { Home: Hotel, Camera, Video, MapPin, MessageCircle, Heart: Share2 };
@@ -30,11 +30,26 @@ const Index = () => {
   const c = config || {};
   const waNum = c.whatsapp_number || '5514997145610';
   const waMsg = encodeURIComponent(c.whatsapp_message || 'Olá! Vim pelo site Le Ville Pet! 🐾');
+  const renderMedia = (url: string | undefined, fallback: string, alt: string, className = "w-full h-full object-cover") => {
+    const src = url || fallback;
+    const isVideo = /\.(mp4|webm|mov|m4v)(\?|$)/i.test(src);
+    return isVideo ? (
+      <video src={src} className={className} autoPlay muted loop playsInline controls={false} />
+    ) : (
+      <img src={src} alt={alt} className={className} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+    );
+  };
 
   return (
     <PublicLayout>
       {/* ═══ HERO — ESCURO ═══ */}
       <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: 'radial-gradient(ellipse at 65% 35%, #1C1500 0%, #080808 55%, #000000 100%)' }}>
+        {c.hero_bg_image_url && (
+          <div className="absolute inset-0 opacity-45">
+            {renderMedia(c.hero_bg_image_url, '', 'Le Ville Pet', 'w-full h-full object-cover')}
+            <div className="absolute inset-0 bg-black/55" />
+          </div>
+        )}
         <div className="absolute top-[10%] right-[5%] w-[700px] h-[700px] rounded-full pointer-events-none animate-scale-breath" style={{ background: 'radial-gradient(circle, rgba(245,192,0,0.14) 0%, transparent 70%)' }} />
         <div className="absolute bottom-[5%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(245,192,0,0.07) 0%, transparent 70%)', animation: 'scaleBreath 6s ease-in-out infinite 2.5s' }} />
         <div className="absolute inset-0 paw-pattern-bg pointer-events-none" />
