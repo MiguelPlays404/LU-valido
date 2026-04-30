@@ -11,12 +11,13 @@ const Hotelzinho = () => {
   const [photos, setPhotos] = useState<any[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [waNum, setWaNum] = useState('5514997145610');
+  const [cfg, setCfg] = useState<any>(null);
   useScrollAnimation();
 
   useEffect(() => {
     supabase.from("hotelzinho_content").select("*").limit(1).maybeSingle().then(({ data }) => setContent(data));
     supabase.from("photos").select("*").eq("is_active", true).eq("category", "hotelzinho").order("display_order").then(({ data }) => setPhotos(data || []));
-    supabase.from("site_config").select("whatsapp_number").limit(1).maybeSingle().then(({ data }) => { if (data) setWaNum(data.whatsapp_number); });
+    supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => { if (data) { setWaNum(data.whatsapp_number); setCfg(data); } });
   }, []);
 
   const iconMap: Record<string, typeof Shield> = { '🛡️': Shield, '❤️': Heart, '🍽️': CheckCircle };
@@ -79,7 +80,7 @@ const Hotelzinho = () => {
       {photos.length > 0 && (
         <section className="py-20" style={{ background: '#0D0D0D' }}>
           <div className="container mx-auto px-4">
-            <h2 data-animate="fade-up" className="section-title text-white text-center mb-10">Nosso Espaço</h2>
+            <h2 data-animate="fade-up" className="section-title text-white text-center mb-10">{cfg?.hotel_gallery_section_title || 'Nosso Espaço'}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {photos.map((photo, i) => (
                 <button key={photo.id} data-animate="fade-scale" data-delay={String(Math.min(i, 5))} onClick={() => setLightboxIndex(i)}
@@ -103,7 +104,7 @@ const Hotelzinho = () => {
       <section className="py-20" style={{ background: '#F5C000' }}>
         <div className="container mx-auto px-4 text-center">
           <h2 data-animate="fade-up" className="font-heading font-extrabold text-black text-2xl lg:text-3xl mb-6">
-            Quer agendar uma estadia para o seu pet?
+            {cfg?.hotel_cta_title || 'Quer agendar uma estadia para o seu pet?'}
           </h2>
           <a data-animate="fade-up" data-delay="1" href={`https://wa.me/${waNum}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="btn-dark inline-flex items-center gap-2 text-lg">
             <MessageCircle className="w-6 h-6" />
