@@ -12,11 +12,15 @@ const categories = [
   { value: "home", label: "Home" },
 ];
 
+const categoryTabs = [
+  { value: "all", label: "Todas" },
+  ...categories,
+];
+
 export default function AdminPhotos() {
   const [photos, setPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [uploadCategory, setUploadCategory] = useState("galeria");
-  const [filterCat, setFilterCat] = useState("all");
+  const [activeTab, setActiveTab] = useState("galeria");
   const [searchTerm, setSearchTerm] = useState("");
   const [editPhoto, setEditPhoto] = useState<any>(null);
   const [deletePhoto, setDeletePhoto] = useState<any>(null);
@@ -33,7 +37,8 @@ export default function AdminPhotos() {
   const handleUploaded = async (url: string) => {
     if (!url) return;
     const fileName = url.split("/").pop()?.split(".")[0] || "Foto";
-    await supabase.from("photos").insert({ title: fileName, image_url: url, category: uploadCategory });
+    const category = activeTab === "all" ? "galeria" : activeTab;
+    await supabase.from("photos").insert({ title: fileName, image_url: url, category });
     toast({ title: "✅ Foto adicionada à galeria!" });
     fetchPhotos();
   };
@@ -67,10 +72,13 @@ export default function AdminPhotos() {
   };
 
   const filtered = photos.filter(p => {
-    if (filterCat !== "all" && p.category !== filterCat) return false;
+    if (activeTab !== "all" && p.category !== activeTab) return false;
     if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
+
+  const uploadCategory = activeTab === "all" ? "galeria" : activeTab;
+  const currentLabel = categories.find(c => c.value === uploadCategory)?.label || "Galeria Geral";
 
   return (
     <AdminLayout title="Gerenciar Fotos">
