@@ -166,13 +166,16 @@ export default function AdminHome() {
       {/* Contact Buttons */}
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
         <h2 className="font-heading font-semibold text-white mb-4">Textos dos Botões de Contato</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Field label="Título da Seção" field="contact_section_title" />
           <Field label="Botão WhatsApp" field="contact_whatsapp_btn_text" />
+          <Field label="Título Telefone Fixo" field="contact_fixed_phone_title" />
+          <Field label="Botão Telefone Fixo" field="contact_fixed_phone_btn_text" />
           <Field label="Botão Mapa" field="contact_maps_btn_text" />
           <Field label="Botão Instagram" field="contact_instagram_btn_text" />
         </div>
         <div className="mt-4">
-          <SaveBtn label="Contato" fields={["contact_whatsapp_btn_text","contact_maps_btn_text","contact_instagram_btn_text"]} />
+          <SaveBtn label="Contato" fields={["contact_section_title","contact_whatsapp_btn_text","contact_fixed_phone_title","contact_fixed_phone_btn_text","contact_maps_btn_text","contact_instagram_btn_text"]} />
         </div>
       </div>
 
