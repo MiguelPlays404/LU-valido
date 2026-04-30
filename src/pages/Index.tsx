@@ -50,8 +50,7 @@ const Index = () => {
         <div className="relative z-10 container mx-auto px-6 lg:px-12 pt-28 pb-20 lg:pt-32 lg:pb-24">
           <div className="max-w-[680px]">
             <div data-animate="fade-up" className="inline-flex items-center gap-2.5 rounded-full px-5 py-2 mb-9" style={{ background: 'rgba(245,192,0,0.12)', border: '1px solid rgba(245,192,0,0.45)', animation: 'heroBadgePop 0.6s ease 0.2s both' }}>
-              <span className="text-base">🐾</span>
-              <span className="font-heading font-semibold text-xs tracking-[0.1em] uppercase text-primary">Petshop em Bauru-SP</span>
+              <span className="font-heading font-semibold text-xs tracking-[0.1em] uppercase text-primary">{c.hero_badge_text || '🐾 Petshop em Bauru-SP'}</span>
             </div>
 
             <h1 data-animate="fade-up" data-delay="1" className="hero-title text-white mb-7">
@@ -202,11 +201,15 @@ const Index = () => {
               <p data-animate="fade-up" data-delay="1" className="section-subtitle mx-auto">{c.video_section_subtitle || featuredVideo.title}</p>
             </div>
             <div data-animate="fade-scale" data-delay="2" className="max-w-3xl mx-auto">
-              <div className="aspect-video rounded-[20px] overflow-hidden" style={{ boxShadow: 'var(--shadow-xl)' }}>
-                <iframe
-                  src={featuredVideo.video_url.includes('embed') ? featuredVideo.video_url : `https://www.youtube.com/embed/${featuredVideo.video_url.match(/(?:v=|youtu\.be\/)([^&\s]+)/)?.[1] || ''}`}
-                  className="w-full h-full" allowFullScreen loading="lazy" title={featuredVideo.title}
-                />
+              <div className="aspect-video rounded-[20px] overflow-hidden bg-black" style={{ boxShadow: 'var(--shadow-xl)' }}>
+                {featuredVideo.video_type === 'upload' ? (
+                  <video src={featuredVideo.video_url} className="w-full h-full" controls preload="metadata" poster={featuredVideo.thumbnail_url || undefined} />
+                ) : (
+                  <iframe
+                    src={featuredVideo.video_url.includes('embed') ? featuredVideo.video_url : `https://www.youtube.com/embed/${featuredVideo.video_url.match(/(?:v=|youtu\.be\/)([^&\s]+)/)?.[1] || ''}`}
+                    className="w-full h-full" allowFullScreen loading="lazy" title={featuredVideo.title}
+                  />
+                )}
               </div>
             </div>
             <div className="text-center mt-8" data-animate="fade-up" data-delay="3">
@@ -244,7 +247,7 @@ const Index = () => {
       <section className="py-20 lg:py-24" style={{ background: '#111111' }}>
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 data-animate="fade-up" className="section-title text-white">Entre em Contato</h2>
+            <h2 data-animate="fade-up" className="section-title text-white">{c.contact_section_title || 'Entre em Contato'}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
