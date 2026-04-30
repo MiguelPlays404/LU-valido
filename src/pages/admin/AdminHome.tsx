@@ -119,7 +119,8 @@ export default function AdminHome() {
           <div className="space-y-4">
             <Field label="Título" field="gallery_section_title" />
             <Field label="Subtítulo" field="gallery_section_subtitle" />
-            <SaveBtn label="Galeria" fields={["gallery_section_title","gallery_section_subtitle"]} />
+            <Field label="Texto do Botão" field="featured_photos_btn_text" />
+            <SaveBtn label="Galeria" fields={["gallery_section_title","gallery_section_subtitle","featured_photos_btn_text"]} />
           </div>
         </div>
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
@@ -127,8 +128,19 @@ export default function AdminHome() {
           <div className="space-y-4">
             <Field label="Título" field="video_section_title" />
             <Field label="Subtítulo" field="video_section_subtitle" />
-            <SaveBtn label="Vídeo" fields={["video_section_title","video_section_subtitle"]} />
+            <Field label="Texto do Botão" field="featured_videos_btn_text" />
+            <SaveBtn label="Vídeo" fields={["video_section_title","video_section_subtitle","featured_videos_btn_text"]} />
           </div>
+        </div>
+      </div>
+
+      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
+        <h2 className="font-heading font-semibold text-white mb-4">Seção de Cards da Home</h2>
+        <div className="space-y-4">
+          <Field label="Título" field="home_explore_title" />
+          <Field label="Subtítulo" field="home_explore_subtitle" />
+          <Field label="Texto do Link" field="home_card_cta_text" />
+          <SaveBtn label="Cards" fields={["home_explore_title","home_explore_subtitle","home_card_cta_text"]} />
         </div>
       </div>
 
@@ -137,16 +149,17 @@ export default function AdminHome() {
         <h2 className="font-heading font-semibold text-white mb-4">CTA Hotelzinho (faixa amarela)</h2>
         <div className="space-y-4">
           <Field label="Título" field="cta_hotel_title" />
+          <Field label="Badge" field="cta_hotel_badge_text" />
           <Field label="Texto Descritivo" field="cta_hotel_text" textarea />
           <div className="grid grid-cols-2 gap-4">
             <Field label="Botão 1" field="cta_hotel_btn1_text" />
             <Field label="Botão 2" field="cta_hotel_btn2_text" />
           </div>
           <div>
-            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem da Faixa CTA</label>
-            <MediaUploader accept="image" pathPrefix="home/cta-hotel" currentUrl={config.cta_hotel_image_url} onUploaded={(url) => setConfig({...config, cta_hotel_image_url: url})} label="" />
+            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem ou vídeo da Faixa CTA</label>
+            <MediaUploader accept="both" pathPrefix="home/cta-hotel" currentUrl={config.cta_hotel_image_url} onUploaded={(url) => setConfig({...config, cta_hotel_image_url: url})} label="" />
           </div>
-          <SaveBtn label="CTA Hotel" fields={["cta_hotel_title","cta_hotel_text","cta_hotel_btn1_text","cta_hotel_btn2_text","cta_hotel_image_url"]} />
+          <SaveBtn label="CTA Hotel" fields={["cta_hotel_title","cta_hotel_badge_text","cta_hotel_text","cta_hotel_btn1_text","cta_hotel_btn2_text","cta_hotel_image_url"]} />
         </div>
       </div>
 
