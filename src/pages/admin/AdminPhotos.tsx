@@ -82,23 +82,26 @@ export default function AdminPhotos() {
 
   return (
     <AdminLayout title="Gerenciar Fotos">
+      <div className="flex gap-2 mb-6 flex-wrap">
+        {categoryTabs.map(t => (
+          <button key={t.value} onClick={() => setActiveTab(t.value)}
+            className={`px-4 py-2 rounded-lg text-sm font-body transition-colors ${activeTab === t.value ? "bg-primary text-black font-semibold" : "bg-[#18181B] text-[#A1A1AA] hover:text-white"}`}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
       {/* Upload com barra de progresso */}
       <div className="bg-[#18181B] rounded-2xl p-6 mb-8 border border-white/[0.07]">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-heading font-semibold text-sm">Adicionar foto</h3>
-          <select value={uploadCategory} onChange={e => setUploadCategory(e.target.value)} className="bg-[#27272A] border border-[#3F3F46] rounded-lg px-2 py-1 text-xs text-white ml-auto">
-            {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-          </select>
+          <h3 className="font-heading font-semibold text-sm">Adicionar foto · {currentLabel}</h3>
+          <span className="text-xs text-[#71717A] ml-auto">Use as abas acima para separar cada local do site</span>
         </div>
         <MediaUploader accept="image" pathPrefix={`fotos/${uploadCategory}`} onUploaded={handleUploaded} label="" />
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
-        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className="bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white">
-          <option value="all">Todas as categorias</option>
-          {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-        </select>
         <div className="flex items-center gap-2 bg-[#27272A] border border-[#3F3F46] rounded-lg px-3">
           <Search className="w-4 h-4 text-[#71717A]" />
           <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Buscar..." className="bg-transparent text-sm text-white py-2 outline-none w-40" />
