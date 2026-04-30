@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
+import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ExternalLink, Upload } from "lucide-react";
@@ -130,6 +131,10 @@ export default function AdminConfig() {
             <Field label="Título do card WhatsApp" field="faleconosco_card_title" />
             <Field label="Texto do card" field="faleconosco_card_text" type="textarea" />
             <Field label="Texto do botão" field="faleconosco_btn_text" />
+            <div>
+              <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">Imagem ou vídeo lateral</label>
+              <MediaUploader accept="both" pathPrefix="fale-conosco/media" currentUrl={config.faleconosco_image_url} onUploaded={(url) => setConfig({ ...config, faleconosco_image_url: url })} label="" />
+            </div>
           </div>
         </div>
 
