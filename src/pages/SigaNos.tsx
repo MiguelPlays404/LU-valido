@@ -1,6 +1,6 @@
 import { PublicLayout } from "@/components/PublicLayout";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Phone } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -82,7 +82,20 @@ const SigaNos = () => {
                 <div data-animate="fade-up" data-delay="3" className="mt-4 h-[1px] w-32 mx-auto" style={{ background: 'linear-gradient(90deg, transparent, #F5C000, transparent)' }} />
               </div>
 
-              <div className="flex flex-col gap-3 mb-10 max-w-[440px] mx-auto">
+              <div className="flex flex-col gap-3 mb-6 max-w-[440px] mx-auto">
+                {c?.fixed_phone && (
+                  <a
+                    href={`tel:${c.fixed_phone.replace(/\D/g,'')}`}
+                    className="flex items-center gap-4 w-full h-16 text-white font-heading font-semibold text-lg rounded-2xl px-6 transition-all hover:-translate-y-1 hover:shadow-lg min-h-[64px]"
+                    style={{ background: 'linear-gradient(135deg, #F5C000 0%, #FFD700 100%)', color: '#000' }}
+                  >
+                    <Phone className="w-7 h-7" />
+                    <div className="flex-1 flex items-center justify-between">
+                      <span>Ligar (Telefone Fixo)</span>
+                      <span className="text-sm opacity-80 font-normal" style={{ fontFamily: 'Inter' }}>{c.fixed_phone}</span>
+                    </div>
+                  </a>
+                )}
                 {socialLinks.map((link: any) => (
                   <a
                     key={link.name}
@@ -99,13 +112,13 @@ const SigaNos = () => {
                     </div>
                   </a>
                 ))}
-                {socialLinks.length === 0 && (
-                  <p className="text-center text-[#666] text-sm" style={{ fontFamily: 'Inter' }}>Nenhuma rede social configurada.</p>
+                {socialLinks.length === 0 && !c?.fixed_phone && (
+                  <p className="text-center text-[#666] text-sm" style={{ fontFamily: 'Inter' }}>Nenhum contato configurado.</p>
                 )}
               </div>
 
               <p data-animate="fade-up" data-delay="4" className="text-center text-[#666] text-sm" style={{ fontFamily: 'Inter' }}>
-                🐾 Feito com amor para você e seu pet
+                {c?.siganos_footer_text || '🐾 Feito com amor para você e seu pet'}
               </p>
             </>
           )}
