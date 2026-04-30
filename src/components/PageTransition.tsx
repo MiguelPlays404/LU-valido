@@ -26,8 +26,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
     <div
       style={{
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(12px)',
-        transition: 'opacity 0.3s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'opacity 0.3s ease',
         minHeight: '100vh',
       }}
     >

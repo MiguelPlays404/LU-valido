@@ -263,12 +263,15 @@ export type Database = {
           conhecer_cta_title: string | null
           conhecer_gallery_title: string | null
           conhecer_hero_image_url: string | null
+          contact_fixed_phone_btn_text: string | null
+          contact_fixed_phone_title: string | null
           contact_instagram_btn_text: string | null
           contact_maps_btn_text: string | null
           contact_section_title: string | null
           contact_whatsapp_btn_text: string | null
           copyright_text: string | null
           created_at: string | null
+          cta_hotel_badge_text: string | null
           cta_hotel_btn1_text: string | null
           cta_hotel_btn2_text: string | null
           cta_hotel_image_url: string | null
@@ -321,6 +324,9 @@ export type Database = {
           hero_stat_3_num: string | null
           hero_subtitle: string | null
           hero_title: string | null
+          home_card_cta_text: string | null
+          home_explore_subtitle: string | null
+          home_explore_title: string | null
           home_section_order: Json | null
           hotel_cta_title: string | null
           hotel_gallery_section_title: string | null
@@ -354,6 +360,7 @@ export type Database = {
           siganos_title: string | null
           site_name: string | null
           site_slogan: string | null
+          sobre_badge_text: string | null
           sobre_cta_text: string | null
           sobre_image_url: string | null
           sobre_text: string | null
@@ -389,12 +396,15 @@ export type Database = {
           conhecer_cta_title?: string | null
           conhecer_gallery_title?: string | null
           conhecer_hero_image_url?: string | null
+          contact_fixed_phone_btn_text?: string | null
+          contact_fixed_phone_title?: string | null
           contact_instagram_btn_text?: string | null
           contact_maps_btn_text?: string | null
           contact_section_title?: string | null
           contact_whatsapp_btn_text?: string | null
           copyright_text?: string | null
           created_at?: string | null
+          cta_hotel_badge_text?: string | null
           cta_hotel_btn1_text?: string | null
           cta_hotel_btn2_text?: string | null
           cta_hotel_image_url?: string | null
@@ -447,6 +457,9 @@ export type Database = {
           hero_stat_3_num?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          home_card_cta_text?: string | null
+          home_explore_subtitle?: string | null
+          home_explore_title?: string | null
           home_section_order?: Json | null
           hotel_cta_title?: string | null
           hotel_gallery_section_title?: string | null
@@ -480,6 +493,7 @@ export type Database = {
           siganos_title?: string | null
           site_name?: string | null
           site_slogan?: string | null
+          sobre_badge_text?: string | null
           sobre_cta_text?: string | null
           sobre_image_url?: string | null
           sobre_text?: string | null
@@ -515,12 +529,15 @@ export type Database = {
           conhecer_cta_title?: string | null
           conhecer_gallery_title?: string | null
           conhecer_hero_image_url?: string | null
+          contact_fixed_phone_btn_text?: string | null
+          contact_fixed_phone_title?: string | null
           contact_instagram_btn_text?: string | null
           contact_maps_btn_text?: string | null
           contact_section_title?: string | null
           contact_whatsapp_btn_text?: string | null
           copyright_text?: string | null
           created_at?: string | null
+          cta_hotel_badge_text?: string | null
           cta_hotel_btn1_text?: string | null
           cta_hotel_btn2_text?: string | null
           cta_hotel_image_url?: string | null
@@ -573,6 +590,9 @@ export type Database = {
           hero_stat_3_num?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          home_card_cta_text?: string | null
+          home_explore_subtitle?: string | null
+          home_explore_title?: string | null
           home_section_order?: Json | null
           hotel_cta_title?: string | null
           hotel_gallery_section_title?: string | null
@@ -606,6 +626,7 @@ export type Database = {
           siganos_title?: string | null
           site_name?: string | null
           site_slogan?: string | null
+          sobre_badge_text?: string | null
           sobre_cta_text?: string | null
           sobre_image_url?: string | null
           sobre_text?: string | null

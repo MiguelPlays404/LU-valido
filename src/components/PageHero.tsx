@@ -10,6 +10,7 @@ interface PageHeroProps {
 
 export function PageHero({ badge, title, subtitle, bgImage, tall }: PageHeroProps) {
   useScrollAnimation();
+  const isVideo = !!bgImage && /\.(mp4|webm|mov|m4v)(\?|$)/i.test(bgImage);
 
   return (
     <section
@@ -24,7 +25,11 @@ export function PageHero({ badge, title, subtitle, bgImage, tall }: PageHeroProp
     >
       {bgImage && (
         <>
-          <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          {isVideo ? (
+            <video src={bgImage} className="absolute inset-0 w-full h-full object-cover" autoPlay muted loop playsInline />
+          ) : (
+            <img src={bgImage} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+          )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/65 to-black/45" />
         </>
       )}

@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
   Hotel, Camera, Video, MapPin, MessageCircle, Share2,
-  Search, Heart
+  Search, Heart, Phone
 } from "lucide-react";
 
 const iconMap: Record<string, any> = { Home: Hotel, Camera, Video, MapPin, MessageCircle, Heart: Share2 };
@@ -30,11 +30,26 @@ const Index = () => {
   const c = config || {};
   const waNum = c.whatsapp_number || '5514997145610';
   const waMsg = encodeURIComponent(c.whatsapp_message || 'Olá! Vim pelo site Le Ville Pet! 🐾');
+  const renderMedia = (url: string | undefined, fallback: string, alt: string, className = "w-full h-full object-cover") => {
+    const src = url || fallback;
+    const isVideo = /\.(mp4|webm|mov|m4v)(\?|$)/i.test(src);
+    return isVideo ? (
+      <video src={src} className={className} autoPlay muted loop playsInline controls={false} />
+    ) : (
+      <img src={src} alt={alt} className={className} loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+    );
+  };
 
   return (
     <PublicLayout>
       {/* ═══ HERO — ESCURO ═══ */}
       <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: 'radial-gradient(ellipse at 65% 35%, #1C1500 0%, #080808 55%, #000000 100%)' }}>
+        {c.hero_bg_image_url && (
+          <div className="absolute inset-0 opacity-45">
+            {renderMedia(c.hero_bg_image_url, '', 'Le Ville Pet', 'w-full h-full object-cover')}
+            <div className="absolute inset-0 bg-black/55" />
+          </div>
+        )}
         <div className="absolute top-[10%] right-[5%] w-[700px] h-[700px] rounded-full pointer-events-none animate-scale-breath" style={{ background: 'radial-gradient(circle, rgba(245,192,0,0.14) 0%, transparent 70%)' }} />
         <div className="absolute bottom-[5%] left-[-5%] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(245,192,0,0.07) 0%, transparent 70%)', animation: 'scaleBreath 6s ease-in-out infinite 2.5s' }} />
         <div className="absolute inset-0 paw-pattern-bg pointer-events-none" />
@@ -109,7 +124,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
             <div className="lg:col-span-3">
-              <span data-animate="fade-up" className="inline-block text-primary text-sm font-body px-4 py-1.5 rounded-full mb-4" style={{ background: 'var(--yellow-badge)' }}>Quem Somos</span>
+              <span data-animate="fade-up" className="inline-block text-primary text-sm font-body px-4 py-1.5 rounded-full mb-4" style={{ background: 'var(--yellow-badge)' }}>{c.sobre_badge_text || 'Quem Somos'}</span>
               <h2 data-animate="fade-up" data-delay="1" className="section-title text-black mb-5">
                 {c.sobre_title || 'O Le Ville Pet — onde seu pet se sente em casa'}
               </h2>
@@ -125,7 +140,7 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute -inset-4 bg-primary/15 rounded-3xl rotate-3" />
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-[3px] border-primary shadow-xl bg-[#E5E5E5]">
-                  <img src={c.sobre_image_url || "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop"} alt="Pets no Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                  {renderMedia(c.sobre_image_url, "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop", "Pets no Le Ville Pet")}
                 </div>
               </div>
             </div>
@@ -137,8 +152,8 @@ const Index = () => {
       <section className="py-20 lg:py-24" style={{ background: '#F8F8F6' }}>
         <div className="container mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 data-animate="fade-up" className="section-title text-black mb-3">Explore o Le Ville Pet</h2>
-            <p data-animate="fade-up" data-delay="1" className="section-subtitle mx-auto">Descubra tudo que preparamos para você e seu pet</p>
+            <h2 data-animate="fade-up" className="section-title text-black mb-3">{c.home_explore_title || 'Explore o Le Ville Pet'}</h2>
+            <p data-animate="fade-up" data-delay="1" className="section-subtitle mx-auto">{c.home_explore_subtitle || 'Descubra tudo que preparamos para você e seu pet'}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {(sections.length > 0 ? sections : [
@@ -158,7 +173,7 @@ const Index = () => {
                   </div>
                   <h3 className="font-heading font-bold text-[19px] text-black mb-2">{card.title}</h3>
                   <p className="text-[#666] text-[15px] mb-3" style={{ fontFamily: 'Inter' }}>{card.description}</p>
-                  <span className="text-primary text-sm font-heading font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Saiba mais →</span>
+                  <span className="text-primary text-sm font-heading font-semibold opacity-0 group-hover:opacity-100 transition-opacity">{c.home_card_cta_text || 'Saiba mais →'}</span>
                 </Link>
               );
             })}
@@ -186,7 +201,7 @@ const Index = () => {
               ))}
             </div>
             <div className="text-center mt-10" data-animate="fade-up">
-              <Link to="/fotos" className="btn-secondary">Ver Todas as Fotos</Link>
+              <Link to="/fotos" className="btn-secondary">{c.featured_photos_btn_text || 'Ver Todas as Fotos'}</Link>
             </div>
           </div>
         </section>
@@ -213,7 +228,7 @@ const Index = () => {
               </div>
             </div>
             <div className="text-center mt-8" data-animate="fade-up" data-delay="3">
-              <Link to="/videos" className="btn-dark">Ver Todos os Vídeos</Link>
+              <Link to="/videos" className="btn-dark">{c.featured_videos_btn_text || 'Ver Todos os Vídeos'}</Link>
             </div>
           </div>
         </section>
@@ -224,7 +239,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <span data-animate="fade-up" className="inline-flex items-center gap-2 text-black/60 text-sm font-body mb-3"><Hotel className="w-5 h-5" /> Nosso Hotelzinho</span>
+              <span data-animate="fade-up" className="inline-flex items-center gap-2 text-black/60 text-sm font-body mb-3"><Hotel className="w-5 h-5" /> {c.cta_hotel_badge_text || 'Nosso Hotelzinho'}</span>
               <h2 data-animate="fade-up" data-delay="1" className="font-heading font-extrabold text-black text-3xl lg:text-4xl mb-5">{c.cta_hotel_title || 'Vai viajar? Deixe seu pet com a gente!'}</h2>
               <p data-animate="fade-up" data-delay="2" className="text-black/70 text-base lg:text-lg leading-relaxed mb-8" style={{ fontFamily: 'Inter' }}>{c.cta_hotel_text || 'Nosso hotelzinho oferece um ambiente seguro, confortável e cheio de carinho para o seu pet enquanto você viaja com tranquilidade.'}</p>
               <div data-animate="fade-up" data-delay="3" className="flex flex-col sm:flex-row gap-3">
@@ -236,7 +251,7 @@ const Index = () => {
             </div>
             <div data-animate="fade-right" data-delay="2">
               <div className="aspect-[4/3] rounded-[20px] overflow-hidden shadow-2xl bg-[#E5E5E5]">
-                <img src={c.cta_hotel_image_url || "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop"} alt="Hotelzinho Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                {renderMedia(c.cta_hotel_image_url, "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=450&fit=crop", "Hotelzinho Le Ville Pet")}
               </div>
             </div>
           </div>
@@ -249,9 +264,10 @@ const Index = () => {
           <div className="text-center mb-12">
             <h2 data-animate="fade-up" className="section-title text-white">{c.contact_section_title || 'Entre em Contato'}</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { icon: <MessageCircle className="w-7 h-7 text-[#25D366]" />, bg: 'rgba(37,211,102,0.15)', title: 'WhatsApp', value: `(${(waNum || '').slice(2,4)}) ${(waNum || '').slice(4,9)}-${(waNum || '').slice(9)}`, color: '#F5C000', btnText: c.contact_whatsapp_btn_text || 'Chamar no WhatsApp', btnBg: '#25D366', href: `https://wa.me/${waNum}` },
+              { icon: <Phone className="w-7 h-7 text-primary" />, bg: 'rgba(245,192,0,0.15)', title: c.contact_fixed_phone_title || 'Telefone Fixo', value: c.fixed_phone || '(14) 3204-7040', color: '#F5C000', btnText: c.contact_fixed_phone_btn_text || 'Ligar agora', btnBg: '#F5C000', href: `tel:${(c.fixed_phone || '(14) 3204-7040').replace(/\D/g, '')}`, darkText: true },
               { icon: <MapPin className="w-7 h-7 text-primary" />, bg: 'rgba(245,192,0,0.15)', title: 'Localização', value: `${c.address_line1 || 'Villaggio Mall Center'}\n${c.address_line3 || 'Bauru-SP'}`, color: '#999', btnText: c.contact_maps_btn_text || 'Ver no Mapa', btnBg: '#F5C000', href: '/localizacao', internal: true },
               { icon: <svg className="w-7 h-7 text-pink-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>, bg: 'rgba(236,72,153,0.15)', title: 'Instagram', value: c.instagram_handle || '@levillepetbauru', color: '#F5C000', btnText: c.contact_instagram_btn_text || 'Seguir', btnBg: 'linear-gradient(135deg, #F56040, #E1306C, #833AB4)', href: c.instagram_url || 'https://www.instagram.com/levillepetbauru/' },
             ].map((card, i) => (
@@ -262,7 +278,7 @@ const Index = () => {
                 {card.internal ? (
                   <Link to={card.href} className="inline-flex items-center justify-center gap-2 text-black font-heading font-bold px-6 py-3 rounded-xl transition-colors min-h-[44px]" style={{ background: card.btnBg }}>{card.btnText}</Link>
                 ) : (
-                  <a href={card.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 text-white font-heading font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all min-h-[44px]" style={{ background: card.btnBg }}>{card.btnText}</a>
+                  <a href={card.href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 font-heading font-bold px-6 py-3 rounded-xl hover:opacity-90 transition-all min-h-[44px] ${card.darkText ? 'text-black' : 'text-white'}`} style={{ background: card.btnBg }}>{card.btnText}</a>
                 )}
               </div>
             ))}

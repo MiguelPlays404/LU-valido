@@ -71,8 +71,13 @@ export default function AdminHome() {
         </div>
         <div className="space-y-4">
           <Field label="Título Principal" field="hero_title" max={80} />
+            <Field label="Badge do Hero" field="hero_badge_text" />
           <Field label="Palavra em Destaque (amarela)" field="hero_highlight_word" />
           <Field label="Subtítulo" field="hero_subtitle" max={200} textarea />
+            <div>
+              <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">Imagem ou vídeo de fundo do Hero</label>
+              <MediaUploader accept="both" pathPrefix="home/hero" currentUrl={config.hero_bg_image_url} onUploaded={(url) => setConfig({...config, hero_bg_image_url: url})} label="" />
+            </div>
           <div className="grid grid-cols-2 gap-4">
             <Field label="Texto Botão Primário" field="hero_btn_primary_text" />
             <Field label="Texto Botão Secundário" field="hero_btn_secondary_text" />
@@ -87,7 +92,7 @@ export default function AdminHome() {
             <Field label="Stat 3 Número" field="hero_stat_3_num" />
             <Field label="Stat 3 Label" field="hero_stat_3_label" />
           </div>
-          <SaveBtn label="Hero" fields={["hero_title","hero_highlight_word","hero_subtitle","hero_btn_primary_text","hero_btn_secondary_text","hero_stat_1_num","hero_stat_1_label","hero_stat_2_num","hero_stat_2_label","hero_stat_3_num","hero_stat_3_label"]} />
+          <SaveBtn label="Hero" fields={["hero_title","hero_badge_text","hero_highlight_word","hero_subtitle","hero_bg_image_url","hero_btn_primary_text","hero_btn_secondary_text","hero_stat_1_num","hero_stat_1_label","hero_stat_2_num","hero_stat_2_label","hero_stat_3_num","hero_stat_3_label"]} />
         </div>
       </div>
 
@@ -96,13 +101,14 @@ export default function AdminHome() {
         <h2 className="font-heading font-semibold text-white mb-4">Sobre o Petshop (Quem Somos)</h2>
         <div className="space-y-4">
           <Field label="Título da Seção" field="sobre_title" />
+          <Field label="Badge da Seção" field="sobre_badge_text" />
           <Field label="Texto de Apresentação" field="sobre_text" textarea />
           <Field label="Texto do CTA" field="sobre_cta_text" />
           <div>
-            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem da Seção (Quem Somos)</label>
-            <MediaUploader accept="image" pathPrefix="home/sobre" currentUrl={config.sobre_image_url} onUploaded={(url) => setConfig({...config, sobre_image_url: url})} label="" />
+            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem ou vídeo da Seção (Quem Somos)</label>
+            <MediaUploader accept="both" pathPrefix="home/sobre" currentUrl={config.sobre_image_url} onUploaded={(url) => setConfig({...config, sobre_image_url: url})} label="" />
           </div>
-          <SaveBtn label="Sobre" fields={["sobre_title","sobre_text","sobre_cta_text","sobre_image_url"]} />
+          <SaveBtn label="Sobre" fields={["sobre_title","sobre_badge_text","sobre_text","sobre_cta_text","sobre_image_url"]} />
         </div>
       </div>
 
@@ -113,7 +119,8 @@ export default function AdminHome() {
           <div className="space-y-4">
             <Field label="Título" field="gallery_section_title" />
             <Field label="Subtítulo" field="gallery_section_subtitle" />
-            <SaveBtn label="Galeria" fields={["gallery_section_title","gallery_section_subtitle"]} />
+            <Field label="Texto do Botão" field="featured_photos_btn_text" />
+            <SaveBtn label="Galeria" fields={["gallery_section_title","gallery_section_subtitle","featured_photos_btn_text"]} />
           </div>
         </div>
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
@@ -121,8 +128,19 @@ export default function AdminHome() {
           <div className="space-y-4">
             <Field label="Título" field="video_section_title" />
             <Field label="Subtítulo" field="video_section_subtitle" />
-            <SaveBtn label="Vídeo" fields={["video_section_title","video_section_subtitle"]} />
+            <Field label="Texto do Botão" field="featured_videos_btn_text" />
+            <SaveBtn label="Vídeo" fields={["video_section_title","video_section_subtitle","featured_videos_btn_text"]} />
           </div>
+        </div>
+      </div>
+
+      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
+        <h2 className="font-heading font-semibold text-white mb-4">Seção de Cards da Home</h2>
+        <div className="space-y-4">
+          <Field label="Título" field="home_explore_title" />
+          <Field label="Subtítulo" field="home_explore_subtitle" />
+          <Field label="Texto do Link" field="home_card_cta_text" />
+          <SaveBtn label="Cards" fields={["home_explore_title","home_explore_subtitle","home_card_cta_text"]} />
         </div>
       </div>
 
@@ -131,29 +149,33 @@ export default function AdminHome() {
         <h2 className="font-heading font-semibold text-white mb-4">CTA Hotelzinho (faixa amarela)</h2>
         <div className="space-y-4">
           <Field label="Título" field="cta_hotel_title" />
+          <Field label="Badge" field="cta_hotel_badge_text" />
           <Field label="Texto Descritivo" field="cta_hotel_text" textarea />
           <div className="grid grid-cols-2 gap-4">
             <Field label="Botão 1" field="cta_hotel_btn1_text" />
             <Field label="Botão 2" field="cta_hotel_btn2_text" />
           </div>
           <div>
-            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem da Faixa CTA</label>
-            <MediaUploader accept="image" pathPrefix="home/cta-hotel" currentUrl={config.cta_hotel_image_url} onUploaded={(url) => setConfig({...config, cta_hotel_image_url: url})} label="" />
+            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem ou vídeo da Faixa CTA</label>
+            <MediaUploader accept="both" pathPrefix="home/cta-hotel" currentUrl={config.cta_hotel_image_url} onUploaded={(url) => setConfig({...config, cta_hotel_image_url: url})} label="" />
           </div>
-          <SaveBtn label="CTA Hotel" fields={["cta_hotel_title","cta_hotel_text","cta_hotel_btn1_text","cta_hotel_btn2_text","cta_hotel_image_url"]} />
+          <SaveBtn label="CTA Hotel" fields={["cta_hotel_title","cta_hotel_badge_text","cta_hotel_text","cta_hotel_btn1_text","cta_hotel_btn2_text","cta_hotel_image_url"]} />
         </div>
       </div>
 
       {/* Contact Buttons */}
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
         <h2 className="font-heading font-semibold text-white mb-4">Textos dos Botões de Contato</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Field label="Título da Seção" field="contact_section_title" />
           <Field label="Botão WhatsApp" field="contact_whatsapp_btn_text" />
+          <Field label="Título Telefone Fixo" field="contact_fixed_phone_title" />
+          <Field label="Botão Telefone Fixo" field="contact_fixed_phone_btn_text" />
           <Field label="Botão Mapa" field="contact_maps_btn_text" />
           <Field label="Botão Instagram" field="contact_instagram_btn_text" />
         </div>
         <div className="mt-4">
-          <SaveBtn label="Contato" fields={["contact_whatsapp_btn_text","contact_maps_btn_text","contact_instagram_btn_text"]} />
+          <SaveBtn label="Contato" fields={["contact_section_title","contact_whatsapp_btn_text","contact_fixed_phone_title","contact_fixed_phone_btn_text","contact_maps_btn_text","contact_instagram_btn_text"]} />
         </div>
       </div>
 

@@ -33,6 +33,7 @@ const VenhaNosConhecer = () => {
         badge="📍 Venha Nos Conhecer"
         title={content?.page_title || "Conheça o Nosso Espaço"}
         subtitle={content?.page_subtitle || "Um ambiente preparado com amor para você e seu pet"}
+        bgImage={cfg?.conhecer_hero_image_url || undefined}
       />
 
       {/* About — WHITE */}
