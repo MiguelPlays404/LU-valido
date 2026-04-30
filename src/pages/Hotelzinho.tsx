@@ -35,6 +35,7 @@ const Hotelzinho = () => {
         badge="🏨 Hotelzinho"
         title={content?.page_title || "Nosso Hotelzinho"}
         subtitle={content?.page_subtitle || "O lar temporário do seu pet"}
+        bgImage={cfg?.hotel_hero_image_url || undefined}
       />
 
       {/* Intro — WHITE */}
