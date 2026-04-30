@@ -12,8 +12,14 @@ export function Navbar() {
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = isOpen ? 'hidden' : previousBodyOverflow;
+    document.documentElement.style.overflow = isOpen ? 'hidden' : previousHtmlOverflow;
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -31,7 +37,7 @@ export function Navbar() {
   const waText = config?.nav_whatsapp_btn_text || '💬 WhatsApp';
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-black/95 backdrop-blur-[20px] shadow-lg border-b border-[rgba(245,192,0,0.15)]">
+    <nav className="fixed top-0 left-0 right-0 z-[9999] transition-all duration-300 bg-[#0D0D0D] shadow-lg border-b border-[rgba(245,192,0,0.15)]" style={{ position: 'fixed', transform: 'translateZ(0)', isolation: 'isolate' }}>
       <div className="container mx-auto flex items-center justify-between h-16 lg:h-[72px] px-4">
         <Link to="/" className="flex items-center gap-2 hover:scale-[1.04] transition-transform">
           <img src={config?.logo_url || "/images/logo-levillepet.png"} alt={config?.site_name || 'Le Ville Pet'} className="h-10 lg:h-[46px] rounded-lg" />
@@ -60,9 +66,9 @@ export function Navbar() {
         </button>
       </div>
 
-      {isOpen && <div className="fixed inset-0 bg-black/95 backdrop-blur-md z-40 lg:hidden" onClick={() => setIsOpen(false)} />}
+      {isOpen && <div className="fixed inset-0 bg-[#0D0D0D] z-[9998] lg:hidden" onClick={() => setIsOpen(false)} />}
 
-      <div className={`fixed top-0 right-0 h-full w-[280px] z-[60] transform transition-transform duration-300 lg:hidden shadow-2xl ${isOpen ? "translate-x-0" : "translate-x-full"}`} style={{ background: '#0D0D0D', isolation: 'isolate' }}>
+      <div className={`fixed top-0 right-0 h-dvh w-[280px] z-[10000] transform transition-transform duration-300 lg:hidden shadow-2xl ${isOpen ? "translate-x-0" : "translate-x-full"}`} style={{ background: '#0D0D0D', isolation: 'isolate' }}>
         <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'rgba(245,192,0,0.15)', background: '#0D0D0D' }}>
           <span className="font-heading font-bold text-primary text-lg">{config?.site_name || 'Le Ville Pet'}</span>
           <button onClick={() => setIsOpen(false)} className="text-white p-2"><X className="w-6 h-6" /></button>
