@@ -68,7 +68,7 @@ const Localizacao = () => {
       {c?.localizacao_howto_text && (
         <section className="py-16" style={{ background: '#FFFFFF' }}>
           <div className="container mx-auto px-4 max-w-3xl">
-            <h3 data-animate="fade-up" className="font-heading font-bold text-black text-xl mb-4 text-center">Como Chegar</h3>
+            <h3 data-animate="fade-up" className="font-heading font-bold text-black text-xl mb-4 text-center">{c?.localizacao_howto_title || 'Como Chegar'}</h3>
             <p data-animate="fade-up" data-delay="1" className="text-[#444] text-base leading-[1.8] text-center" style={{ fontFamily: 'Inter' }}>{c.localizacao_howto_text}</p>
           </div>
         </section>

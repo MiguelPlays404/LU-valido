@@ -69,8 +69,13 @@ export function Footer() {
           <div>
             <h3 className="font-heading font-semibold text-white text-sm mb-4">{c?.footer_contact_title || 'Contato'}</h3>
             <div className="flex flex-col gap-3 text-sm mb-6" style={{ fontFamily: 'Inter' }}>
+              {c?.fixed_phone && (
+                <a href={`tel:${c.fixed_phone.replace(/\D/g,'')}`} className="flex items-center gap-2 text-[#888] hover:text-primary transition-colors">
+                  <Phone className="w-4 h-4 text-primary" /> {c.fixed_phone}
+                </a>
+              )}
               <a href={`https://wa.me/${waNum}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#888] hover:text-primary transition-colors">
-                <Phone className="w-4 h-4 text-primary" /> {phone}
+                <Phone className="w-4 h-4 text-primary" /> {phone} <span className="text-[10px] text-[#25D366]">WhatsApp</span>
               </a>
               <a href={c?.google_maps_url || "https://maps.app.goo.gl/nkuDnVyBe6ZHYNbS8"} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-[#888] hover:text-primary transition-colors">
                 <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />

@@ -12,6 +12,11 @@ export function Navbar() {
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  useEffect(() => {
     Promise.all([
       supabase.from("site_config").select("*").limit(1).maybeSingle(),
       supabase.from("nav_items").select("*").eq("is_active", true).eq("show_in_navbar", true).order("display_order"),
@@ -55,10 +60,10 @@ export function Navbar() {
         </button>
       </div>
 
-      {isOpen && <div className="fixed inset-0 bg-black/80 z-40 lg:hidden" onClick={() => setIsOpen(false)} />}
+      {isOpen && <div className="fixed inset-0 bg-black/95 backdrop-blur-md z-40 lg:hidden" onClick={() => setIsOpen(false)} />}
 
-      <div className={`fixed top-0 right-0 h-full w-[280px] z-50 transform transition-transform duration-300 lg:hidden ${isOpen ? "translate-x-0" : "translate-x-full"}`} style={{ background: '#0D0D0D' }}>
-        <div className="flex items-center justify-between p-4 border-b border-[rgba(245,192,0,0.15)]">
+      <div className={`fixed top-0 right-0 h-full w-[280px] z-[60] transform transition-transform duration-300 lg:hidden shadow-2xl ${isOpen ? "translate-x-0" : "translate-x-full"}`} style={{ background: '#0D0D0D', isolation: 'isolate' }}>
+        <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'rgba(245,192,0,0.15)', background: '#0D0D0D' }}>
           <span className="font-heading font-bold text-primary text-lg">{config?.site_name || 'Le Ville Pet'}</span>
           <button onClick={() => setIsOpen(false)} className="text-white p-2"><X className="w-6 h-6" /></button>
         </div>

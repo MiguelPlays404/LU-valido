@@ -6,17 +6,15 @@ import { Lightbox } from "@/components/Lightbox";
 import { Search, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-const filters = ["Todas", "Galeria", "Hotelzinho", "Nosso Espaço"];
-const filterMap: Record<string, string | null> = {
-  "Todas": null, "Galeria": "galeria", "Hotelzinho": "hotelzinho", "Nosso Espaço": "conhecer",
-};
+const catKeys = ["all", "galeria", "hotelzinho", "conhecer"] as const;
 
 const Fotos = () => {
-  const [activeFilter, setActiveFilter] = useState("Todas");
+  const [activeKey, setActiveKey] = useState<typeof catKeys[number]>("all");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [photos, setPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(12);
+  const [cfg, setCfg] = useState<any>(null);
   useScrollAnimation();
 
   useEffect(() => {
@@ -24,28 +22,34 @@ const Fotos = () => {
       setPhotos(data || []);
       setLoading(false);
     });
+    supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => setCfg(data));
   }, []);
 
-  const filtered = filterMap[activeFilter]
-    ? photos.filter((p) => p.category === filterMap[activeFilter])
-    : photos;
+  const filterLabels: Record<typeof catKeys[number], string> = {
+    all: cfg?.fotos_filter_all || "Todas",
+    galeria: cfg?.fotos_filter_galeria || "Galeria",
+    hotelzinho: cfg?.fotos_filter_hotel || "Hotelzinho",
+    conhecer: cfg?.fotos_filter_conhecer || "Nosso Espaço",
+  };
+
+  const filtered = activeKey === "all" ? photos : photos.filter((p) => p.category === activeKey);
   const visible = filtered.slice(0, visibleCount);
 
   return (
     <PublicLayout>
-      <PageHero badge="📸 Fotos" title="Galeria de Momentos" subtitle="Os pets mais lindos de Bauru" />
+      <PageHero badge="📸 Fotos" title={cfg?.fotos_page_title || "Galeria de Momentos"} subtitle={cfg?.fotos_page_subtitle || "Os pets mais lindos de Bauru"} />
 
       <section className="py-16" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap gap-2 justify-center mb-10">
-            {filters.map((f) => (
-              <button key={f} onClick={() => { setActiveFilter(f); setVisibleCount(12); }}
+            {catKeys.map((k) => (
+              <button key={k} onClick={() => { setActiveKey(k); setVisibleCount(12); }}
                 className={`px-5 py-2 rounded-full text-sm font-heading font-semibold transition-all min-h-[44px] ${
-                  activeFilter === f
+                  activeKey === k
                     ? "bg-primary text-black"
                     : "bg-transparent border border-[#D4D4D4] text-[#666] hover:border-primary hover:text-primary"
                 }`}>
-                {f}
+                {filterLabels[k]}
               </button>
             ))}
           </div>
