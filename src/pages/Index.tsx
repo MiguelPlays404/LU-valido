@@ -124,7 +124,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
             <div className="lg:col-span-3">
-              <span data-animate="fade-up" className="inline-block text-primary text-sm font-body px-4 py-1.5 rounded-full mb-4" style={{ background: 'var(--yellow-badge)' }}>Quem Somos</span>
+              <span data-animate="fade-up" className="inline-block text-primary text-sm font-body px-4 py-1.5 rounded-full mb-4" style={{ background: 'var(--yellow-badge)' }}>{c.sobre_badge_text || 'Quem Somos'}</span>
               <h2 data-animate="fade-up" data-delay="1" className="section-title text-black mb-5">
                 {c.sobre_title || 'O Le Ville Pet — onde seu pet se sente em casa'}
               </h2>
@@ -140,7 +140,7 @@ const Index = () => {
               <div className="relative">
                 <div className="absolute -inset-4 bg-primary/15 rounded-3xl rotate-3" />
                 <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border-[3px] border-primary shadow-xl bg-[#E5E5E5]">
-                  <img src={c.sobre_image_url || "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop"} alt="Pets no Le Ville Pet" className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                  {renderMedia(c.sobre_image_url, "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=450&fit=crop", "Pets no Le Ville Pet")}
                 </div>
               </div>
             </div>
@@ -152,8 +152,8 @@ const Index = () => {
       <section className="py-20 lg:py-24" style={{ background: '#F8F8F6' }}>
         <div className="container mx-auto px-6">
           <div className="text-center mb-14">
-            <h2 data-animate="fade-up" className="section-title text-black mb-3">Explore o Le Ville Pet</h2>
-            <p data-animate="fade-up" data-delay="1" className="section-subtitle mx-auto">Descubra tudo que preparamos para você e seu pet</p>
+            <h2 data-animate="fade-up" className="section-title text-black mb-3">{c.home_explore_title || 'Explore o Le Ville Pet'}</h2>
+            <p data-animate="fade-up" data-delay="1" className="section-subtitle mx-auto">{c.home_explore_subtitle || 'Descubra tudo que preparamos para você e seu pet'}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {(sections.length > 0 ? sections : [
@@ -173,7 +173,7 @@ const Index = () => {
                   </div>
                   <h3 className="font-heading font-bold text-[19px] text-black mb-2">{card.title}</h3>
                   <p className="text-[#666] text-[15px] mb-3" style={{ fontFamily: 'Inter' }}>{card.description}</p>
-                  <span className="text-primary text-sm font-heading font-semibold opacity-0 group-hover:opacity-100 transition-opacity">Saiba mais →</span>
+                  <span className="text-primary text-sm font-heading font-semibold opacity-0 group-hover:opacity-100 transition-opacity">{c.home_card_cta_text || 'Saiba mais →'}</span>
                 </Link>
               );
             })}
@@ -201,7 +201,7 @@ const Index = () => {
               ))}
             </div>
             <div className="text-center mt-10" data-animate="fade-up">
-              <Link to="/fotos" className="btn-secondary">Ver Todas as Fotos</Link>
+              <Link to="/fotos" className="btn-secondary">{c.featured_photos_btn_text || 'Ver Todas as Fotos'}</Link>
             </div>
           </div>
         </section>
@@ -228,7 +228,7 @@ const Index = () => {
               </div>
             </div>
             <div className="text-center mt-8" data-animate="fade-up" data-delay="3">
-              <Link to="/videos" className="btn-dark">Ver Todos os Vídeos</Link>
+              <Link to="/videos" className="btn-dark">{c.featured_videos_btn_text || 'Ver Todos os Vídeos'}</Link>
             </div>
           </div>
         </section>
