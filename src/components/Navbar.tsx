@@ -12,6 +12,11 @@ export function Navbar() {
   useEffect(() => { setIsOpen(false); }, [location.pathname]);
 
   useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  useEffect(() => {
     Promise.all([
       supabase.from("site_config").select("*").limit(1).maybeSingle(),
       supabase.from("nav_items").select("*").eq("is_active", true).eq("show_in_navbar", true).order("display_order"),
