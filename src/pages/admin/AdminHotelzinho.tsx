@@ -19,7 +19,7 @@ export default function AdminHotelzinho() {
     if (!content) return;
     setSaving(true);
     const { error } = await supabase.from("hotelzinho_content").update(content).eq("id", content.id);
-    if (config?.id) await supabase.from("site_config").update({ hotel_hero_image_url: config.hotel_hero_image_url, hotel_gallery_section_title: config.hotel_gallery_section_title, hotel_cta_title: config.hotel_cta_title }).eq("id", config.id);
+    if (config?.id) await supabase.from("site_config").update({ hotel_hero_image_url: config.hotel_hero_image_url, hotel_gallery_section_title: config.hotel_gallery_section_title, hotel_cta_title: config.hotel_cta_title } as any).eq("id", config.id);
     toast({ title: error ? "Erro ao salvar" : "✅ Conteúdo salvo!" });
     setSaving(false);
   };
