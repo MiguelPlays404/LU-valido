@@ -79,12 +79,13 @@ export default function AdminConfig() {
           )}
         </div>
 
-        {/* WhatsApp */}
+        {/* WhatsApp & Telefone */}
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
-          <h3 className="font-heading font-semibold text-white text-sm mb-4">WhatsApp</h3>
+          <h3 className="font-heading font-semibold text-white text-sm mb-4">Telefones & WhatsApp</h3>
           <div className="space-y-4">
-            <Field label="Número (apenas números, ex: 5514997145610)" field="whatsapp_number" />
-            <Field label="Mensagem padrão" field="whatsapp_message" type="textarea" />
+            <Field label="📞 Telefone Fixo (ex: (14) 3204-7040)" field="fixed_phone" />
+            <Field label="WhatsApp — Número (apenas dígitos, ex: 5514997145610)" field="whatsapp_number" />
+            <Field label="Mensagem padrão WhatsApp" field="whatsapp_message" type="textarea" />
           </div>
         </div>
 

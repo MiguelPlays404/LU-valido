@@ -5,10 +5,19 @@ import { useToast } from "@/hooks/use-toast";
 import { Save } from "lucide-react";
 
 const TABS = [
+  { key: "global", label: "🌐 Globais", fields: [
+    { k: "hero_badge_text", l: "Badge do Hero (Home)" },
+    { k: "contact_section_title", l: "Título da seção de contato (Home)" },
+    { k: "siganos_footer_text", l: "Texto pé da página Siga-nos" },
+  ]},
   { key: "fotos", label: "Fotos", fields: [
     { k: "fotos_page_title", l: "Título da página" },
     { k: "fotos_page_subtitle", l: "Subtítulo" },
     { k: "fotos_empty_text", l: "Texto quando não há fotos" },
+    { k: "fotos_filter_all", l: "Filtro: Todas" },
+    { k: "fotos_filter_galeria", l: "Filtro: Galeria" },
+    { k: "fotos_filter_hotel", l: "Filtro: Hotelzinho" },
+    { k: "fotos_filter_conhecer", l: "Filtro: Nosso Espaço" },
     { k: "gallery_section_title", l: "Título da galeria na home" },
     { k: "gallery_section_subtitle", l: "Subtítulo da galeria na home" },
     { k: "featured_photos_btn_text", l: "Texto do botão 'Ver todas as fotos'" },
@@ -37,13 +46,29 @@ const TABS = [
     { k: "faleconosco_card_title", l: "Título do card" },
     { k: "faleconosco_card_text", l: "Texto do card" },
     { k: "faleconosco_btn_text", l: "Texto do botão" },
+    { k: "faleconosco_info_title", l: "Título 'Informações de Contato'" },
+    { k: "faleconosco_visit_text", l: "Texto rodapé 'Venha nos visitar'" },
+    { k: "faleconosco_image_url", l: "URL da imagem lateral" },
   ]},
   { key: "loc", label: "Localização", fields: [
     { k: "localizacao_title", l: "Título" },
     { k: "localizacao_subtitle", l: "Subtítulo" },
+    { k: "localizacao_howto_title", l: "Título 'Como Chegar'" },
     { k: "localizacao_howto_text", l: "Instruções (como chegar)" },
     { k: "localizacao_maps_btn_text", l: "Botão Maps" },
     { k: "localizacao_route_btn_text", l: "Botão calcular rota" },
+  ]},
+  { key: "hotel", label: "Hotelzinho", fields: [
+    { k: "hotel_cta_title", l: "Título do CTA amarelo" },
+    { k: "hotel_gallery_section_title", l: "Título da galeria 'Nosso Espaço'" },
+    { k: "hotel_gallery_title", l: "Título seção (extra)" },
+    { k: "hotel_videos_title", l: "Título seção vídeos" },
+  ]},
+  { key: "conhecer", label: "Venha Nos Conhecer", fields: [
+    { k: "conhecer_about_title", l: "Título 'Sobre o Le Ville Pet'" },
+    { k: "conhecer_gallery_title", l: "Título 'Galeria do Espaço'" },
+    { k: "conhecer_cta_title", l: "Título do CTA amarelo" },
+    { k: "conhecer_cta_btn_text", l: "Texto do botão CTA" },
   ]},
 ];
 

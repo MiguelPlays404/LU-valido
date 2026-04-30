@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/AdminLayout";
+import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -92,12 +93,15 @@ export default function AdminHome() {
 
       {/* Sobre Editor */}
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
-        <h2 className="font-heading font-semibold text-white mb-4">Sobre o Petshop</h2>
+        <h2 className="font-heading font-semibold text-white mb-4">Sobre o Petshop (Quem Somos)</h2>
         <div className="space-y-4">
           <Field label="Título da Seção" field="sobre_title" />
           <Field label="Texto de Apresentação" field="sobre_text" textarea />
           <Field label="Texto do CTA" field="sobre_cta_text" />
-          <Field label="URL da Imagem" field="sobre_image_url" />
+          <div>
+            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem da Seção (Quem Somos)</label>
+            <MediaUploader accept="image" pathPrefix="home/sobre" currentUrl={config.sobre_image_url} onUploaded={(url) => setConfig({...config, sobre_image_url: url})} label="" />
+          </div>
           <SaveBtn label="Sobre" fields={["sobre_title","sobre_text","sobre_cta_text","sobre_image_url"]} />
         </div>
       </div>
@@ -132,7 +136,10 @@ export default function AdminHome() {
             <Field label="Botão 1" field="cta_hotel_btn1_text" />
             <Field label="Botão 2" field="cta_hotel_btn2_text" />
           </div>
-          <Field label="URL da Imagem" field="cta_hotel_image_url" />
+          <div>
+            <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem da Faixa CTA</label>
+            <MediaUploader accept="image" pathPrefix="home/cta-hotel" currentUrl={config.cta_hotel_image_url} onUploaded={(url) => setConfig({...config, cta_hotel_image_url: url})} label="" />
+          </div>
           <SaveBtn label="CTA Hotel" fields={["cta_hotel_title","cta_hotel_text","cta_hotel_btn1_text","cta_hotel_btn2_text","cta_hotel_image_url"]} />
         </div>
       </div>
