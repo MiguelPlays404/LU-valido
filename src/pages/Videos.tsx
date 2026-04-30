@@ -133,8 +133,12 @@ const Videos = () => {
             <button onClick={() => setPlayerVideo(null)} className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors">
               <X className="w-9 h-9" />
             </button>
-            <div className="aspect-video rounded-2xl overflow-hidden">
-              <iframe src={getEmbedUrl(playerVideo.video_url)} className="w-full h-full" allowFullScreen allow="autoplay" />
+            <div className="aspect-video rounded-2xl overflow-hidden bg-black">
+              {playerVideo.video_type === 'upload' ? (
+                <video src={playerVideo.video_url} className="w-full h-full" controls autoPlay />
+              ) : (
+                <iframe src={getEmbedUrl(playerVideo.video_url)} className="w-full h-full" allowFullScreen allow="autoplay" />
+              )}
             </div>
             <div className="mt-4 flex items-center justify-between">
               <h3 className="text-white font-heading font-semibold text-lg">{playerVideo.title}</h3>
