@@ -4,15 +4,30 @@ import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getYoutubeThumbnail } from "@/lib/youtube";
-import { Link2, Trash2, Eye, EyeOff, Heart, Star, Upload } from "lucide-react";
+import { Link2, Trash2, Eye, EyeOff, Heart, Star, Upload, CheckSquare } from "lucide-react";
 
 const TABS = [
   { key: "all", label: "Todos" },
-  { key: "destaque", label: "⭐ Em Destaque (Home)" },
+  { key: "home", label: "⭐ Em Destaque (Home)" },
   { key: "geral", label: "Geral" },
   { key: "hotelzinho", label: "Hotelzinho" },
   { key: "conhecer", label: "Venha Nos Conhecer" },
 ];
+
+const LOCATIONS = [
+  { key: "geral", label: "Geral" },
+  { key: "home", label: "Destaque na Home" },
+  { key: "hotelzinho", label: "Hotelzinho" },
+  { key: "conhecer", label: "Venha Nos Conhecer" },
+];
+
+const normalizeLocations = (video: any) => {
+  const list = Array.isArray(video.locations) ? video.locations : [];
+  const legacy = [video.category || "geral", video.is_featured ? "home" : null].filter(Boolean);
+  return Array.from(new Set([...list, ...legacy]));
+};
+
+const primaryCategory = (locations: string[]) => locations.find(l => l !== "home") || "geral";
 
 export default function AdminVideos() {
   const [videos, setVideos] = useState<any[]>([]);
@@ -21,7 +36,7 @@ export default function AdminVideos() {
   const [linkTitle, setLinkTitle] = useState("");
   const [uploadTitle, setUploadTitle] = useState("");
   const [tab, setTab] = useState("all");
-  const [addCategory, setAddCategory] = useState("geral");
+  const [addLocations, setAddLocations] = useState<string[]>(["geral"]);
   const [deleteVideo, setDeleteVideo] = useState<any>(null);
   const { toast } = useToast();
 
@@ -37,14 +52,17 @@ export default function AdminVideos() {
     if (!linkUrl.trim()) return;
     const thumbnail = getYoutubeThumbnail(linkUrl);
     const isYoutube = linkUrl.includes("youtube") || linkUrl.includes("youtu.be");
+    const locations = addLocations.length ? addLocations : ["geral"];
     await supabase.from("videos").insert({
       title: linkTitle || "Novo vídeo",
       video_url: linkUrl,
       video_type: isYoutube ? "youtube" : "link",
       thumbnail_url: thumbnail,
-      category: addCategory,
+      category: primaryCategory(locations),
+      locations,
+      is_featured: locations.includes("home"),
       likes_count: 0, is_active: true, published_at: new Date().toISOString(),
-    });
+    } as any);
     toast({ title: "✅ Vídeo adicionado!" });
     setLinkUrl(""); setLinkTitle("");
     fetchVideos();
@@ -52,14 +70,17 @@ export default function AdminVideos() {
 
   const handleUploaded = async (url: string) => {
     if (!url) return;
+    const locations = addLocations.length ? addLocations : ["geral"];
     await supabase.from("videos").insert({
       title: uploadTitle || "Novo vídeo enviado",
       video_url: url,
       video_type: "upload",
       thumbnail_url: "",
-      category: addCategory,
+      category: primaryCategory(locations),
+      locations,
+      is_featured: locations.includes("home"),
       likes_count: 0, is_active: true, published_at: new Date().toISOString(),
-    });
+    } as any);
     toast({ title: "✅ Vídeo enviado e adicionado!" });
     setUploadTitle("");
     fetchVideos();
