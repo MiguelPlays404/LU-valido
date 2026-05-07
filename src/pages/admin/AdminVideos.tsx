@@ -136,11 +136,13 @@ export default function AdminVideos() {
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-4">
         <div className="flex items-center gap-3 mb-4">
           <h3 className="font-heading font-semibold text-sm flex items-center gap-2"><Link2 className="w-4 h-4 text-primary" /> Adicionar via Link (YouTube)</h3>
-          <select value={addCategory} onChange={e => setAddCategory(e.target.value)} className="ml-auto bg-[#27272A] border border-[#3F3F46] rounded-lg px-2 py-1 text-xs text-white">
-            <option value="geral">Geral</option>
-            <option value="hotelzinho">Hotelzinho</option>
-            <option value="conhecer">Venha Nos Conhecer</option>
-          </select>
+        </div>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {LOCATIONS.map(loc => (
+            <button key={loc.key} onClick={() => toggleAddLocation(loc.key)} className={`px-3 py-2 rounded-lg text-xs font-heading transition-colors ${addLocations.includes(loc.key) ? "bg-primary text-black" : "bg-[#27272A] text-[#A1A1AA] hover:text-white"}`}>
+              {addLocations.includes(loc.key) ? "✓ " : "+ "}{loc.label}
+            </button>
+          ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           <input value={linkTitle} onChange={e => setLinkTitle(e.target.value)} placeholder="Título do vídeo" className="bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
@@ -153,7 +155,7 @@ export default function AdminVideos() {
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-8">
         <h3 className="font-heading font-semibold text-sm mb-4 flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Enviar Arquivo de Vídeo (qualquer tamanho/duração)</h3>
         <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Título do vídeo" className="w-full mb-3 bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
-        <MediaUploader accept="video" pathPrefix={`videos/${addCategory}`} onUploaded={handleUploaded} label="" />
+        <MediaUploader accept="video" pathPrefix={`videos/${primaryCategory(addLocations)}`} onUploaded={handleUploaded} label="" />
       </div>
 
       {/* Tabs */}
@@ -171,7 +173,7 @@ export default function AdminVideos() {
           <thead><tr className="border-b border-[#27272A]">
             <th className="text-left p-4 text-[#71717A]">Vídeo</th>
             <th className="text-left p-4 text-[#71717A]">Tipo</th>
-            <th className="text-left p-4 text-[#71717A]">Categoria</th>
+            <th className="text-left p-4 text-[#71717A]">Locais onde aparece</th>
             <th className="text-center p-4 text-[#71717A]">❤️</th>
             <th className="text-right p-4 text-[#71717A]">Ações</th>
           </tr></thead>
@@ -190,16 +192,17 @@ export default function AdminVideos() {
                 </td>
                 <td className="p-4 text-[#71717A] text-xs">{v.video_type}</td>
                 <td className="p-4">
-                  <select value={v.category || 'geral'} onChange={e => handleChangeCategory(v.id, e.target.value)} className="bg-[#27272A] border border-[#3F3F46] rounded px-2 py-1 text-xs text-white">
-                    <option value="geral">Geral</option>
-                    <option value="hotelzinho">Hotelzinho</option>
-                    <option value="conhecer">Conhecer</option>
-                  </select>
+                  <div className="flex flex-wrap gap-1 max-w-[360px]">
+                    {LOCATIONS.map(loc => {
+                      const active = normalizeLocations(v).includes(loc.key);
+                      return <button key={loc.key} onClick={() => handleToggleLocation(v, loc.key)} className={`px-2 py-1 rounded text-[11px] font-heading ${active ? "bg-primary text-black" : "bg-[#27272A] text-[#A1A1AA] hover:text-white"}`}>{active ? "✓ " : "+ "}{loc.label}</button>;
+                    })}
+                  </div>
                 </td>
                 <td className="p-4 text-center text-primary font-bold">{v.likes_count}</td>
                 <td className="p-4 text-right">
                   <div className="flex gap-1 justify-end">
-                    <button onClick={() => handleToggleFeatured(v.id, v.is_featured)} title="Destaque na Home" className="p-2 rounded hover:bg-white/5"><Star className={`w-4 h-4 ${v.is_featured ? "text-primary fill-primary" : "text-[#71717A]"}`} /></button>
+                    <button onClick={() => handleToggleFeatured(v)} title="Destaque na Home" className="p-2 rounded hover:bg-white/5"><Star className={`w-4 h-4 ${normalizeLocations(v).includes("home") ? "text-primary fill-primary" : "text-[#71717A]"}`} /></button>
                     <button onClick={() => handleToggleActive(v.id, v.is_active)} className="p-2 rounded hover:bg-white/5">{v.is_active ? <Eye className="w-4 h-4 text-green-400" /> : <EyeOff className="w-4 h-4 text-red-400" />}</button>
                     <button onClick={() => setDeleteVideo(v)} className="p-2 rounded hover:bg-white/5"><Trash2 className="w-4 h-4 text-red-400" /></button>
                   </div>
