@@ -17,11 +17,27 @@ const categoryTabs = [
   ...categories,
 ];
 
+const LOCATIONS = [
+  { key: "galeria", label: "Galeria Geral" },
+  { key: "home", label: "Momentos da Home" },
+  { key: "hotelzinho", label: "Hotelzinho" },
+  { key: "conhecer", label: "Venha Nos Conhecer" },
+];
+
+const normalizeLocations = (photo: any) => {
+  const list = Array.isArray(photo.locations) ? photo.locations : [];
+  const legacy = [photo.category || "galeria", photo.is_featured ? "home" : null].filter(Boolean);
+  return Array.from(new Set([...list, ...legacy]));
+};
+
+const primaryCategory = (locations: string[]) => locations.find(l => l !== "home") || "galeria";
+
 export default function AdminPhotos() {
   const [photos, setPhotos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("galeria");
   const [searchTerm, setSearchTerm] = useState("");
+  const [uploadLocations, setUploadLocations] = useState<string[]>(["galeria"]);
   const [editPhoto, setEditPhoto] = useState<any>(null);
   const [deletePhoto, setDeletePhoto] = useState<any>(null);
   const { toast } = useToast();
@@ -37,8 +53,8 @@ export default function AdminPhotos() {
   const handleUploaded = async (url: string) => {
     if (!url) return;
     const fileName = url.split("/").pop()?.split(".")[0] || "Foto";
-    const category = activeTab === "all" ? "galeria" : activeTab;
-    await supabase.from("photos").insert({ title: fileName, image_url: url, category });
+    const locations = uploadLocations.length ? uploadLocations : [activeTab === "all" ? "galeria" : activeTab];
+    await supabase.from("photos").insert({ title: fileName, image_url: url, category: primaryCategory(locations), locations, is_featured: locations.includes("home") } as any);
     toast({ title: "✅ Foto adicionada à galeria!" });
     fetchPhotos();
   };
@@ -54,7 +70,21 @@ export default function AdminPhotos() {
   };
 
   const handleToggleFeatured = async (id: string, current: boolean) => {
-    await supabase.from("photos").update({ is_featured: !current }).eq("id", id);
+    const photo = photos.find(p => p.id === id);
+    const currentLocations = normalizeLocations(photo);
+    const nextFeatured = !current;
+    const locations = nextFeatured ? Array.from(new Set([...currentLocations, "home"])) : currentLocations.filter(l => l !== "home");
+    await supabase.from("photos").update({ is_featured: nextFeatured, locations } as any).eq("id", id);
+    fetchPhotos();
+  };
+
+  const toggleUploadLocation = (loc: string) => setUploadLocations(prev => prev.includes(loc) ? prev.filter(x => x !== loc) : [...prev, loc]);
+
+  const handleToggleLocation = async (photo: any, loc: string) => {
+    const current = normalizeLocations(photo);
+    const next = current.includes(loc) ? current.filter(l => l !== loc) : [...current, loc];
+    const safeNext = next.length ? next : ["galeria"];
+    await supabase.from("photos").update({ locations: safeNext, category: primaryCategory(safeNext), is_featured: safeNext.includes("home") } as any).eq("id", photo.id);
     fetchPhotos();
   };
 
@@ -65,14 +95,15 @@ export default function AdminPhotos() {
 
   const handleSaveEdit = async () => {
     if (!editPhoto) return;
-    await supabase.from("photos").update({ title: editPhoto.title, category: editPhoto.category, is_featured: editPhoto.is_featured, display_order: editPhoto.display_order }).eq("id", editPhoto.id);
+    const locations = normalizeLocations(editPhoto);
+    await supabase.from("photos").update({ title: editPhoto.title, category: primaryCategory(locations), locations, is_featured: locations.includes("home"), display_order: editPhoto.display_order } as any).eq("id", editPhoto.id);
     toast({ title: "✅ Foto atualizada!" });
     setEditPhoto(null);
     fetchPhotos();
   };
 
   const filtered = photos.filter(p => {
-    if (activeTab !== "all" && p.category !== activeTab) return false;
+    if (activeTab !== "all" && !normalizeLocations(p).includes(activeTab)) return false;
     if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase())) return false;
     return true;
   });
