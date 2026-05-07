@@ -125,8 +125,15 @@ export default function AdminPhotos() {
       {/* Upload com barra de progresso */}
       <div className="bg-[#18181B] rounded-2xl p-6 mb-8 border border-white/[0.07]">
         <div className="flex items-center gap-3 mb-3">
-          <h3 className="font-heading font-semibold text-sm">Adicionar foto · {currentLabel}</h3>
-          <span className="text-xs text-[#71717A] ml-auto">Use as abas acima para separar cada local do site</span>
+          <h3 className="font-heading font-semibold text-sm">Adicionar foto</h3>
+          <span className="text-xs text-[#71717A] ml-auto">Marque todos os locais onde essa foto deve aparecer</span>
+        </div>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {LOCATIONS.map(loc => (
+            <button key={loc.key} onClick={() => toggleUploadLocation(loc.key)} className={`px-3 py-2 rounded-lg text-xs font-heading transition-colors ${uploadLocations.includes(loc.key) ? "bg-primary text-black" : "bg-[#27272A] text-[#A1A1AA] hover:text-white"}`}>
+              {uploadLocations.includes(loc.key) ? "✓ " : "+ "}{loc.label}
+            </button>
+          ))}
         </div>
         <MediaUploader accept="image" pathPrefix={`fotos/${uploadCategory}`} onUploaded={handleUploaded} label="" />
       </div>
@@ -155,7 +162,12 @@ export default function AdminPhotos() {
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 p-2">
                 <p className="text-xs text-white truncate">{photo.title}</p>
-                <span className="text-[10px] text-primary">{categories.find(c => c.value === photo.category)?.label}</span>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {LOCATIONS.map(loc => {
+                    const active = normalizeLocations(photo).includes(loc.key);
+                    return <button key={loc.key} onClick={(e) => { e.stopPropagation(); handleToggleLocation(photo, loc.key); }} className={`text-[10px] px-1.5 py-0.5 rounded ${active ? "bg-primary text-black" : "bg-black/50 text-white/70"}`}>{active ? "✓" : "+"} {loc.label}</button>;
+                  })}
+                </div>
               </div>
             </div>
           ))}
@@ -169,7 +181,7 @@ export default function AdminPhotos() {
             <div className="flex justify-between mb-4"><h3 className="font-heading font-bold">Editar Foto</h3><button onClick={() => setEditPhoto(null)}><X className="w-5 h-5 text-[#71717A]" /></button></div>
             <div className="space-y-4">
               <div><label className="text-xs text-[#A1A1AA] mb-1 block">Título</label><input value={editPhoto.title} onChange={e => setEditPhoto({...editPhoto, title: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" /></div>
-              <div><label className="text-xs text-[#A1A1AA] mb-1 block">Categoria</label><select value={editPhoto.category} onChange={e => setEditPhoto({...editPhoto, category: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white">{categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></div>
+              <div><label className="text-xs text-[#A1A1AA] mb-1 block">Locais onde aparece</label><div className="grid grid-cols-2 gap-2">{LOCATIONS.map(loc => { const active = normalizeLocations(editPhoto).includes(loc.key); return <button key={loc.key} onClick={() => { const current = normalizeLocations(editPhoto); const next = active ? current.filter(l => l !== loc.key) : [...current, loc.key]; setEditPhoto({...editPhoto, locations: next.length ? next : ["galeria"], is_featured: next.includes("home")}); }} className={`px-3 py-2 rounded-lg text-xs ${active ? "bg-primary text-black" : "bg-[#27272A] text-[#A1A1AA]"}`}>{active ? "✓ " : "+ "}{loc.label}</button>; })}</div></div>
               <div><label className="text-xs text-[#A1A1AA] mb-1 block">Ordem</label><input type="number" value={editPhoto.display_order} onChange={e => setEditPhoto({...editPhoto, display_order: parseInt(e.target.value) || 0})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" /></div>
               <button onClick={handleSaveEdit} className="btn-primary w-full text-sm">Salvar</button>
             </div>
