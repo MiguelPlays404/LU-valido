@@ -104,25 +104,30 @@ export default function AdminVideos() {
     fetchVideos();
   };
 
-  const handleToggleFeatured = async (id: string, current: boolean) => {
-    if (!current) {
-      // Apenas 1 destaque na home
-      await supabase.from("videos").update({ is_featured: false }).neq("id", id);
-    }
-    await supabase.from("videos").update({ is_featured: !current }).eq("id", id);
-    toast({ title: !current ? "⭐ Marcado como destaque da Home" : "Removido do destaque" });
+  const toggleAddLocation = (loc: string) => {
+    setAddLocations(prev => prev.includes(loc) ? prev.filter(x => x !== loc) : [...prev, loc]);
+  };
+
+  const handleToggleFeatured = async (video: any) => {
+    const locations = normalizeLocations(video);
+    const nextFeatured = !locations.includes("home");
+    const nextLocations = nextFeatured ? Array.from(new Set([...locations, "home"])) : locations.filter(l => l !== "home");
+    await supabase.from("videos").update({ is_featured: nextFeatured, locations: nextLocations } as any).eq("id", video.id);
+    toast({ title: nextFeatured ? "⭐ Vídeo também aparece no destaque da Home" : "Removido do destaque da Home" });
     fetchVideos();
   };
 
-  const handleChangeCategory = async (id: string, cat: string) => {
-    await supabase.from("videos").update({ category: cat }).eq("id", id);
+  const handleToggleLocation = async (video: any, loc: string) => {
+    const current = normalizeLocations(video);
+    const next = current.includes(loc) ? current.filter(l => l !== loc) : [...current, loc];
+    const safeNext = next.length ? next : ["geral"];
+    await supabase.from("videos").update({ locations: safeNext, category: primaryCategory(safeNext), is_featured: safeNext.includes("home") } as any).eq("id", video.id);
     fetchVideos();
   };
 
   const filtered = videos.filter(v => {
     if (tab === "all") return true;
-    if (tab === "destaque") return v.is_featured;
-    return v.category === tab;
+    return normalizeLocations(v).includes(tab);
   });
 
   return (
