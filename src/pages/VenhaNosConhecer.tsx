@@ -15,9 +15,11 @@ const VenhaNosConhecer = () => {
   const [cfg, setCfg] = useState<any>(null);
   useScrollAnimation();
 
+  const mediaLocations = (item: any) => Array.from(new Set([...(Array.isArray(item.locations) ? item.locations : []), item.category, item.is_featured ? "home" : null].filter(Boolean)));
+
   useEffect(() => {
     supabase.from("conhecer_content").select("*").limit(1).maybeSingle().then(({ data }) => setContent(data));
-    supabase.from("photos").select("*").eq("is_active", true).eq("category", "conhecer").order("display_order").then(({ data }) => setPhotos(data || []));
+    supabase.from("photos").select("*").eq("is_active", true).order("display_order").then(({ data }) => setPhotos((data || []).filter(media => mediaLocations(media).includes("conhecer"))));
     supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => {
       if (data) {
         setWaNum(data.whatsapp_number);
