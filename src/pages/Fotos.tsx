@@ -8,6 +8,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 const catKeys = ["all", "galeria", "hotelzinho", "conhecer"] as const;
 
+const photoLocations = (photo: any) => {
+  const list = Array.isArray(photo.locations) ? photo.locations : [];
+  const legacy = [photo.category || "galeria", photo.is_featured ? "home" : null].filter(Boolean);
+  return Array.from(new Set([...list, ...legacy]));
+};
+
 const Fotos = () => {
   const [activeKey, setActiveKey] = useState<typeof catKeys[number]>("all");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -32,7 +38,7 @@ const Fotos = () => {
     conhecer: cfg?.fotos_filter_conhecer || "Nosso Espaço",
   };
 
-  const filtered = activeKey === "all" ? photos : photos.filter((p) => p.category === activeKey);
+  const filtered = activeKey === "all" ? photos : photos.filter((p) => photoLocations(p).includes(activeKey));
   const visible = filtered.slice(0, visibleCount);
 
   return (

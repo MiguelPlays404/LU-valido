@@ -4,15 +4,30 @@ import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getYoutubeThumbnail } from "@/lib/youtube";
-import { Link2, Trash2, Eye, EyeOff, Heart, Star, Upload } from "lucide-react";
+import { Link2, Trash2, Eye, EyeOff, Heart, Star, Upload, CheckSquare } from "lucide-react";
 
 const TABS = [
   { key: "all", label: "Todos" },
-  { key: "destaque", label: "⭐ Em Destaque (Home)" },
+  { key: "home", label: "⭐ Em Destaque (Home)" },
   { key: "geral", label: "Geral" },
   { key: "hotelzinho", label: "Hotelzinho" },
   { key: "conhecer", label: "Venha Nos Conhecer" },
 ];
+
+const LOCATIONS = [
+  { key: "geral", label: "Geral" },
+  { key: "home", label: "Destaque na Home" },
+  { key: "hotelzinho", label: "Hotelzinho" },
+  { key: "conhecer", label: "Venha Nos Conhecer" },
+];
+
+const normalizeLocations = (video: any) => {
+  const list = Array.isArray(video.locations) ? video.locations : [];
+  const legacy = [video.category || "geral", video.is_featured ? "home" : null].filter(Boolean);
+  return Array.from(new Set([...list, ...legacy]));
+};
+
+const primaryCategory = (locations: string[]) => locations.find(l => l !== "home") || "geral";
 
 export default function AdminVideos() {
   const [videos, setVideos] = useState<any[]>([]);
@@ -21,7 +36,7 @@ export default function AdminVideos() {
   const [linkTitle, setLinkTitle] = useState("");
   const [uploadTitle, setUploadTitle] = useState("");
   const [tab, setTab] = useState("all");
-  const [addCategory, setAddCategory] = useState("geral");
+  const [addLocations, setAddLocations] = useState<string[]>(["geral"]);
   const [deleteVideo, setDeleteVideo] = useState<any>(null);
   const { toast } = useToast();
 
@@ -37,14 +52,17 @@ export default function AdminVideos() {
     if (!linkUrl.trim()) return;
     const thumbnail = getYoutubeThumbnail(linkUrl);
     const isYoutube = linkUrl.includes("youtube") || linkUrl.includes("youtu.be");
+    const locations = addLocations.length ? addLocations : ["geral"];
     await supabase.from("videos").insert({
       title: linkTitle || "Novo vídeo",
       video_url: linkUrl,
       video_type: isYoutube ? "youtube" : "link",
       thumbnail_url: thumbnail,
-      category: addCategory,
+      category: primaryCategory(locations),
+      locations,
+      is_featured: locations.includes("home"),
       likes_count: 0, is_active: true, published_at: new Date().toISOString(),
-    });
+    } as any);
     toast({ title: "✅ Vídeo adicionado!" });
     setLinkUrl(""); setLinkTitle("");
     fetchVideos();
@@ -52,14 +70,17 @@ export default function AdminVideos() {
 
   const handleUploaded = async (url: string) => {
     if (!url) return;
+    const locations = addLocations.length ? addLocations : ["geral"];
     await supabase.from("videos").insert({
       title: uploadTitle || "Novo vídeo enviado",
       video_url: url,
       video_type: "upload",
       thumbnail_url: "",
-      category: addCategory,
+      category: primaryCategory(locations),
+      locations,
+      is_featured: locations.includes("home"),
       likes_count: 0, is_active: true, published_at: new Date().toISOString(),
-    });
+    } as any);
     toast({ title: "✅ Vídeo enviado e adicionado!" });
     setUploadTitle("");
     fetchVideos();
@@ -83,25 +104,30 @@ export default function AdminVideos() {
     fetchVideos();
   };
 
-  const handleToggleFeatured = async (id: string, current: boolean) => {
-    if (!current) {
-      // Apenas 1 destaque na home
-      await supabase.from("videos").update({ is_featured: false }).neq("id", id);
-    }
-    await supabase.from("videos").update({ is_featured: !current }).eq("id", id);
-    toast({ title: !current ? "⭐ Marcado como destaque da Home" : "Removido do destaque" });
+  const toggleAddLocation = (loc: string) => {
+    setAddLocations(prev => prev.includes(loc) ? prev.filter(x => x !== loc) : [...prev, loc]);
+  };
+
+  const handleToggleFeatured = async (video: any) => {
+    const locations = normalizeLocations(video);
+    const nextFeatured = !locations.includes("home");
+    const nextLocations = nextFeatured ? Array.from(new Set([...locations, "home"])) : locations.filter(l => l !== "home");
+    await supabase.from("videos").update({ is_featured: nextFeatured, locations: nextLocations } as any).eq("id", video.id);
+    toast({ title: nextFeatured ? "⭐ Vídeo também aparece no destaque da Home" : "Removido do destaque da Home" });
     fetchVideos();
   };
 
-  const handleChangeCategory = async (id: string, cat: string) => {
-    await supabase.from("videos").update({ category: cat }).eq("id", id);
+  const handleToggleLocation = async (video: any, loc: string) => {
+    const current = normalizeLocations(video);
+    const next = current.includes(loc) ? current.filter(l => l !== loc) : [...current, loc];
+    const safeNext = next.length ? next : ["geral"];
+    await supabase.from("videos").update({ locations: safeNext, category: primaryCategory(safeNext), is_featured: safeNext.includes("home") } as any).eq("id", video.id);
     fetchVideos();
   };
 
   const filtered = videos.filter(v => {
     if (tab === "all") return true;
-    if (tab === "destaque") return v.is_featured;
-    return v.category === tab;
+    return normalizeLocations(v).includes(tab);
   });
 
   return (
@@ -110,11 +136,13 @@ export default function AdminVideos() {
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-4">
         <div className="flex items-center gap-3 mb-4">
           <h3 className="font-heading font-semibold text-sm flex items-center gap-2"><Link2 className="w-4 h-4 text-primary" /> Adicionar via Link (YouTube)</h3>
-          <select value={addCategory} onChange={e => setAddCategory(e.target.value)} className="ml-auto bg-[#27272A] border border-[#3F3F46] rounded-lg px-2 py-1 text-xs text-white">
-            <option value="geral">Geral</option>
-            <option value="hotelzinho">Hotelzinho</option>
-            <option value="conhecer">Venha Nos Conhecer</option>
-          </select>
+        </div>
+        <div className="flex flex-wrap gap-2 mb-4">
+          {LOCATIONS.map(loc => (
+            <button key={loc.key} onClick={() => toggleAddLocation(loc.key)} className={`px-3 py-2 rounded-lg text-xs font-heading transition-colors ${addLocations.includes(loc.key) ? "bg-primary text-black" : "bg-[#27272A] text-[#A1A1AA] hover:text-white"}`}>
+              {addLocations.includes(loc.key) ? "✓ " : "+ "}{loc.label}
+            </button>
+          ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           <input value={linkTitle} onChange={e => setLinkTitle(e.target.value)} placeholder="Título do vídeo" className="bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
@@ -127,7 +155,7 @@ export default function AdminVideos() {
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-8">
         <h3 className="font-heading font-semibold text-sm mb-4 flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Enviar Arquivo de Vídeo (qualquer tamanho/duração)</h3>
         <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Título do vídeo" className="w-full mb-3 bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
-        <MediaUploader accept="video" pathPrefix={`videos/${addCategory}`} onUploaded={handleUploaded} label="" />
+        <MediaUploader accept="video" pathPrefix={`videos/${primaryCategory(addLocations)}`} onUploaded={handleUploaded} label="" />
       </div>
 
       {/* Tabs */}
@@ -145,7 +173,7 @@ export default function AdminVideos() {
           <thead><tr className="border-b border-[#27272A]">
             <th className="text-left p-4 text-[#71717A]">Vídeo</th>
             <th className="text-left p-4 text-[#71717A]">Tipo</th>
-            <th className="text-left p-4 text-[#71717A]">Categoria</th>
+            <th className="text-left p-4 text-[#71717A]">Locais onde aparece</th>
             <th className="text-center p-4 text-[#71717A]">❤️</th>
             <th className="text-right p-4 text-[#71717A]">Ações</th>
           </tr></thead>
@@ -164,16 +192,17 @@ export default function AdminVideos() {
                 </td>
                 <td className="p-4 text-[#71717A] text-xs">{v.video_type}</td>
                 <td className="p-4">
-                  <select value={v.category || 'geral'} onChange={e => handleChangeCategory(v.id, e.target.value)} className="bg-[#27272A] border border-[#3F3F46] rounded px-2 py-1 text-xs text-white">
-                    <option value="geral">Geral</option>
-                    <option value="hotelzinho">Hotelzinho</option>
-                    <option value="conhecer">Conhecer</option>
-                  </select>
+                  <div className="flex flex-wrap gap-1 max-w-[360px]">
+                    {LOCATIONS.map(loc => {
+                      const active = normalizeLocations(v).includes(loc.key);
+                      return <button key={loc.key} onClick={() => handleToggleLocation(v, loc.key)} className={`px-2 py-1 rounded text-[11px] font-heading ${active ? "bg-primary text-black" : "bg-[#27272A] text-[#A1A1AA] hover:text-white"}`}>{active ? "✓ " : "+ "}{loc.label}</button>;
+                    })}
+                  </div>
                 </td>
                 <td className="p-4 text-center text-primary font-bold">{v.likes_count}</td>
                 <td className="p-4 text-right">
                   <div className="flex gap-1 justify-end">
-                    <button onClick={() => handleToggleFeatured(v.id, v.is_featured)} title="Destaque na Home" className="p-2 rounded hover:bg-white/5"><Star className={`w-4 h-4 ${v.is_featured ? "text-primary fill-primary" : "text-[#71717A]"}`} /></button>
+                    <button onClick={() => handleToggleFeatured(v)} title="Destaque na Home" className="p-2 rounded hover:bg-white/5"><Star className={`w-4 h-4 ${normalizeLocations(v).includes("home") ? "text-primary fill-primary" : "text-[#71717A]"}`} /></button>
                     <button onClick={() => handleToggleActive(v.id, v.is_active)} className="p-2 rounded hover:bg-white/5">{v.is_active ? <Eye className="w-4 h-4 text-green-400" /> : <EyeOff className="w-4 h-4 text-red-400" />}</button>
                     <button onClick={() => setDeleteVideo(v)} className="p-2 rounded hover:bg-white/5"><Trash2 className="w-4 h-4 text-red-400" /></button>
                   </div>

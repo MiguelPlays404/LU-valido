@@ -4,12 +4,22 @@ import { MediaUploader } from "@/components/MediaUploader";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+const HOME_TABS = [
+  { key: "hero", label: "Hero" },
+  { key: "sobre", label: "Quem Somos" },
+  { key: "midia", label: "Galeria & Vídeo" },
+  { key: "cards", label: "Cards" },
+  { key: "cta", label: "CTA Hotelzinho" },
+  { key: "contato", label: "Contato" },
+];
+
 export default function AdminHome() {
   const { toast } = useToast();
   const [config, setConfig] = useState<any>(null);
   const [sections, setSections] = useState<any[]>([]);
   const [saving, setSaving] = useState("");
   const [editSection, setEditSection] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("hero");
 
   useEffect(() => { loadData(); }, []);
 
@@ -63,8 +73,14 @@ export default function AdminHome() {
 
   return (
     <AdminLayout title="🏠 Gerenciar Home">
+      <div className="sticky top-0 z-20 bg-[#09090B]/95 backdrop-blur border-b border-white/[0.07] -mx-8 px-8 py-4 mb-6 flex gap-2 overflow-x-auto">
+        {HOME_TABS.map(t => (
+          <button key={t.key} onClick={() => setActiveTab(t.key)} className={`px-4 py-2 rounded-lg text-sm font-heading whitespace-nowrap transition-colors ${activeTab === t.key ? "bg-primary text-black" : "bg-[#18181B] text-[#A1A1AA] hover:text-white"}`}>{t.label}</button>
+        ))}
+      </div>
+
       {/* Hero Editor */}
-      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
+      <div className={`${activeTab === "hero" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading font-semibold text-white">Editor do Hero</h2>
           <a href="/" target="_blank" className="text-xs text-primary hover:underline">Ver página →</a>
@@ -97,7 +113,7 @@ export default function AdminHome() {
       </div>
 
       {/* Sobre Editor */}
-      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
+      <div className={`${activeTab === "sobre" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">Sobre o Petshop (Quem Somos)</h2>
         <div className="space-y-4">
           <Field label="Título da Seção" field="sobre_title" />
@@ -113,7 +129,7 @@ export default function AdminHome() {
       </div>
 
       {/* Gallery/Video Section Titles */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div className={`${activeTab === "midia" ? "grid" : "hidden"} grid-cols-1 lg:grid-cols-2 gap-6 mb-6`}>
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h2 className="font-heading font-semibold text-white mb-4">Seção Galeria</h2>
           <div className="space-y-4">
@@ -134,7 +150,7 @@ export default function AdminHome() {
         </div>
       </div>
 
-      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
+      <div className={`${activeTab === "cards" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">Seção de Cards da Home</h2>
         <div className="space-y-4">
           <Field label="Título" field="home_explore_title" />
@@ -145,7 +161,7 @@ export default function AdminHome() {
       </div>
 
       {/* CTA Hotel */}
-      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
+      <div className={`${activeTab === "cta" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">CTA Hotelzinho (faixa amarela)</h2>
         <div className="space-y-4">
           <Field label="Título" field="cta_hotel_title" />
@@ -164,7 +180,7 @@ export default function AdminHome() {
       </div>
 
       {/* Contact Buttons */}
-      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6">
+      <div className={`${activeTab === "contato" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">Textos dos Botões de Contato</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Field label="Título da Seção" field="contact_section_title" />
@@ -180,7 +196,7 @@ export default function AdminHome() {
       </div>
 
       {/* Home Sections / Cards */}
-      <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
+      <div className={`${activeTab === "cards" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]`}>
         <h2 className="font-heading font-semibold text-white mb-4">Cards das Páginas</h2>
         <div className="space-y-3">
           {sections.map((s) => (
