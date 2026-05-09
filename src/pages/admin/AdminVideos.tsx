@@ -70,35 +70,42 @@ export default function AdminVideos() {
     fetchVideos();
   };
 
-  const handleUploaded = async (url: string) => {
-    if (!url) return;
+  const handleUploadedVideo = (url: string) => setPendingVideoUrl(url);
+
+  const handleConfirmUpload = async () => {
+    if (!pendingVideoUrl) { toast({ title: "Envie o vídeo primeiro" }); return; }
     const locations = addLocations.length ? addLocations : ["geral"];
     await supabase.from("videos").insert({
-      title: uploadTitle || "Novo vídeo enviado",
-      video_url: url,
+      title: uploadTitle || "Vídeo",
+      video_url: pendingVideoUrl,
       video_type: "upload",
-      thumbnail_url: "",
+      thumbnail_url: uploadThumb || "",
       category: primaryCategory(locations),
       locations,
       is_featured: locations.includes("home"),
       likes_count: 0, is_active: true, published_at: new Date().toISOString(),
     } as any);
-    toast({ title: "✅ Vídeo enviado e adicionado!" });
-    setUploadTitle("");
+    toast({ title: "✅ Vídeo adicionado!" });
+    setUploadTitle(""); setUploadThumb(""); setPendingVideoUrl("");
     fetchVideos();
   };
 
   const handleDelete = async () => {
     if (!deleteVideo) return;
-    if (deleteVideo.video_type === "upload" && deleteVideo.video_url.includes("/levillepet-media/")) {
-      const path = deleteVideo.video_url.split("/levillepet-media/")[1];
-      if (path) await supabase.storage.from("levillepet-media").remove([path]);
+    try {
+      if (deleteVideo.video_type === "upload" && deleteVideo.video_url?.includes("/levillepet-media/")) {
+        const path = deleteVideo.video_url.split("/levillepet-media/")[1];
+        if (path) await supabase.storage.from("levillepet-media").remove([path]);
+      }
+      await supabase.from("video_likes").delete().eq("video_id", deleteVideo.id);
+      const { error } = await supabase.from("videos").delete().eq("id", deleteVideo.id);
+      if (error) throw error;
+      toast({ title: "✅ Vídeo removido" });
+      setVideos(prev => prev.filter(v => v.id !== deleteVideo.id));
+    } catch (e: any) {
+      toast({ title: "Erro ao excluir", description: e.message, variant: "destructive" });
     }
-    await supabase.from("video_likes").delete().eq("video_id", deleteVideo.id);
-    await supabase.from("videos").delete().eq("id", deleteVideo.id);
-    toast({ title: "Vídeo removido" });
     setDeleteVideo(null);
-    fetchVideos();
   };
 
   const handleToggleActive = async (id: string, current: boolean) => {
