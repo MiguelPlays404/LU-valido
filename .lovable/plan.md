@@ -1,194 +1,59 @@
-# Plano: Editor Total de Mídia + Bugs + Telefone Fixo
+## Plano
 
-## Resumo dos problemas e soluções
+### 1. Substituir mídias antigas (bebês/camisetas) por fotos de cachorros
+- Auditar `site_config` e tabelas `photos`/`videos` para localizar URLs que ainda apontam para imagens antigas (ex.: `cta_hotel_image_url`, `sobre_image_url`, `hero_bg_image_url`, hero das páginas internas, `faleconosco_image_url`).
+- Gerar novas imagens de cachorros (via imagegen) para preencher esses slots e salvar em `public/images/seed-dogs/`.
+- Migration `UPDATE site_config SET ... = '/images/seed-dogs/...'` apontando para as novas imagens.
 
+### 2. Adicionar mais fotos e vídeos pet ao banco
+- Gerar +6 fotos novas (variando: banho, tosa, pet shop, hotel, brincadeira, loja).
+- Inserir na tabela `photos` distribuindo `locations` entre `geral`, `hotelzinho`, `conhecer`, `home`.
+- Adicionar +2 vídeos demo (usar assets já existentes em `public/videos/seed-dogs/` + 1 novo se possível) marcando alguns como `home` (destaque).
 
-| #   | Problema                                 | Solução                                                                                                                                                                                                      |
-| --- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | Menu mobile fica transparente (image-16) | Forçar `bg-[#0D0D0D]` opaco + `z-50` correto + `body { overflow:hidden }` quando aberto                                                                                                                      |
-| 2   | Navbar não fixa em todas páginas         | Já tem `fixed top-0 z-50`, mas alguns scroll containers cancelam — garantir + adicionar shadow contínuo                                                                                                      |
-| 3   | Vídeo destaque da Home não editável      | Já lê `is_featured=true` da tabela videos. Adicionar **toggle "destaque"** no AdminVideos (falta hoje)                                                                                                       |
-| 4   | Fotos "Momentos Especiais" não editáveis | Já lê `is_featured=true` em photos. Adicionar **toggle "destaque"** funcional já existe — falta evidenciar/explicar e separar por aba                                                                        |
-| 5   | Foto "Quem Somos" / Sobre não editável   | Já existe `sobre_image_url` em AdminHome (campo URL) — substituir por **MediaUploader visual**                                                                                                               |
-| 6   | Upload de vídeo (arquivo, não só link)   | Adicionar `MediaUploader accept="video"` no AdminVideos + suportar `video_type='upload'` no player                                                                                                           |
-| 7   | Telefone fixo no rodapé e Siga-nos       | Adicionar campo `fixed_phone` em site_config + render em Footer e SigaNos                                                                                                                                    |
-| 8   | Mídia tudo junto                         | Reorganizar AdminPhotos e AdminVideos com **abas por categoria/local**                                                                                                                                       |
-| 9   | Outros itens não editáveis encontrados   | Hero badge, scroll arrow, "Entre em Contato" title, PageHero badges, Hotelzinho gallery title, Conhecer "Sobre o Le Ville Pet" title, Fotos filtros, FaleConosco bottom text — **nova aba "Textos Globais"** |
+### 3. Nova seção "Produtos que utilizamos" na página Venha Nos Conhecer
+Layout entre **Sobre** e **Galeria do Espaço**:
 
-
----
-
-## 1. Migration (campos + bucket video)
-
-```sql
-ALTER TABLE site_config
-  ADD COLUMN IF NOT EXISTS fixed_phone TEXT DEFAULT '',
-  ADD COLUMN IF NOT EXISTS hero_badge_text TEXT DEFAULT '🐾 Petshop em Bauru-SP',
-  ADD COLUMN IF NOT EXISTS contact_section_title TEXT DEFAULT 'Entre em Contato',
-  ADD COLUMN IF NOT EXISTS faleconosco_visit_text TEXT DEFAULT 'Venha nos visitar! Estamos te esperando 🐾',
-  ADD COLUMN IF NOT EXISTS conhecer_about_title TEXT DEFAULT 'Sobre o Le Ville Pet',
-  ADD COLUMN IF NOT EXISTS conhecer_cta_title TEXT DEFAULT 'Venha nos visitar!',
-  ADD COLUMN IF NOT EXISTS conhecer_cta_btn_text TEXT DEFAULT 'Fale Conosco',
-  ADD COLUMN IF NOT EXISTS hotel_cta_title TEXT DEFAULT 'Quer agendar uma estadia para o seu pet?',
-  ADD COLUMN IF NOT EXISTS hotel_gallery_section_title TEXT DEFAULT 'Nosso Espaço',
-  ADD COLUMN IF NOT EXISTS faleconosco_info_title TEXT DEFAULT 'Informações de Contato',
-  ADD COLUMN IF NOT EXISTS faleconosco_image_url TEXT DEFAULT '',
-  ADD COLUMN IF NOT EXISTS localizacao_howto_title TEXT DEFAULT 'Como Chegar',
-  ADD COLUMN IF NOT EXISTS fotos_filter_all TEXT DEFAULT 'Todas',
-  ADD COLUMN IF NOT EXISTS fotos_filter_galeria TEXT DEFAULT 'Galeria',
-  ADD COLUMN IF NOT EXISTS fotos_filter_hotel TEXT DEFAULT 'Hotelzinho',
-  ADD COLUMN IF NOT EXISTS fotos_filter_conhecer TEXT DEFAULT 'Nosso Espaço',
-  ADD COLUMN IF NOT EXISTS siganos_footer_text TEXT DEFAULT '🐾 Feito com amor para você e seu pet';
-
--- Adicionar 'video_url' na tabela photos? NÃO. Manter videos separado.
--- Tornar video_type aceitar 'upload' (já é text — apenas usar o valor)
-
--- Garantir bucket aceita videos grandes (já é levillepet-media público)
-UPDATE storage.buckets SET file_size_limit = NULL WHERE id = 'levillepet-media';
+```text
+[ Imagem produtos ]   PRODUTOS QUE UTILIZAMOS
+                      Texto explicando marcas/qualidade/cuidado.
+                      (badge amarelo no topo)
 ```
 
----
+- Adicionar colunas em `site_config`:
+  - `conhecer_produtos_badge` (default "🛍️ Qualidade")
+  - `conhecer_produtos_title` (default "Produtos que utilizamos no seu pet")
+  - `conhecer_produtos_text` (texto longo)
+  - `conhecer_produtos_image_url` (imagem/vídeo)
+- Renderizar nova `<section>` em `src/pages/VenhaNosConhecer.tsx`.
+- Em `src/pages/admin/AdminConhecer.tsx`: nova aba/grupo "Produtos" com inputs + `MediaUploader` (aceitando imagem e vídeo).
 
-## 2. Bug navbar mobile transparente
+### 4. Animações mais elegantes/modernas (sem mudar identidade visual)
+Manter paleta amarelo `#F5C000` + preto `#09090B` + Poppins/Inter. Apenas refinar movimento.
 
-`src/components/Navbar.tsx`:
+- Em `src/index.css` / `tailwind.config.ts`:
+  - Adicionar keyframes: `float-slow`, `shimmer`, `fade-up-soft` (translateY 24→0, blur 4px→0), `subtle-zoom`.
+  - Easing padrão: `cubic-bezier(0.22, 1, 0.36, 1)` (mais suave que ease-out).
+- `useScrollAnimation`: aumentar duração para 700ms, stagger entre filhos, suportar `data-animate="fade-up-soft"` e `blur-in`.
+- `PageTransition`: cross-fade + scale leve (0.995→1) com 350ms; corrigir possível salto do scroll.
+- Hover refinado em cards (`.card-hover`): `translateY(-4px)` + sombra amarela suave + borda do primary aparecendo.
+- Botões `.btn-primary` / `.btn-dark`: brilho `shimmer` discreto on hover.
+- Imagens em galerias: `subtle-zoom` no hover (já existe scale-105, deixar mais lento, 600ms).
 
-- Garantir sidebar mobile com `**background: #0D0D0D !important**` + `**isolation: isolate**`
-- Adicionar `useEffect` que faz `document.body.style.overflow = isOpen ? 'hidden' : ''`
-- Aumentar overlay para `bg-black/95 backdrop-blur-md`
+### 5. Refinos de elegância no UI (mínimos, sem reestruturar)
+- Bordas mais arredondadas em hero badges (já ok), reforçar `backdrop-blur` nos overlays.
+- Adicionar grão/ruído sutil opcional via CSS no fundo escuro de seções pretas (overlay 2% noise).
+- Espaçamento vertical entre seções: garantir `py-20 lg:py-24` consistente.
 
----
+### Detalhes técnicos
+- Migration única cobrindo: novas colunas em `site_config`, UPDATE de URLs antigas, INSERTs de novas photos/videos.
+- Frontend: `VenhaNosConhecer.tsx`, `AdminConhecer.tsx`, `index.css`, `tailwind.config.ts`, `useScrollAnimation.ts`, `PageTransition.tsx`.
+- Sem mudanças em backend/edge functions.
 
-## 3. Navbar fixa robusta em todas páginas
-
-Já é `fixed top-0`. Garantir não há `transform/filter` em ancestrais (PublicLayout) que quebre `position: fixed`. Inspecionar PublicLayout — se `pt-16` está OK. Sem mudanças além de remover qualquer `overflow-hidden` problemático.
-
----
-
-## 4. AdminPhotos com abas por categoria
-
-Reescrever `AdminPhotos.tsx` com **tabs no topo**:
-
-- Aba **"Galeria Geral"** → categoria `galeria`
-- Aba **"Hotelzinho"** → `hotelzinho`
-- Aba **"Venha Nos Conhecer"** → `conhecer`
-- Aba **"Home/Momentos Especiais"** → fotos com `is_featured=true` (não importa categoria)
-
-Cada aba mostra:
-
-- Uploader **dedicado** (já cria com a categoria certa)
-- Grid filtrado **só dessa categoria**
-- Botão "⭐ Destacar na Home" visível e claro
-
----
-
-## 5. AdminVideos com abas + upload de vídeo + toggle destaque
-
-Reescrever `AdminVideos.tsx`:
-
-- Aba **"Todos"** / **"Em Destaque (Home)"** / **"Hotelzinho"**
-- Adicionar coluna `category` na tabela videos (migration)
-- 2 modos de adicionar:
-  - **Adicionar via Link** (atual)
-  - **Upload de Arquivo** (novo — `MediaUploader accept="video"`, salva `video_type='upload'`, `video_url` = URL do storage)
-- **Toggle ⭐ Destaque** funcional para escolher o vídeo da home
-
-Player Videos.tsx detecta `video_type === 'upload'` e usa `<video>` em vez de `<iframe>`. Index.tsx idem para o featured.
-
-```sql
-ALTER TABLE videos ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'geral';
-```
-
----
-
-## 6. AdminHome — substituir campos URL por MediaUploader
-
-- `sobre_image_url` → MediaUploader image
-- `cta_hotel_image_url` → MediaUploader image
-- `hero_bg_image_url` → MediaUploader image (novo)
-
----
-
-## 7. Telefone fixo (rodapé + SigaNos)
-
-Footer.tsx: nova linha
-
-```tsx
-{c?.fixed_phone && (
-  <a href={`tel:${c.fixed_phone.replace(/\D/g,'')}`} className="...">
-    <Phone /> {c.fixed_phone}
-  </a>
-)}
-```
-
-SigaNos.tsx: card extra acima dos sociais com mesma lógica.
-
-AdminConfig: novo campo "Telefone Fixo" na seção WhatsApp.
-
----
-
-## 8. Nova aba "Textos Globais" em AdminPageTexts
-
-Adicionar tab `global` com:
-
-- `hero_badge_text`
-- `contact_section_title`
-- `faleconosco_visit_text`, `faleconosco_info_title`
-- `conhecer_about_title`, `conhecer_cta_title`, `conhecer_cta_btn_text`
-- `hotel_cta_title`, `hotel_gallery_section_title`
-- `localizacao_howto_title`
-- `fotos_filter_*` (4 campos)
-- `siganos_footer_text`
-
-E usar todos esses campos nas páginas públicas.
-
----
-
-## 9. Aplicar campos editáveis nas páginas
-
-- `Index.tsx`: hero_badge_text, contact_section_title (linha 247)
-- `Hotelzinho.tsx`: hotel_cta_title, hotel_gallery_section_title
-- `VenhaNosConhecer.tsx`: conhecer_about_title, conhecer_cta_title, conhecer_cta_btn_text
-- `FaleConosco.tsx`: faleconosco_visit_text, faleconosco_info_title, faleconosco_image_url
-- `Localizacao.tsx`: localizacao_howto_title
-- `Fotos.tsx`: filtros vindos do config
-- `SigaNos.tsx`: siganos_footer_text + telefone fixo
-
----
-
-## 10. Upload de vídeo em galerias (extra)
-
-`MediaUploader` já aceita `accept="both"`. Habilitar em AdminPhotos? Não — fotos é fotos. Mas adicionar **opção de vídeo curto** em AdminVideos para todas categorias (Hotelzinho, Conhecer também) via aba.
-
----
-
-## Arquivos alterados
-
-
-| Arquivo                              | Mudança                                                     |
-| ------------------------------------ | ----------------------------------------------------------- |
-| `supabase/migrations/...sql`         | novos campos site_config + videos.category                  |
-| `src/components/Navbar.tsx`          | bg opaco + overflow body lock                               |
-| `src/components/Footer.tsx`          | telefone fixo                                               |
-| `src/pages/SigaNos.tsx`              | telefone fixo + footer text editável                        |
-| `src/pages/Index.tsx`                | hero_badge_text, contact_section_title, vídeo upload player |
-| `src/pages/Hotelzinho.tsx`           | títulos editáveis                                           |
-| `src/pages/VenhaNosConhecer.tsx`     | títulos editáveis                                           |
-| `src/pages/FaleConosco.tsx`          | textos + imagem editáveis                                   |
-| `src/pages/Localizacao.tsx`          | título "Como Chegar"                                        |
-| `src/pages/Fotos.tsx`                | filtros editáveis                                           |
-| `src/pages/Videos.tsx`               | suporte a video_type=upload                                 |
-| `src/pages/admin/AdminPhotos.tsx`    | reescrita com abas por categoria                            |
-| `src/pages/admin/AdminVideos.tsx`    | reescrita: abas + upload arquivo + destaque toggle          |
-| `src/pages/admin/AdminHome.tsx`      | MediaUploader em vez de URL                                 |
-| `src/pages/admin/AdminConfig.tsx`    | campo fixed_phone                                           |
-| `src/pages/admin/AdminPageTexts.tsx` | nova aba "Globais"                                          |
-
-
-Sem alteração de RLS — políticas já permitem CRUD anônimo (admin via sessionStorage).   
-  
-O telefone fixo do estabelecimento é (14) 3204-7040.
-
-Use esse valor como padrão no campo fixed_phone da migration
-
-e exiba já preenchido no admin e no footer/siga-nos.
+### Arquivos a alterar
+- `supabase/migrations/<novo>.sql`
+- `src/pages/VenhaNosConhecer.tsx`
+- `src/pages/admin/AdminConhecer.tsx`
+- `src/index.css`, `tailwind.config.ts`
+- `src/hooks/useScrollAnimation.ts`
+- `src/components/PageTransition.tsx`
+- Novos assets em `public/images/seed-dogs/`
