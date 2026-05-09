@@ -35,6 +35,8 @@ export default function AdminVideos() {
   const [linkUrl, setLinkUrl] = useState("");
   const [linkTitle, setLinkTitle] = useState("");
   const [uploadTitle, setUploadTitle] = useState("");
+  const [uploadThumb, setUploadThumb] = useState("");
+  const [pendingVideoUrl, setPendingVideoUrl] = useState("");
   const [tab, setTab] = useState("all");
   const [addLocations, setAddLocations] = useState<string[]>(["geral"]);
   const [deleteVideo, setDeleteVideo] = useState<any>(null);
@@ -68,35 +70,42 @@ export default function AdminVideos() {
     fetchVideos();
   };
 
-  const handleUploaded = async (url: string) => {
-    if (!url) return;
+  const handleUploadedVideo = (url: string) => setPendingVideoUrl(url);
+
+  const handleConfirmUpload = async () => {
+    if (!pendingVideoUrl) { toast({ title: "Envie o vídeo primeiro" }); return; }
     const locations = addLocations.length ? addLocations : ["geral"];
     await supabase.from("videos").insert({
-      title: uploadTitle || "Novo vídeo enviado",
-      video_url: url,
+      title: uploadTitle || "Vídeo",
+      video_url: pendingVideoUrl,
       video_type: "upload",
-      thumbnail_url: "",
+      thumbnail_url: uploadThumb || "",
       category: primaryCategory(locations),
       locations,
       is_featured: locations.includes("home"),
       likes_count: 0, is_active: true, published_at: new Date().toISOString(),
     } as any);
-    toast({ title: "✅ Vídeo enviado e adicionado!" });
-    setUploadTitle("");
+    toast({ title: "✅ Vídeo adicionado!" });
+    setUploadTitle(""); setUploadThumb(""); setPendingVideoUrl("");
     fetchVideos();
   };
 
   const handleDelete = async () => {
     if (!deleteVideo) return;
-    if (deleteVideo.video_type === "upload" && deleteVideo.video_url.includes("/levillepet-media/")) {
-      const path = deleteVideo.video_url.split("/levillepet-media/")[1];
-      if (path) await supabase.storage.from("levillepet-media").remove([path]);
+    try {
+      if (deleteVideo.video_type === "upload" && deleteVideo.video_url?.includes("/levillepet-media/")) {
+        const path = deleteVideo.video_url.split("/levillepet-media/")[1];
+        if (path) await supabase.storage.from("levillepet-media").remove([path]);
+      }
+      await supabase.from("video_likes").delete().eq("video_id", deleteVideo.id);
+      const { error } = await supabase.from("videos").delete().eq("id", deleteVideo.id);
+      if (error) throw error;
+      toast({ title: "✅ Vídeo removido" });
+      setVideos(prev => prev.filter(v => v.id !== deleteVideo.id));
+    } catch (e: any) {
+      toast({ title: "Erro ao excluir", description: e.message, variant: "destructive" });
     }
-    await supabase.from("video_likes").delete().eq("video_id", deleteVideo.id);
-    await supabase.from("videos").delete().eq("id", deleteVideo.id);
-    toast({ title: "Vídeo removido" });
     setDeleteVideo(null);
-    fetchVideos();
   };
 
   const handleToggleActive = async (id: string, current: boolean) => {
@@ -154,8 +163,19 @@ export default function AdminVideos() {
       {/* Upload File */}
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-8">
         <h3 className="font-heading font-semibold text-sm mb-4 flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Enviar Arquivo de Vídeo (qualquer tamanho/duração)</h3>
-        <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Título do vídeo" className="w-full mb-3 bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
-        <MediaUploader accept="video" pathPrefix={`videos/${primaryCategory(addLocations)}`} onUploaded={handleUploaded} label="" />
+        <p className="text-xs text-[#71717A] mb-3">Título e capa são <strong className="text-primary">opcionais</strong>. Envie o vídeo e clique em "Adicionar".</p>
+        <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Título (opcional)" className="w-full mb-3 bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+          <div>
+            <label className="text-xs text-[#A1A1AA] mb-2 block">🎬 Vídeo *</label>
+            <MediaUploader accept="video" pathPrefix={`videos/${primaryCategory(addLocations)}`} currentUrl={pendingVideoUrl} onUploaded={handleUploadedVideo} label="" />
+          </div>
+          <div>
+            <label className="text-xs text-[#A1A1AA] mb-2 block">🖼️ Capa (opcional)</label>
+            <MediaUploader accept="image" pathPrefix={`videos/thumbs`} currentUrl={uploadThumb} onUploaded={(url) => setUploadThumb(url)} label="" />
+          </div>
+        </div>
+        <button onClick={handleConfirmUpload} disabled={!pendingVideoUrl} className="btn-primary text-sm w-full disabled:opacity-50">➕ Adicionar vídeo enviado</button>
       </div>
 
       {/* Tabs */}

@@ -61,12 +61,19 @@ export default function AdminPhotos() {
 
   const handleDelete = async () => {
     if (!deletePhoto) return;
-    const path = deletePhoto.image_url.split("/levillepet-media/")[1];
-    if (path) await supabase.storage.from("levillepet-media").remove([path]);
-    await supabase.from("photos").delete().eq("id", deletePhoto.id);
-    toast({ title: "Foto removida" });
+    try {
+      if (deletePhoto.image_url?.includes("/levillepet-media/")) {
+        const path = deletePhoto.image_url.split("/levillepet-media/")[1];
+        if (path) await supabase.storage.from("levillepet-media").remove([path]);
+      }
+      const { error } = await supabase.from("photos").delete().eq("id", deletePhoto.id);
+      if (error) throw error;
+      toast({ title: "✅ Foto removida" });
+      setPhotos(prev => prev.filter(p => p.id !== deletePhoto.id));
+    } catch (e: any) {
+      toast({ title: "Erro ao excluir", description: e.message, variant: "destructive" });
+    }
     setDeletePhoto(null);
-    fetchPhotos();
   };
 
   const handleToggleFeatured = async (id: string, current: boolean) => {
@@ -150,23 +157,28 @@ export default function AdminPhotos() {
       {loading ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">{Array.from({length:8}).map((_,i) => <div key={i} className="aspect-square skeleton rounded-xl" />)}</div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filtered.length === 0 && <p className="text-[#71717A] col-span-full text-center py-10">Nenhuma foto nesta categoria.</p>}
           {filtered.map(photo => (
-            <div key={photo.id} className="relative group rounded-xl overflow-hidden border border-[#27272A]">
-              <img src={photo.image_url} alt={photo.title} className="w-full aspect-square object-cover" />
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button onClick={() => setEditPhoto({...photo})} className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center"><Pencil className="w-4 h-4 text-black" /></button>
-                <button onClick={() => handleToggleFeatured(photo.id, photo.is_featured)} className="w-9 h-9 bg-[#27272A] rounded-lg flex items-center justify-center"><Star className={`w-4 h-4 ${photo.is_featured ? "text-primary fill-primary" : "text-white"}`} /></button>
-                <button onClick={() => handleToggleActive(photo.id, photo.is_active)} className="w-9 h-9 bg-[#27272A] rounded-lg flex items-center justify-center">{photo.is_active ? <Eye className="w-4 h-4 text-green-400" /> : <EyeOff className="w-4 h-4 text-red-400" />}</button>
-                <button onClick={() => setDeletePhoto(photo)} className="w-9 h-9 bg-red-500/20 rounded-lg flex items-center justify-center"><Trash2 className="w-4 h-4 text-red-400" /></button>
+            <div key={photo.id} className={`bg-[#18181B] rounded-xl overflow-hidden border ${photo.is_active ? "border-[#27272A]" : "border-red-500/40 opacity-60"}`}>
+              <div className="relative aspect-video bg-black">
+                <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                {photo.is_featured && <span className="absolute top-2 left-2 bg-primary text-black text-[10px] font-bold px-2 py-0.5 rounded">⭐ DESTAQUE HOME</span>}
+                {!photo.is_active && <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">OCULTA</span>}
               </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 p-2">
-                <p className="text-xs text-white truncate">{photo.title}</p>
-                <div className="flex flex-wrap gap-1 mt-1">
+              <div className="p-3 space-y-2">
+                <p className="text-sm text-white font-medium truncate">{photo.title}</p>
+                <div className="flex flex-wrap gap-1">
                   {LOCATIONS.map(loc => {
                     const active = normalizeLocations(photo).includes(loc.key);
-                    return <button key={loc.key} onClick={(e) => { e.stopPropagation(); handleToggleLocation(photo, loc.key); }} className={`text-[10px] px-1.5 py-0.5 rounded ${active ? "bg-primary text-black" : "bg-black/50 text-white/70"}`}>{active ? "✓" : "+"} {loc.label}</button>;
+                    return <button key={loc.key} onClick={() => handleToggleLocation(photo, loc.key)} className={`text-[10px] px-2 py-0.5 rounded font-heading ${active ? "bg-primary text-black" : "bg-[#27272A] text-[#A1A1AA] hover:text-white"}`}>{active ? "✓ " : "+ "}{loc.label}</button>;
                   })}
+                </div>
+                <div className="flex gap-1 pt-1 border-t border-[#27272A]">
+                  <button onClick={() => setEditPhoto({...photo})} title="Editar" className="flex-1 py-2 rounded bg-[#27272A] hover:bg-primary hover:text-black text-white text-xs flex items-center justify-center gap-1"><Pencil className="w-3 h-3" /> Editar</button>
+                  <button onClick={() => handleToggleFeatured(photo.id, photo.is_featured)} title="Destaque Home" className={`px-3 py-2 rounded ${photo.is_featured ? "bg-primary text-black" : "bg-[#27272A] text-white hover:bg-primary/30"}`}><Star className="w-3 h-3" /></button>
+                  <button onClick={() => handleToggleActive(photo.id, photo.is_active)} title={photo.is_active ? "Ocultar" : "Mostrar"} className="px-3 py-2 rounded bg-[#27272A] hover:bg-white/10 text-white">{photo.is_active ? <Eye className="w-3 h-3 text-green-400" /> : <EyeOff className="w-3 h-3 text-red-400" />}</button>
+                  <button onClick={() => setDeletePhoto(photo)} title="Excluir" className="px-3 py-2 rounded bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white"><Trash2 className="w-3 h-3" /></button>
                 </div>
               </div>
             </div>
