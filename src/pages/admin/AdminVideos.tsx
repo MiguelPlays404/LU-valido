@@ -163,8 +163,19 @@ export default function AdminVideos() {
       {/* Upload File */}
       <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-8">
         <h3 className="font-heading font-semibold text-sm mb-4 flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Enviar Arquivo de Vídeo (qualquer tamanho/duração)</h3>
-        <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Título do vídeo" className="w-full mb-3 bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
-        <MediaUploader accept="video" pathPrefix={`videos/${primaryCategory(addLocations)}`} onUploaded={handleUploaded} label="" />
+        <p className="text-xs text-[#71717A] mb-3">Título e capa são <strong className="text-primary">opcionais</strong>. Envie o vídeo e clique em "Adicionar".</p>
+        <input value={uploadTitle} onChange={e => setUploadTitle(e.target.value)} placeholder="Título (opcional)" className="w-full mb-3 bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+          <div>
+            <label className="text-xs text-[#A1A1AA] mb-2 block">🎬 Vídeo *</label>
+            <MediaUploader accept="video" pathPrefix={`videos/${primaryCategory(addLocations)}`} currentUrl={pendingVideoUrl} onUploaded={handleUploadedVideo} label="" />
+          </div>
+          <div>
+            <label className="text-xs text-[#A1A1AA] mb-2 block">🖼️ Capa (opcional)</label>
+            <MediaUploader accept="image" pathPrefix={`videos/thumbs`} currentUrl={uploadThumb} onUploaded={(url) => setUploadThumb(url)} label="" />
+          </div>
+        </div>
+        <button onClick={handleConfirmUpload} disabled={!pendingVideoUrl} className="btn-primary text-sm w-full disabled:opacity-50">➕ Adicionar vídeo enviado</button>
       </div>
 
       {/* Tabs */}
