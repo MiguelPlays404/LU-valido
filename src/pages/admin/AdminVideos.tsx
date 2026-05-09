@@ -35,6 +35,8 @@ export default function AdminVideos() {
   const [linkUrl, setLinkUrl] = useState("");
   const [linkTitle, setLinkTitle] = useState("");
   const [uploadTitle, setUploadTitle] = useState("");
+  const [uploadThumb, setUploadThumb] = useState("");
+  const [pendingVideoUrl, setPendingVideoUrl] = useState("");
   const [tab, setTab] = useState("all");
   const [addLocations, setAddLocations] = useState<string[]>(["geral"]);
   const [deleteVideo, setDeleteVideo] = useState<any>(null);
