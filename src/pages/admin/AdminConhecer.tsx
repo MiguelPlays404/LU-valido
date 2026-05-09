@@ -69,6 +69,26 @@ export default function AdminConhecer() {
             <div><label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">Botão CTA</label><input value={config.conhecer_cta_btn_text || ""} onChange={e => setConfig({...config, conhecer_cta_btn_text: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" /></div>
           </div>
         )}
+
+        {config && (
+          <div className="border-t border-[#27272A] pt-6">
+            <h3 className="font-heading font-semibold text-primary text-sm uppercase tracking-wider mb-4">🛍️ Seção "Produtos que utilizamos"</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">Imagem ou vídeo dos produtos</label>
+                <MediaUploader accept="both" pathPrefix="conhecer/produtos" currentUrl={config.conhecer_produtos_image_url} onUploaded={(url) => setConfig({ ...config, conhecer_produtos_image_url: url })} label="" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">Selo (badge)</label><input value={config.conhecer_produtos_badge || ""} onChange={e => setConfig({...config, conhecer_produtos_badge: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" /></div>
+                <div><label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">Título</label><input value={config.conhecer_produtos_title || ""} onChange={e => setConfig({...config, conhecer_produtos_title: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" /></div>
+              </div>
+              <div>
+                <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">Texto descritivo</label>
+                <textarea value={config.conhecer_produtos_text || ""} onChange={e => setConfig({...config, conhecer_produtos_text: e.target.value})} rows={5} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white resize-y" />
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex gap-3 justify-end pt-4">
           <a href="/venha-nos-conhecer" target="_blank" className="px-4 py-2 text-sm text-[#A1A1AA] hover:text-primary">Ver página ↗</a>
           <button onClick={handleSave} disabled={saving} className="btn-primary text-sm">{saving ? "Salvando..." : "💾 Salvar"}</button>
