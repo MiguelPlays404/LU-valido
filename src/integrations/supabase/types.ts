@@ -266,6 +266,10 @@ export type Database = {
           conhecer_cta_title: string | null
           conhecer_gallery_title: string | null
           conhecer_hero_image_url: string | null
+          conhecer_produtos_badge: string | null
+          conhecer_produtos_image_url: string | null
+          conhecer_produtos_text: string | null
+          conhecer_produtos_title: string | null
           contact_fixed_phone_btn_text: string | null
           contact_fixed_phone_title: string | null
           contact_instagram_btn_text: string | null
@@ -399,6 +403,10 @@ export type Database = {
           conhecer_cta_title?: string | null
           conhecer_gallery_title?: string | null
           conhecer_hero_image_url?: string | null
+          conhecer_produtos_badge?: string | null
+          conhecer_produtos_image_url?: string | null
+          conhecer_produtos_text?: string | null
+          conhecer_produtos_title?: string | null
           contact_fixed_phone_btn_text?: string | null
           contact_fixed_phone_title?: string | null
           contact_instagram_btn_text?: string | null
@@ -532,6 +540,10 @@ export type Database = {
           conhecer_cta_title?: string | null
           conhecer_gallery_title?: string | null
           conhecer_hero_image_url?: string | null
+          conhecer_produtos_badge?: string | null
+          conhecer_produtos_image_url?: string | null
+          conhecer_produtos_text?: string | null
+          conhecer_produtos_title?: string | null
           contact_fixed_phone_btn_text?: string | null
           contact_fixed_phone_title?: string | null
           contact_instagram_btn_text?: string | null
