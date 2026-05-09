@@ -19,7 +19,17 @@ export default function AdminConhecer() {
     if (!content) return;
     setSaving(true);
     const { error } = await supabase.from("conhecer_content").update(content).eq("id", content.id);
-    if (config?.id) await supabase.from("site_config").update({ conhecer_hero_image_url: config.conhecer_hero_image_url, conhecer_about_title: config.conhecer_about_title, conhecer_gallery_title: config.conhecer_gallery_title, conhecer_cta_title: config.conhecer_cta_title, conhecer_cta_btn_text: config.conhecer_cta_btn_text } as any).eq("id", config.id);
+    if (config?.id) await supabase.from("site_config").update({
+      conhecer_hero_image_url: config.conhecer_hero_image_url,
+      conhecer_about_title: config.conhecer_about_title,
+      conhecer_gallery_title: config.conhecer_gallery_title,
+      conhecer_cta_title: config.conhecer_cta_title,
+      conhecer_cta_btn_text: config.conhecer_cta_btn_text,
+      conhecer_produtos_badge: config.conhecer_produtos_badge,
+      conhecer_produtos_title: config.conhecer_produtos_title,
+      conhecer_produtos_text: config.conhecer_produtos_text,
+      conhecer_produtos_image_url: config.conhecer_produtos_image_url,
+    } as any).eq("id", config.id);
     toast({ title: error ? "Erro ao salvar" : "✅ Conteúdo salvo!" });
     setSaving(false);
   };
