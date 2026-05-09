@@ -61,12 +61,19 @@ export default function AdminPhotos() {
 
   const handleDelete = async () => {
     if (!deletePhoto) return;
-    const path = deletePhoto.image_url.split("/levillepet-media/")[1];
-    if (path) await supabase.storage.from("levillepet-media").remove([path]);
-    await supabase.from("photos").delete().eq("id", deletePhoto.id);
-    toast({ title: "Foto removida" });
+    try {
+      if (deletePhoto.image_url?.includes("/levillepet-media/")) {
+        const path = deletePhoto.image_url.split("/levillepet-media/")[1];
+        if (path) await supabase.storage.from("levillepet-media").remove([path]);
+      }
+      const { error } = await supabase.from("photos").delete().eq("id", deletePhoto.id);
+      if (error) throw error;
+      toast({ title: "✅ Foto removida" });
+      setPhotos(prev => prev.filter(p => p.id !== deletePhoto.id));
+    } catch (e: any) {
+      toast({ title: "Erro ao excluir", description: e.message, variant: "destructive" });
+    }
     setDeletePhoto(null);
-    fetchPhotos();
   };
 
   const handleToggleFeatured = async (id: string, current: boolean) => {

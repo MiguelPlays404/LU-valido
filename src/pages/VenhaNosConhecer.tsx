@@ -65,6 +65,30 @@ const VenhaNosConhecer = () => {
         </div>
       </section>
 
+      {/* Produtos que utilizamos — PEARL */}
+      {cfg && (cfg.conhecer_produtos_title || cfg.conhecer_produtos_image_url) && (
+        <section className="py-20" style={{ background: '#F8F8F6' }}>
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+              <div data-animate="fade-right" className="rounded-2xl overflow-hidden bg-[#E5E5E5] aspect-[4/3]">
+                {cfg.conhecer_produtos_image_url && /\.(mp4|webm|mov)(\?|$)/i.test(cfg.conhecer_produtos_image_url) ? (
+                  <video src={cfg.conhecer_produtos_image_url} className="w-full h-full object-cover" autoPlay muted loop playsInline />
+                ) : (
+                  <img src={cfg.conhecer_produtos_image_url || '/placeholder.svg'} alt={cfg.conhecer_produtos_title} className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                )}
+              </div>
+              <div>
+                {cfg.conhecer_produtos_badge && (
+                  <span data-animate="fade-up" className="inline-block bg-primary/15 text-black border border-primary/30 px-3 py-1 rounded-full text-xs font-heading font-semibold mb-4">{cfg.conhecer_produtos_badge}</span>
+                )}
+                <h2 data-animate="fade-up" data-delay="1" className="section-title text-black mb-5">{cfg.conhecer_produtos_title || 'Produtos que utilizamos'}</h2>
+                <p data-animate="fade-up" data-delay="2" className="text-[#444] text-base leading-relaxed whitespace-pre-line" style={{ fontFamily: 'Inter' }}>{cfg.conhecer_produtos_text || ''}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Gallery — PEARL */}
       {photos.length > 0 && (
         <section className="py-20" style={{ background: '#F8F8F6' }}>
