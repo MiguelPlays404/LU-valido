@@ -291,6 +291,7 @@ export type Database = {
           faleconosco_btn_text: string | null
           faleconosco_card_text: string | null
           faleconosco_card_title: string | null
+          faleconosco_hero_image_url: string | null
           faleconosco_image_url: string | null
           faleconosco_info_title: string | null
           faleconosco_subtitle: string | null
@@ -312,6 +313,7 @@ export type Database = {
           fotos_filter_conhecer: string | null
           fotos_filter_galeria: string | null
           fotos_filter_hotel: string | null
+          fotos_hero_image_url: string | null
           fotos_page_subtitle: string | null
           fotos_page_title: string | null
           gallery_section_subtitle: string | null
@@ -345,6 +347,7 @@ export type Database = {
           instagram_btn_text: string | null
           instagram_handle: string | null
           instagram_url: string | null
+          localizacao_hero_image_url: string | null
           localizacao_howto_text: string | null
           localizacao_howto_title: string | null
           localizacao_maps_btn_text: string | null
@@ -363,6 +366,7 @@ export type Database = {
           primary_color: string | null
           secondary_color: string | null
           siganos_footer_text: string | null
+          siganos_hero_image_url: string | null
           siganos_subtitle: string | null
           siganos_title: string | null
           site_name: string | null
@@ -380,6 +384,7 @@ export type Database = {
           video_section_subtitle: string | null
           video_section_title: string | null
           videos_empty_text: string | null
+          videos_hero_image_url: string | null
           videos_likes_label: string | null
           videos_page_subtitle: string | null
           videos_page_title: string | null
@@ -428,6 +433,7 @@ export type Database = {
           faleconosco_btn_text?: string | null
           faleconosco_card_text?: string | null
           faleconosco_card_title?: string | null
+          faleconosco_hero_image_url?: string | null
           faleconosco_image_url?: string | null
           faleconosco_info_title?: string | null
           faleconosco_subtitle?: string | null
@@ -449,6 +455,7 @@ export type Database = {
           fotos_filter_conhecer?: string | null
           fotos_filter_galeria?: string | null
           fotos_filter_hotel?: string | null
+          fotos_hero_image_url?: string | null
           fotos_page_subtitle?: string | null
           fotos_page_title?: string | null
           gallery_section_subtitle?: string | null
@@ -482,6 +489,7 @@ export type Database = {
           instagram_btn_text?: string | null
           instagram_handle?: string | null
           instagram_url?: string | null
+          localizacao_hero_image_url?: string | null
           localizacao_howto_text?: string | null
           localizacao_howto_title?: string | null
           localizacao_maps_btn_text?: string | null
@@ -500,6 +508,7 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           siganos_footer_text?: string | null
+          siganos_hero_image_url?: string | null
           siganos_subtitle?: string | null
           siganos_title?: string | null
           site_name?: string | null
@@ -517,6 +526,7 @@ export type Database = {
           video_section_subtitle?: string | null
           video_section_title?: string | null
           videos_empty_text?: string | null
+          videos_hero_image_url?: string | null
           videos_likes_label?: string | null
           videos_page_subtitle?: string | null
           videos_page_title?: string | null
@@ -565,6 +575,7 @@ export type Database = {
           faleconosco_btn_text?: string | null
           faleconosco_card_text?: string | null
           faleconosco_card_title?: string | null
+          faleconosco_hero_image_url?: string | null
           faleconosco_image_url?: string | null
           faleconosco_info_title?: string | null
           faleconosco_subtitle?: string | null
@@ -586,6 +597,7 @@ export type Database = {
           fotos_filter_conhecer?: string | null
           fotos_filter_galeria?: string | null
           fotos_filter_hotel?: string | null
+          fotos_hero_image_url?: string | null
           fotos_page_subtitle?: string | null
           fotos_page_title?: string | null
           gallery_section_subtitle?: string | null
@@ -619,6 +631,7 @@ export type Database = {
           instagram_btn_text?: string | null
           instagram_handle?: string | null
           instagram_url?: string | null
+          localizacao_hero_image_url?: string | null
           localizacao_howto_text?: string | null
           localizacao_howto_title?: string | null
           localizacao_maps_btn_text?: string | null
@@ -637,6 +650,7 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           siganos_footer_text?: string | null
+          siganos_hero_image_url?: string | null
           siganos_subtitle?: string | null
           siganos_title?: string | null
           site_name?: string | null
@@ -654,6 +668,7 @@ export type Database = {
           video_section_subtitle?: string | null
           video_section_title?: string | null
           videos_empty_text?: string | null
+          videos_hero_image_url?: string | null
           videos_likes_label?: string | null
           videos_page_subtitle?: string | null
           videos_page_title?: string | null
