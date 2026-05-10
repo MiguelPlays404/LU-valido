@@ -124,11 +124,7 @@ export default function AdminPageTexts() {
           {active.fields.map(f => (
             <div key={f.k}>
               <label className="text-xs text-[#A1A1AA] block mb-1">{f.l}</label>
-              {(c[f.k] || "").length > 80 ? (
-                <textarea value={c[f.k] || ""} onChange={e => setC({ ...c, [f.k]: e.target.value })} rows={3} className="w-full bg-[#27272A] border border-[#3F3F46] rounded px-3 py-2 text-sm" />
-              ) : (
-                <input value={c[f.k] || ""} onChange={e => setC({ ...c, [f.k]: e.target.value })} className="w-full bg-[#27272A] border border-[#3F3F46] rounded px-3 py-2 text-sm" />
-              )}
+              <textarea value={c[f.k] || ""} onChange={e => setC({ ...c, [f.k]: e.target.value })} rows={2} className="w-full bg-[#27272A] border border-[#3F3F46] rounded px-3 py-2 text-sm resize-y" />
             </div>
           ))}
         </section>
