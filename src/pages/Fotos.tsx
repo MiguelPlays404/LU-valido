@@ -43,7 +43,7 @@ const Fotos = () => {
 
   return (
     <PublicLayout>
-      <PageHero badge="📸 Fotos" title={cfg?.fotos_page_title || "Galeria de Momentos"} subtitle={cfg?.fotos_page_subtitle || "Os pets mais lindos de Bauru"} />
+      <PageHero badge="📸 Fotos" title={cfg?.fotos_page_title || "Galeria de Momentos"} subtitle={cfg?.fotos_page_subtitle || "Os pets mais lindos de Bauru"} bgImage={cfg?.fotos_hero_image_url || undefined} />
 
       <section className="py-16" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4">

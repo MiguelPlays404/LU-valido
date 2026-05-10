@@ -17,10 +17,12 @@ const Videos = () => {
   const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [playerVideo, setPlayerVideo] = useState<any>(null);
+  const [cfg, setCfg] = useState<any>(null);
   useScrollAnimation();
 
   useEffect(() => {
     loadData();
+    supabase.from("site_config").select("*").limit(1).maybeSingle().then(({ data }) => setCfg(data));
     const localLikes = JSON.parse(localStorage.getItem("lvp_likes") || "[]");
     setLikedSet(new Set(localLikes));
   }, []);
@@ -76,7 +78,7 @@ const Videos = () => {
 
   return (
     <PublicLayout>
-      <PageHero badge="🎥 Vídeos" title="Nossos Vídeos" subtitle="Curta, compartilhe, sorria!" />
+      <PageHero badge="🎥 Vídeos" title={cfg?.videos_page_title || "Nossos Vídeos"} subtitle={cfg?.videos_page_subtitle || "Curta, compartilhe, sorria!"} bgImage={cfg?.videos_hero_image_url || undefined} />
 
       <section className="py-16" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4">

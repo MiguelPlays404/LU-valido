@@ -86,13 +86,13 @@ const SigaNos = () => {
                 {c?.fixed_phone && (
                   <a
                     href={`tel:${c.fixed_phone.replace(/\D/g,'')}`}
-                    className="flex items-center gap-4 w-full h-16 text-white font-heading font-semibold text-lg rounded-2xl px-6 transition-all hover:-translate-y-1 hover:shadow-lg min-h-[64px]"
+                    className="flex items-center gap-3 w-full min-h-[64px] py-3 font-heading font-semibold rounded-2xl px-5 transition-all hover:-translate-y-1 hover:shadow-lg"
                     style={{ background: 'linear-gradient(135deg, #F5C000 0%, #FFD700 100%)', color: '#000' }}
                   >
-                    <Phone className="w-7 h-7" />
-                    <div className="flex-1 flex items-center justify-between">
-                      <span>Ligar (Telefone Fixo)</span>
-                      <span className="text-sm opacity-80 font-normal" style={{ fontFamily: 'Inter' }}>{c.fixed_phone}</span>
+                    <Phone className="w-6 h-6 shrink-0" />
+                    <div className="flex-1 min-w-0 flex flex-col text-left">
+                      <span className="text-base leading-tight">Ligar agora</span>
+                      <span className="text-xs opacity-75 font-normal truncate" style={{ fontFamily: 'Inter' }}>{c.fixed_phone}</span>
                     </div>
                   </a>
                 )}
@@ -102,13 +102,13 @@ const SigaNos = () => {
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-4 w-full h-16 text-white font-heading font-semibold text-lg rounded-2xl px-6 transition-all hover:-translate-y-1 hover:shadow-lg min-h-[64px]"
+                    className="flex items-center gap-3 w-full min-h-[64px] py-3 text-white font-heading font-semibold rounded-2xl px-5 transition-all hover:-translate-y-1 hover:shadow-lg"
                     style={{ background: link.bg }}
                   >
-                    {link.icon}
-                    <div className="flex-1 flex items-center justify-between">
-                      <span>{link.btnText || link.name}</span>
-                      <span className="text-sm opacity-80 font-normal" style={{ fontFamily: 'Inter' }}>{link.handle}</span>
+                    <span className="shrink-0">{link.icon}</span>
+                    <div className="flex-1 min-w-0 flex flex-col text-left">
+                      <span className="text-base leading-tight truncate">{link.btnText || link.name}</span>
+                      {link.handle && <span className="text-xs opacity-75 font-normal truncate" style={{ fontFamily: 'Inter' }}>{link.handle}</span>}
                     </div>
                   </a>
                 ))}

@@ -21,7 +21,7 @@ const FaleConosco = () => {
 
   return (
     <PublicLayout>
-      <PageHero badge="💬 Contato" title={c?.faleconosco_title || "Fale com o Le Ville Pet"} subtitle={c?.faleconosco_subtitle || "Estamos prontos para te atender"} />
+      <PageHero badge="💬 Contato" title={c?.faleconosco_title || "Fale com o Le Ville Pet"} subtitle={c?.faleconosco_subtitle || "Estamos prontos para te atender"} bgImage={c?.faleconosco_hero_image_url || undefined} />
 
       {/* WhatsApp Card — WHITE bg */}
       <section className="py-20" style={{ background: '#FFFFFF' }}>
