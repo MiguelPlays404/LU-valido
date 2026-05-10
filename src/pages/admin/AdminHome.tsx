@@ -66,19 +66,12 @@ export default function AdminHome() {
 
   if (!config) return <AdminLayout title="🏠 Gerenciar Home"><div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full" style={{ animation: 'spinSmooth 1s linear infinite' }} /></div></AdminLayout>;
 
-  const F = (props: Omit<FieldProps, 'config' | 'setConfig'>) => <Field {...props} config={config} setConfig={setConfig} />;
-
   const SaveBtn = ({ label, fields }: { label: string; fields: string[] }) => (
     <button onClick={() => saveFields(Object.fromEntries(fields.map(f => [f, config[f]])), label)} disabled={saving === label} className="bg-primary text-black font-heading font-bold px-6 py-2.5 rounded-lg hover:bg-primary-vibrant transition-colors disabled:opacity-50">
       {saving === label ? "Salvando..." : `💾 Salvar ${label}`}
     </button>
   );
-
-  const SaveBtn = ({ label, fields }: { label: string; fields: string[] }) => (
-    <button onClick={() => saveFields(Object.fromEntries(fields.map(f => [f, config[f]])), label)} disabled={saving === label} className="bg-primary text-black font-heading font-bold px-6 py-2.5 rounded-lg hover:bg-primary-vibrant transition-colors disabled:opacity-50">
-      {saving === label ? "Salvando..." : `💾 Salvar ${label}`}
-    </button>
-  );
+  const cfgProps = { config, setConfig };
 
   return (
     <AdminLayout title="🏠 Gerenciar Home">
