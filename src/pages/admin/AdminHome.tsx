@@ -13,6 +13,18 @@ const HOME_TABS = [
   { key: "contato", label: "Contato" },
 ];
 
+type FieldProps = { label: string; field: string; max?: number; textarea?: boolean; config: any; setConfig: (v: any) => void };
+const Field = ({ label, field, max, textarea, config, setConfig }: FieldProps) => (
+  <div>
+    <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">{label} {max && `(${(config[field] || '').length}/${max})`}</label>
+    {textarea ? (
+      <textarea value={config[field] || ""} onChange={e => setConfig({ ...config, [field]: e.target.value })} maxLength={max} rows={3} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-white text-sm focus:border-primary outline-none transition-colors resize-none" />
+    ) : (
+      <input value={config[field] || ""} onChange={e => setConfig({ ...config, [field]: e.target.value })} maxLength={max} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-white text-sm focus:border-primary outline-none transition-colors" />
+    )}
+  </div>
+);
+
 export default function AdminHome() {
   const { toast } = useToast();
   const [config, setConfig] = useState<any>(null);
