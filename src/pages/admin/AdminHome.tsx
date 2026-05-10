@@ -13,6 +13,18 @@ const HOME_TABS = [
   { key: "contato", label: "Contato" },
 ];
 
+type FieldProps = { label: string; field: string; max?: number; textarea?: boolean; config: any; setConfig: (v: any) => void };
+const Field = ({ label, field, max, textarea, config, setConfig }: FieldProps) => (
+  <div>
+    <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">{label} {max && `(${(config[field] || '').length}/${max})`}</label>
+    {textarea ? (
+      <textarea value={config[field] || ""} onChange={e => setConfig({ ...config, [field]: e.target.value })} maxLength={max} rows={3} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-white text-sm focus:border-primary outline-none transition-colors resize-none" />
+    ) : (
+      <input value={config[field] || ""} onChange={e => setConfig({ ...config, [field]: e.target.value })} maxLength={max} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-white text-sm focus:border-primary outline-none transition-colors" />
+    )}
+  </div>
+);
+
 export default function AdminHome() {
   const { toast } = useToast();
   const [config, setConfig] = useState<any>(null);
@@ -54,22 +66,12 @@ export default function AdminHome() {
 
   if (!config) return <AdminLayout title="🏠 Gerenciar Home"><div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full" style={{ animation: 'spinSmooth 1s linear infinite' }} /></div></AdminLayout>;
 
-  const Field = ({ label, field, max, textarea }: { label: string; field: string; max?: number; textarea?: boolean }) => (
-    <div>
-      <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">{label} {max && `(${(config[field] || '').length}/${max})`}</label>
-      {textarea ? (
-        <textarea value={config[field] || ""} onChange={e => setConfig({ ...config, [field]: e.target.value })} maxLength={max} rows={3} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-white text-sm focus:border-primary outline-none transition-colors resize-none" />
-      ) : (
-        <input value={config[field] || ""} onChange={e => setConfig({ ...config, [field]: e.target.value })} maxLength={max} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-4 py-3 text-white text-sm focus:border-primary outline-none transition-colors" />
-      )}
-    </div>
-  );
-
   const SaveBtn = ({ label, fields }: { label: string; fields: string[] }) => (
     <button onClick={() => saveFields(Object.fromEntries(fields.map(f => [f, config[f]])), label)} disabled={saving === label} className="bg-primary text-black font-heading font-bold px-6 py-2.5 rounded-lg hover:bg-primary-vibrant transition-colors disabled:opacity-50">
       {saving === label ? "Salvando..." : `💾 Salvar ${label}`}
     </button>
   );
+  const cfgProps = { config, setConfig };
 
   return (
     <AdminLayout title="🏠 Gerenciar Home">
@@ -86,27 +88,27 @@ export default function AdminHome() {
           <a href="/" target="_blank" className="text-xs text-primary hover:underline">Ver página →</a>
         </div>
         <div className="space-y-4">
-          <Field label="Título Principal" field="hero_title" max={80} />
-            <Field label="Badge do Hero" field="hero_badge_text" />
-          <Field label="Palavra em Destaque (amarela)" field="hero_highlight_word" />
-          <Field label="Subtítulo" field="hero_subtitle" max={200} textarea />
+          <Field {...cfgProps} label="Título Principal" field="hero_title" max={80} />
+            <Field {...cfgProps} label="Badge do Hero" field="hero_badge_text" />
+          <Field {...cfgProps} label="Palavra em Destaque (amarela)" field="hero_highlight_word" />
+          <Field {...cfgProps} label="Subtítulo" field="hero_subtitle" max={200} textarea />
             <div>
               <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">Imagem ou vídeo de fundo do Hero</label>
               <MediaUploader accept="both" pathPrefix="home/hero" currentUrl={config.hero_bg_image_url} onUploaded={(url) => setConfig({...config, hero_bg_image_url: url})} label="" />
             </div>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Texto Botão Primário" field="hero_btn_primary_text" />
-            <Field label="Texto Botão Secundário" field="hero_btn_secondary_text" />
+            <Field {...cfgProps} label="Texto Botão Primário" field="hero_btn_primary_text" />
+            <Field {...cfgProps} label="Texto Botão Secundário" field="hero_btn_secondary_text" />
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <Field label="Stat 1 Número" field="hero_stat_1_num" />
-            <Field label="Stat 1 Label" field="hero_stat_1_label" />
+            <Field {...cfgProps} label="Stat 1 Número" field="hero_stat_1_num" />
+            <Field {...cfgProps} label="Stat 1 Label" field="hero_stat_1_label" />
             <div />
-            <Field label="Stat 2 Número" field="hero_stat_2_num" />
-            <Field label="Stat 2 Label" field="hero_stat_2_label" />
+            <Field {...cfgProps} label="Stat 2 Número" field="hero_stat_2_num" />
+            <Field {...cfgProps} label="Stat 2 Label" field="hero_stat_2_label" />
             <div />
-            <Field label="Stat 3 Número" field="hero_stat_3_num" />
-            <Field label="Stat 3 Label" field="hero_stat_3_label" />
+            <Field {...cfgProps} label="Stat 3 Número" field="hero_stat_3_num" />
+            <Field {...cfgProps} label="Stat 3 Label" field="hero_stat_3_label" />
           </div>
           <SaveBtn label="Hero" fields={["hero_title","hero_badge_text","hero_highlight_word","hero_subtitle","hero_bg_image_url","hero_btn_primary_text","hero_btn_secondary_text","hero_stat_1_num","hero_stat_1_label","hero_stat_2_num","hero_stat_2_label","hero_stat_3_num","hero_stat_3_label"]} />
         </div>
@@ -116,10 +118,10 @@ export default function AdminHome() {
       <div className={`${activeTab === "sobre" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">Sobre o Petshop (Quem Somos)</h2>
         <div className="space-y-4">
-          <Field label="Título da Seção" field="sobre_title" />
-          <Field label="Badge da Seção" field="sobre_badge_text" />
-          <Field label="Texto de Apresentação" field="sobre_text" textarea />
-          <Field label="Texto do CTA" field="sobre_cta_text" />
+          <Field {...cfgProps} label="Título da Seção" field="sobre_title" />
+          <Field {...cfgProps} label="Badge da Seção" field="sobre_badge_text" />
+          <Field {...cfgProps} label="Texto de Apresentação" field="sobre_text" textarea />
+          <Field {...cfgProps} label="Texto do CTA" field="sobre_cta_text" />
           <div>
             <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem ou vídeo da Seção (Quem Somos)</label>
             <MediaUploader accept="both" pathPrefix="home/sobre" currentUrl={config.sobre_image_url} onUploaded={(url) => setConfig({...config, sobre_image_url: url})} label="" />
@@ -133,18 +135,18 @@ export default function AdminHome() {
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h2 className="font-heading font-semibold text-white mb-4">Seção Galeria</h2>
           <div className="space-y-4">
-            <Field label="Título" field="gallery_section_title" />
-            <Field label="Subtítulo" field="gallery_section_subtitle" />
-            <Field label="Texto do Botão" field="featured_photos_btn_text" />
+            <Field {...cfgProps} label="Título" field="gallery_section_title" />
+            <Field {...cfgProps} label="Subtítulo" field="gallery_section_subtitle" />
+            <Field {...cfgProps} label="Texto do Botão" field="featured_photos_btn_text" />
             <SaveBtn label="Galeria" fields={["gallery_section_title","gallery_section_subtitle","featured_photos_btn_text"]} />
           </div>
         </div>
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h2 className="font-heading font-semibold text-white mb-4">Seção Vídeo</h2>
           <div className="space-y-4">
-            <Field label="Título" field="video_section_title" />
-            <Field label="Subtítulo" field="video_section_subtitle" />
-            <Field label="Texto do Botão" field="featured_videos_btn_text" />
+            <Field {...cfgProps} label="Título" field="video_section_title" />
+            <Field {...cfgProps} label="Subtítulo" field="video_section_subtitle" />
+            <Field {...cfgProps} label="Texto do Botão" field="featured_videos_btn_text" />
             <SaveBtn label="Vídeo" fields={["video_section_title","video_section_subtitle","featured_videos_btn_text"]} />
           </div>
         </div>
@@ -153,9 +155,9 @@ export default function AdminHome() {
       <div className={`${activeTab === "cards" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">Seção de Cards da Home</h2>
         <div className="space-y-4">
-          <Field label="Título" field="home_explore_title" />
-          <Field label="Subtítulo" field="home_explore_subtitle" />
-          <Field label="Texto do Link" field="home_card_cta_text" />
+          <Field {...cfgProps} label="Título" field="home_explore_title" />
+          <Field {...cfgProps} label="Subtítulo" field="home_explore_subtitle" />
+          <Field {...cfgProps} label="Texto do Link" field="home_card_cta_text" />
           <SaveBtn label="Cards" fields={["home_explore_title","home_explore_subtitle","home_card_cta_text"]} />
         </div>
       </div>
@@ -164,12 +166,12 @@ export default function AdminHome() {
       <div className={`${activeTab === "cta" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">CTA Hotelzinho (faixa amarela)</h2>
         <div className="space-y-4">
-          <Field label="Título" field="cta_hotel_title" />
-          <Field label="Badge" field="cta_hotel_badge_text" />
-          <Field label="Texto Descritivo" field="cta_hotel_text" textarea />
+          <Field {...cfgProps} label="Título" field="cta_hotel_title" />
+          <Field {...cfgProps} label="Badge" field="cta_hotel_badge_text" />
+          <Field {...cfgProps} label="Texto Descritivo" field="cta_hotel_text" textarea />
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Botão 1" field="cta_hotel_btn1_text" />
-            <Field label="Botão 2" field="cta_hotel_btn2_text" />
+            <Field {...cfgProps} label="Botão 1" field="cta_hotel_btn1_text" />
+            <Field {...cfgProps} label="Botão 2" field="cta_hotel_btn2_text" />
           </div>
           <div>
             <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">📷 Imagem ou vídeo da Faixa CTA</label>
@@ -183,12 +185,12 @@ export default function AdminHome() {
       <div className={`${activeTab === "contato" ? "block" : "hidden"} bg-[#18181B] rounded-2xl p-6 border border-white/[0.07] mb-6`}>
         <h2 className="font-heading font-semibold text-white mb-4">Textos dos Botões de Contato</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Field label="Título da Seção" field="contact_section_title" />
-          <Field label="Botão WhatsApp" field="contact_whatsapp_btn_text" />
-          <Field label="Título Telefone Fixo" field="contact_fixed_phone_title" />
-          <Field label="Botão Telefone Fixo" field="contact_fixed_phone_btn_text" />
-          <Field label="Botão Mapa" field="contact_maps_btn_text" />
-          <Field label="Botão Instagram" field="contact_instagram_btn_text" />
+          <Field {...cfgProps} label="Título da Seção" field="contact_section_title" />
+          <Field {...cfgProps} label="Botão WhatsApp" field="contact_whatsapp_btn_text" />
+          <Field {...cfgProps} label="Título Telefone Fixo" field="contact_fixed_phone_title" />
+          <Field {...cfgProps} label="Botão Telefone Fixo" field="contact_fixed_phone_btn_text" />
+          <Field {...cfgProps} label="Botão Mapa" field="contact_maps_btn_text" />
+          <Field {...cfgProps} label="Botão Instagram" field="contact_instagram_btn_text" />
         </div>
         <div className="mt-4">
           <SaveBtn label="Contato" fields={["contact_section_title","contact_whatsapp_btn_text","contact_fixed_phone_title","contact_fixed_phone_btn_text","contact_maps_btn_text","contact_instagram_btn_text"]} />

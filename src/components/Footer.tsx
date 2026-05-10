@@ -24,9 +24,9 @@ export function Footer() {
   const phone = `(${waNum.slice(2,4)}) ${waNum.slice(4,9)}-${waNum.slice(9)}`;
 
   return (
-    <footer style={{ background: '#111111' }} className="pt-16 pb-6">
+    <footer style={{ background: '#111111' }} className="pt-10 pb-5">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
           <div>
             {c?.logo_url ? (
               <img src={c.logo_url} alt={c?.site_name || 'Le Ville Pet'} className="h-11 rounded-lg mb-3" />

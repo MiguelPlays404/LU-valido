@@ -5,6 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ExternalLink, Upload } from "lucide-react";
 
+type FieldProps = { label: string; field: string; type?: string; config: any; setConfig: (v: any) => void };
+const Field = ({ label, field, type, config, setConfig }: FieldProps) => (
+  <div>
+    <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">{label}</label>
+    {type === "textarea" ? (
+      <textarea value={config[field] || ""} onChange={e => setConfig({...config, [field]: e.target.value})} rows={2} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white resize-y" />
+    ) : (
+      <input value={config[field] || ""} onChange={e => setConfig({...config, [field]: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
+    )}
+  </div>
+);
+
 export default function AdminConfig() {
   const [config, setConfig] = useState<any>(null);
   const [saving, setSaving] = useState(false);
@@ -38,16 +50,6 @@ export default function AdminConfig() {
 
   if (!config) return <AdminLayout title="Configurações Gerais"><div className="text-[#71717A]">Carregando...</div></AdminLayout>;
 
-  const Field = ({ label, field, type }: { label: string; field: string; type?: string }) => (
-    <div>
-      <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">{label}</label>
-      {type === "textarea" ? (
-        <textarea value={config[field] || ""} onChange={e => setConfig({...config, [field]: e.target.value})} rows={2} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white resize-y" />
-      ) : (
-        <input value={config[field] || ""} onChange={e => setConfig({...config, [field]: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
-      )}
-    </div>
-  );
 
   return (
     <AdminLayout title="Configurações Gerais">
@@ -56,8 +58,8 @@ export default function AdminConfig() {
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h3 className="font-heading font-semibold text-white text-sm mb-4">Identidade</h3>
           <div className="space-y-4">
-            <Field label="Nome do Petshop" field="site_name" />
-            <Field label="Slogan" field="site_slogan" />
+            <Field config={config} setConfig={setConfig} label="Nome do Petshop" field="site_name" />
+            <Field config={config} setConfig={setConfig} label="Slogan" field="site_slogan" />
           </div>
         </div>
 
@@ -84,9 +86,9 @@ export default function AdminConfig() {
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h3 className="font-heading font-semibold text-white text-sm mb-4">Telefones & WhatsApp</h3>
           <div className="space-y-4">
-            <Field label="📞 Telefone Fixo (ex: (14) 3204-7040)" field="fixed_phone" />
-            <Field label="WhatsApp — Número (apenas dígitos, ex: 5514997145610)" field="whatsapp_number" />
-            <Field label="Mensagem padrão WhatsApp" field="whatsapp_message" type="textarea" />
+            <Field config={config} setConfig={setConfig} label="📞 Telefone Fixo (ex: (14) 3204-7040)" field="fixed_phone" />
+            <Field config={config} setConfig={setConfig} label="WhatsApp — Número (apenas dígitos, ex: 5514997145610)" field="whatsapp_number" />
+            <Field config={config} setConfig={setConfig} label="Mensagem padrão WhatsApp" field="whatsapp_message" type="textarea" />
           </div>
         </div>
 
@@ -94,11 +96,11 @@ export default function AdminConfig() {
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h3 className="font-heading font-semibold text-white text-sm mb-4">Localização</h3>
           <div className="space-y-4">
-            <Field label="Endereço Linha 1 (nome do local)" field="address_line1" />
-            <Field label="Endereço Linha 2 (rua e número)" field="address_line2" />
-            <Field label="Endereço Linha 3 (bairro, cidade, CEP)" field="address_line3" />
-            <Field label="Link Google Maps" field="google_maps_url" />
-            <Field label="Google Maps Embed URL (para iframe)" field="google_maps_embed" />
+            <Field config={config} setConfig={setConfig} label="Endereço Linha 1 (nome do local)" field="address_line1" />
+            <Field config={config} setConfig={setConfig} label="Endereço Linha 2 (rua e número)" field="address_line2" />
+            <Field config={config} setConfig={setConfig} label="Endereço Linha 3 (bairro, cidade, CEP)" field="address_line3" />
+            <Field config={config} setConfig={setConfig} label="Link Google Maps" field="google_maps_url" />
+            <Field config={config} setConfig={setConfig} label="Google Maps Embed URL (para iframe)" field="google_maps_embed" />
             {config.google_maps_url && (
               <a href={config.google_maps_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-xs text-primary hover:underline">
                 <ExternalLink className="w-3.5 h-3.5" /> Testar link do Maps
@@ -110,15 +112,15 @@ export default function AdminConfig() {
         {/* Instagram */}
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h3 className="font-heading font-semibold text-white text-sm mb-4">Instagram</h3>
-          <Field label="URL do Instagram" field="instagram_url" />
+          <Field config={config} setConfig={setConfig} label="URL do Instagram" field="instagram_url" />
         </div>
 
         {/* Footer */}
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h3 className="font-heading font-semibold text-white text-sm mb-4">Footer</h3>
           <div className="space-y-4">
-            <Field label="Descrição curta no footer" field="footer_description" type="textarea" />
-            <Field label="Texto de copyright" field="copyright_text" />
+            <Field config={config} setConfig={setConfig} label="Descrição curta no footer" field="footer_description" type="textarea" />
+            <Field config={config} setConfig={setConfig} label="Texto de copyright" field="copyright_text" />
           </div>
         </div>
 
@@ -126,11 +128,11 @@ export default function AdminConfig() {
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h3 className="font-heading font-semibold text-white text-sm mb-4">Página Fale Conosco</h3>
           <div className="space-y-4">
-            <Field label="Título da página" field="faleconosco_title" />
-            <Field label="Subtítulo" field="faleconosco_subtitle" />
-            <Field label="Título do card WhatsApp" field="faleconosco_card_title" />
-            <Field label="Texto do card" field="faleconosco_card_text" type="textarea" />
-            <Field label="Texto do botão" field="faleconosco_btn_text" />
+            <Field config={config} setConfig={setConfig} label="Título da página" field="faleconosco_title" />
+            <Field config={config} setConfig={setConfig} label="Subtítulo" field="faleconosco_subtitle" />
+            <Field config={config} setConfig={setConfig} label="Título do card WhatsApp" field="faleconosco_card_title" />
+            <Field config={config} setConfig={setConfig} label="Texto do card" field="faleconosco_card_text" type="textarea" />
+            <Field config={config} setConfig={setConfig} label="Texto do botão" field="faleconosco_btn_text" />
             <div>
               <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">Imagem ou vídeo lateral</label>
               <MediaUploader accept="both" pathPrefix="fale-conosco/media" currentUrl={config.faleconosco_image_url} onUploaded={(url) => setConfig({ ...config, faleconosco_image_url: url })} label="" />
@@ -142,11 +144,11 @@ export default function AdminConfig() {
         <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
           <h3 className="font-heading font-semibold text-white text-sm mb-4">Página Localização</h3>
           <div className="space-y-4">
-            <Field label="Título" field="localizacao_title" />
-            <Field label="Subtítulo" field="localizacao_subtitle" />
-            <Field label="Texto botão Maps" field="localizacao_maps_btn_text" />
-            <Field label="Texto botão Rota" field="localizacao_route_btn_text" />
-            <Field label="Texto 'Como Chegar'" field="localizacao_howto_text" type="textarea" />
+            <Field config={config} setConfig={setConfig} label="Título" field="localizacao_title" />
+            <Field config={config} setConfig={setConfig} label="Subtítulo" field="localizacao_subtitle" />
+            <Field config={config} setConfig={setConfig} label="Texto botão Maps" field="localizacao_maps_btn_text" />
+            <Field config={config} setConfig={setConfig} label="Texto botão Rota" field="localizacao_route_btn_text" />
+            <Field config={config} setConfig={setConfig} label="Texto 'Como Chegar'" field="localizacao_howto_text" type="textarea" />
           </div>
         </div>
 
