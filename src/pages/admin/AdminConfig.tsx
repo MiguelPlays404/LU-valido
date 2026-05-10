@@ -152,6 +152,28 @@ export default function AdminConfig() {
           </div>
         </div>
 
+        {/* Hero images for sub-pages */}
+        <div className="bg-[#18181B] rounded-2xl p-6 border border-white/[0.07]">
+          <h3 className="font-heading font-semibold text-white text-sm mb-4">🖼️ Imagens do Hero (topo das páginas)</h3>
+          <p className="text-xs text-[#71717A] mb-4">Imagem ou vídeo de fundo do topo de cada página. Deixe em branco para fundo preto padrão.</p>
+          <div className="space-y-5">
+            {[
+              { f: "fotos_hero_image_url", l: "Página Fotos" },
+              { f: "videos_hero_image_url", l: "Página Vídeos" },
+              { f: "localizacao_hero_image_url", l: "Página Localização" },
+              { f: "faleconosco_hero_image_url", l: "Página Fale Conosco" },
+              { f: "hotel_hero_image_url", l: "Página Hotelzinho" },
+              { f: "conhecer_hero_image_url", l: "Página Venha Nos Conhecer" },
+              { f: "hero_bg_image_url", l: "Hero da Home (Inicial)" },
+            ].map(({ f, l }) => (
+              <div key={f}>
+                <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-2 block">{l}</label>
+                <MediaUploader accept="both" pathPrefix={`hero/${f}`} currentUrl={config[f]} onUploaded={(url) => setConfig({ ...config, [f]: url })} label="" />
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="flex gap-3 justify-end pt-4">
           <button onClick={handleSave} disabled={saving} className="btn-primary text-sm">{saving ? "Salvando..." : "💾 Salvar Tudo"}</button>
         </div>
