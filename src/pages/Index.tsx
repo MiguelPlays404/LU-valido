@@ -45,9 +45,11 @@ const Index = () => {
       {/* ═══ HERO — ESCURO ═══ */}
       <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: 'radial-gradient(ellipse at 65% 35%, #1C1500 0%, #080808 55%, #000000 100%)' }}>
         {c.hero_bg_image_url && (
-          <div className="absolute inset-0 opacity-45">
-            {renderMedia(c.hero_bg_image_url, '', 'Le Ville Pet', 'w-full h-full object-cover')}
-            <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0">
+            <div className="absolute inset-0 opacity-30 lg:opacity-45">
+              {renderMedia(c.hero_bg_image_url, '', 'Le Ville Pet', 'w-full h-full object-cover object-center')}
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/85 lg:from-black/55 lg:via-black/45 lg:to-black/60" />
           </div>
         )}
         <div className="absolute top-[10%] right-[5%] w-[700px] h-[700px] rounded-full pointer-events-none animate-scale-breath" style={{ background: 'radial-gradient(circle, rgba(245,192,0,0.14) 0%, transparent 70%)' }} />

@@ -22,7 +22,7 @@ const Localizacao = () => {
 
   return (
     <PublicLayout>
-      <PageHero badge="📍 Nossa Localização" title={c?.localizacao_title || "Nossa Localização"} subtitle={c?.localizacao_subtitle || "Venha nos visitar em Bauru-SP"} />
+      <PageHero badge="📍 Nossa Localização" title={c?.localizacao_title || "Nossa Localização"} subtitle={c?.localizacao_subtitle || "Venha nos visitar em Bauru-SP"} bgImage={c?.localizacao_hero_image_url || undefined} />
 
       <section className="py-20" style={{ background: '#FFFFFF' }}>
         <div className="container mx-auto px-4 max-w-[700px]">
