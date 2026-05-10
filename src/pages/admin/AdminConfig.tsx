@@ -5,6 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ExternalLink, Upload } from "lucide-react";
 
+type FieldProps = { label: string; field: string; type?: string; config: any; setConfig: (v: any) => void };
+const Field = ({ label, field, type, config, setConfig }: FieldProps) => (
+  <div>
+    <label className="text-xs text-[#A1A1AA] uppercase tracking-wider font-heading mb-1 block">{label}</label>
+    {type === "textarea" ? (
+      <textarea value={config[field] || ""} onChange={e => setConfig({...config, [field]: e.target.value})} rows={2} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white resize-y" />
+    ) : (
+      <input value={config[field] || ""} onChange={e => setConfig({...config, [field]: e.target.value})} className="w-full bg-[#27272A] border border-[#3F3F46] rounded-lg px-3 py-2 text-sm text-white" />
+    )}
+  </div>
+);
+
 export default function AdminConfig() {
   const [config, setConfig] = useState<any>(null);
   const [saving, setSaving] = useState(false);
