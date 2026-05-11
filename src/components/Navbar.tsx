@@ -57,9 +57,11 @@ export function Navbar() {
           })}
         </div>
 
-        <a href={`https://wa.me/${waNum}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="hidden lg:flex btn-primary text-sm py-2.5 px-5">
-          {waText}
-        </a>
+        <div className="hidden lg:block">
+          <a href={`https://wa.me/${waNum}?text=${waMsg}`} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm py-2.5 px-5">
+            {waText}
+          </a>
+        </div>
 
         <button onClick={() => setIsOpen(true)} className="lg:hidden text-white p-2" aria-label="Abrir menu">
           <Menu className="w-6 h-6" />
