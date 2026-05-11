@@ -67,22 +67,22 @@ const VenhaNosConhecer = () => {
 
       {/* Produtos que utilizamos — PEARL */}
       {cfg && (cfg.conhecer_produtos_title || cfg.conhecer_produtos_image_url) && (
-        <section className="py-20" style={{ background: '#F8F8F6' }}>
-          <div className="container mx-auto px-4 max-w-4xl">
-            <div className="text-center mb-8">
+        <section className="py-14 lg:py-20" style={{ background: '#F8F8F6' }}>
+          <div className="container mx-auto px-5 sm:px-6 max-w-4xl">
+            <div className="text-center mb-7 lg:mb-10">
               {cfg.conhecer_produtos_badge && (
                 <span data-animate="fade-up" className="inline-block bg-primary/15 text-black border border-primary/30 px-3 py-1 rounded-full text-xs font-heading font-semibold mb-4">{cfg.conhecer_produtos_badge}</span>
               )}
-              <h2 data-animate="fade-up" data-delay="1" className="section-title text-black">{cfg.conhecer_produtos_title || 'Produtos que utilizamos'}</h2>
+              <h2 data-animate="fade-up" data-delay="1" className="section-title text-black px-2">{cfg.conhecer_produtos_title || 'Produtos que utilizamos'}</h2>
             </div>
-            <div data-animate="fade-up" data-delay="2" className="rounded-2xl overflow-hidden bg-[#E5E5E5] aspect-[16/9] mb-8">
+            <div data-animate="fade-up" data-delay="2" className="rounded-2xl overflow-hidden bg-[#E5E5E5] aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] mb-7 lg:mb-9 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.18)]">
               {cfg.conhecer_produtos_image_url && /\.(mp4|webm|mov)(\?|$)/i.test(cfg.conhecer_produtos_image_url) ? (
                 <video src={cfg.conhecer_produtos_image_url} className="w-full h-full object-cover" autoPlay muted loop playsInline />
               ) : (
                 <img src={cfg.conhecer_produtos_image_url || '/placeholder.svg'} alt={cfg.conhecer_produtos_title} className="w-full h-full object-cover" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
               )}
             </div>
-            <p data-animate="fade-up" data-delay="3" className="text-[#444] text-base leading-relaxed whitespace-pre-line text-center max-w-2xl mx-auto" style={{ fontFamily: 'Inter' }}>{cfg.conhecer_produtos_text || ''}</p>
+            <p data-animate="fade-up" data-delay="3" className="text-[#444] text-[15px] sm:text-base leading-relaxed whitespace-pre-line text-center max-w-2xl mx-auto px-1" style={{ fontFamily: 'Inter' }}>{cfg.conhecer_produtos_text || ''}</p>
           </div>
         </section>
       )}
