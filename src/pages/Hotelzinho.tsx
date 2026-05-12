@@ -80,6 +80,14 @@ const Hotelzinho = () => {
         </section>
       )}
 
+      {/* Destaques da Semana */}
+      <DestaquesSection
+        locationKey="destaques_hotel"
+        title={cfg?.destaques_hotel_title || "Destaques da Semana"}
+        subtitle={cfg?.destaques_hotel_subtitle || "Pets que passaram por aqui"}
+        background="#FAFAF8"
+      />
+
       {/* Gallery — DARK */}
       {photos.length > 0 && (
         <section className="py-20" style={{ background: '#0D0D0D' }}>
