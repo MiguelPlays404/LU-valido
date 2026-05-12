@@ -5,6 +5,7 @@ import { Shield, Heart, CheckCircle, MessageCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Lightbox } from "@/components/Lightbox";
+import { DestaquesSection } from "@/components/DestaquesSection";
 
 const Hotelzinho = () => {
   const [content, setContent] = useState<any>(null);
