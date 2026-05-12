@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { PublicLayout } from "@/components/PublicLayout";
 import { useState, useEffect } from "react";
 import { Lightbox } from "@/components/Lightbox";
+import { DestaquesSection } from "@/components/DestaquesSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
