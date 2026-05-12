@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface LightboxProps {
@@ -61,10 +61,18 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
       )}
 
       <div className="flex flex-col items-center max-w-[90vw] max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+        {/* preload neighbors */}
+        {images.length > 1 && (
+          <>
+            <link rel="preload" as="image" href={images[(current + 1) % images.length].url} />
+            <link rel="preload" as="image" href={images[(current - 1 + images.length) % images.length].url} />
+          </>
+        )}
         <img
+          key={images[current].url}
           src={images[current].url}
           alt={images[current].title || "Foto"}
-          className="max-w-full max-h-[80vh] object-contain rounded-lg"
+          className="max-w-full max-h-[80vh] object-contain rounded-lg animate-[fadeIn_0.25s_ease]"
         />
         {images[current].title && (
           <p className="text-text-on-dark text-sm mt-3 font-body">{images[current].title}</p>

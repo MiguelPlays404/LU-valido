@@ -28,6 +28,7 @@ import AdminNavbarFooter from "./pages/admin/AdminNavbarFooter";
 import AdminBranding from "./pages/admin/AdminBranding";
 import AdminPageTexts from "./pages/admin/AdminPageTexts";
 import AdminGuia from "./pages/admin/AdminGuia";
+import AdminDestaques from "./pages/admin/AdminDestaques";
 import { useEffect } from "react";
 import { supabase } from "./integrations/supabase/client";
 
@@ -85,6 +86,7 @@ const App = () => (
           <Route path="/admin/branding" element={<ProtectedRoute><AdminBranding /></ProtectedRoute>} />
           <Route path="/admin/textos-paginas" element={<ProtectedRoute><AdminPageTexts /></ProtectedRoute>} />
           <Route path="/admin/guia" element={<ProtectedRoute><AdminGuia /></ProtectedRoute>} />
+          <Route path="/admin/destaques" element={<ProtectedRoute><AdminDestaques /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

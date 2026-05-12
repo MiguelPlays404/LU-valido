@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { PublicLayout } from "@/components/PublicLayout";
 import { useState, useEffect } from "react";
 import { Lightbox } from "@/components/Lightbox";
+import { DestaquesSection } from "@/components/DestaquesSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import {
@@ -150,6 +151,14 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ═══ DESTAQUES DA SEMANA — HOME ═══ */}
+      <DestaquesSection
+        locationKey="destaques_home"
+        title={c.destaques_home_title || "Destaques da Semana"}
+        subtitle={c.destaques_home_subtitle || "Os momentos mais especiais"}
+        background="#FAFAF8"
+      />
+
       {/* ═══ CARDS — CLARO (#F8F8F6) ═══ */}
       <section className="py-20 lg:py-24" style={{ background: '#F8F8F6' }}>
         <div className="container mx-auto px-6">
@@ -195,7 +204,7 @@ const Index = () => {
               {photos.map((photo: any, i: number) => (
                 <button key={photo.id} data-animate="fade-scale" data-delay={String(i)} onClick={() => setLightboxIndex(i)}
                   className="group relative aspect-square rounded-[14px] overflow-hidden bg-[#333]">
-                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.06]" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
+                  <img src={photo.image_url} alt={photo.title} className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.08]" loading="lazy" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }} />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
                     <Search className="w-8 h-8 text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 scale-0 group-hover:scale-100" />
                   </div>

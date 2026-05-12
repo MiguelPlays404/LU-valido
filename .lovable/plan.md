@@ -1,59 +1,68 @@
 ## Plano
 
-### 1. Substituir mídias antigas (bebês/camisetas) por fotos de cachorros
-- Auditar `site_config` e tabelas `photos`/`videos` para localizar URLs que ainda apontam para imagens antigas (ex.: `cta_hotel_image_url`, `sobre_image_url`, `hero_bg_image_url`, hero das páginas internas, `faleconosco_image_url`).
-- Gerar novas imagens de cachorros (via imagegen) para preencher esses slots e salvar em `public/images/seed-dogs/`.
-- Migration `UPDATE site_config SET ... = '/images/seed-dogs/...'` apontando para as novas imagens.
+### 1. Nova seção "Destaques da Semana"
 
-### 2. Adicionar mais fotos e vídeos pet ao banco
-- Gerar +6 fotos novas (variando: banho, tosa, pet shop, hotel, brincadeira, loja).
-- Inserir na tabela `photos` distribuindo `locations` entre `geral`, `hotelzinho`, `conhecer`, `home`.
-- Adicionar +2 vídeos demo (usar assets já existentes em `public/videos/seed-dogs/` + 1 novo se possível) marcando alguns como `home` (destaque).
+Reaproveitar a tabela `photos` existente usando o sistema `locations` (já suporta múltiplos locais). Adicionar duas novas chaves:
 
-### 3. Nova seção "Produtos que utilizamos" na página Venha Nos Conhecer
-Layout entre **Sobre** e **Galeria do Espaço**:
+- `destaques_home` — aparece na Home entre "Quem Somos" e "Explore o Le Ville Pet"
+- `destaques_hotel` — aparece no Hotelzinho antes de "Nosso Espaço"
 
-```text
-[ Imagem produtos ]   PRODUTOS QUE UTILIZAMOS
-                      Texto explicando marcas/qualidade/cuidado.
-                      (badge amarelo no topo)
-```
+Limite de exibição: **8 fotos** por seção (ordenadas por `display_order`). Clique abre o `Lightbox` já existente com swipe/teclado.
 
-- Adicionar colunas em `site_config`:
-  - `conhecer_produtos_badge` (default "🛍️ Qualidade")
-  - `conhecer_produtos_title` (default "Produtos que utilizamos no seu pet")
-  - `conhecer_produtos_text` (texto longo)
-  - `conhecer_produtos_image_url` (imagem/vídeo)
-- Renderizar nova `<section>` em `src/pages/VenhaNosConhecer.tsx`.
-- Em `src/pages/admin/AdminConhecer.tsx`: nova aba/grupo "Produtos" com inputs + `MediaUploader` (aceitando imagem e vídeo).
+### 2. Configuração editável (site_config)
 
-### 4. Animações mais elegantes/modernas (sem mudar identidade visual)
-Manter paleta amarelo `#F5C000` + preto `#09090B` + Poppins/Inter. Apenas refinar movimento.
+Adicionar colunas opcionais para títulos/subtítulos editáveis:
+- `destaques_home_title` (default "Destaques da Semana")
+- `destaques_home_subtitle` (default "Os momentos mais especiais")
+- `destaques_hotel_title` (default "Destaques da Semana")
+- `destaques_hotel_subtitle` (default "Pets que passaram por aqui")
 
-- Em `src/index.css` / `tailwind.config.ts`:
-  - Adicionar keyframes: `float-slow`, `shimmer`, `fade-up-soft` (translateY 24→0, blur 4px→0), `subtle-zoom`.
-  - Easing padrão: `cubic-bezier(0.22, 1, 0.36, 1)` (mais suave que ease-out).
-- `useScrollAnimation`: aumentar duração para 700ms, stagger entre filhos, suportar `data-animate="fade-up-soft"` e `blur-in`.
-- `PageTransition`: cross-fade + scale leve (0.995→1) com 350ms; corrigir possível salto do scroll.
-- Hover refinado em cards (`.card-hover`): `translateY(-4px)` + sombra amarela suave + borda do primary aparecendo.
-- Botões `.btn-primary` / `.btn-dark`: brilho `shimmer` discreto on hover.
-- Imagens em galerias: `subtle-zoom` no hover (já existe scale-105, deixar mais lento, 600ms).
+### 3. Frontend público
 
-### 5. Refinos de elegância no UI (mínimos, sem reestruturar)
-- Bordas mais arredondadas em hero badges (já ok), reforçar `backdrop-blur` nos overlays.
-- Adicionar grão/ruído sutil opcional via CSS no fundo escuro de seções pretas (overlay 2% noise).
-- Espaçamento vertical entre seções: garantir `py-20 lg:py-24` consistente.
+- `src/pages/Index.tsx`: nova `<section>` carrossel/grid após Sobre
+- `src/pages/Hotelzinho.tsx`: nova `<section>` antes de "Nosso Espaço"
+- Componente reutilizável `DestaquesSection` que:
+  - busca `photos` filtrando por `locations` contendo a chave, limit 8
+  - layout: grid responsivo (2 col mobile, 4 col desktop) **OU** carrossel horizontal com snap
+  - usa `Lightbox` ao clicar
+  - skeleton enquanto carrega; oculta seção se vazia
+
+### 4. Painel admin
+
+Nova página `src/pages/admin/AdminDestaques.tsx` com 2 abas (Home / Hotelzinho):
+- Editar título e subtítulo da seção
+- Upload de fotos (`MediaUploader`) que insere em `photos` já marcando o `location` correto
+- Listar as fotos atuais do destaque com: reordenar (setas/up-down em `display_order`), ocultar/mostrar, excluir, alternar entre as duas seções
+- Aviso visual quando >8 fotos ativas (só as 8 primeiras aparecem)
+- Adicionar entrada no `AdminLayout` sidebar e rota em `App.tsx`
+
+### 5. Atualizar `AdminPhotos`
+
+Incluir as duas novas chaves (`destaques_home`, `destaques_hotel`) na constante `LOCATIONS` para que qualquer foto existente possa ser marcada como destaque sem reupload.
+
+### 6. Animação suave entre fotos (todas as galerias)
+
+Aplicar em `Fotos.tsx`, `Hotelzinho.tsx`, `VenhaNosConhecer.tsx`, novas seções de destaques e `Lightbox`:
+
+- **Cards**: fade-up escalonado ao entrar (`stagger 60ms`), `transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]`, hover com `scale-[1.03]` e sombra amarela suave
+- **Lightbox**: cross-fade entre imagens (200ms opacity), além do swipe atual; precarregar próxima/anterior
+- **Carrossel destaques**: scroll horizontal com `scroll-smooth snap-x snap-mandatory`, setas com fade e arrasto por touch
+
+### Arquivos a criar/alterar
+
+- `supabase/migrations/<novo>.sql` — colunas em `site_config`
+- `src/components/DestaquesSection.tsx` (novo)
+- `src/pages/Index.tsx`, `src/pages/Hotelzinho.tsx`
+- `src/pages/admin/AdminDestaques.tsx` (novo)
+- `src/pages/admin/AdminPhotos.tsx` (LOCATIONS)
+- `src/components/AdminLayout.tsx` (item de menu)
+- `src/App.tsx` (rota)
+- `src/components/Lightbox.tsx` (cross-fade)
+- `src/pages/Fotos.tsx`, `src/pages/Hotelzinho.tsx`, `src/pages/VenhaNosConhecer.tsx` (animação cards)
+- `src/index.css` (keyframes refinados se necessário)
 
 ### Detalhes técnicos
-- Migration única cobrindo: novas colunas em `site_config`, UPDATE de URLs antigas, INSERTs de novas photos/videos.
-- Frontend: `VenhaNosConhecer.tsx`, `AdminConhecer.tsx`, `index.css`, `tailwind.config.ts`, `useScrollAnimation.ts`, `PageTransition.tsx`.
-- Sem mudanças em backend/edge functions.
 
-### Arquivos a alterar
-- `supabase/migrations/<novo>.sql`
-- `src/pages/VenhaNosConhecer.tsx`
-- `src/pages/admin/AdminConhecer.tsx`
-- `src/index.css`, `tailwind.config.ts`
-- `src/hooks/useScrollAnimation.ts`
-- `src/components/PageTransition.tsx`
-- Novos assets em `public/images/seed-dogs/`
+- Sem mudanças em RLS — `photos` já permite tudo via `Anon manage photos`
+- Sem novas tabelas; reuso de `locations[]`
+- Limite de 8 aplicado no frontend (`.slice(0,8)` após ordenar) — admin permite mais cadastrados, mas só 8 visíveis

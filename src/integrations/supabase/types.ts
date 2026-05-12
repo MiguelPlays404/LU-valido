@@ -284,6 +284,10 @@ export type Database = {
           cta_hotel_image_url: string | null
           cta_hotel_text: string | null
           cta_hotel_title: string | null
+          destaques_home_subtitle: string | null
+          destaques_home_title: string | null
+          destaques_hotel_subtitle: string | null
+          destaques_hotel_title: string | null
           facebook_active: boolean | null
           facebook_btn_text: string | null
           facebook_handle: string | null
@@ -426,6 +430,10 @@ export type Database = {
           cta_hotel_image_url?: string | null
           cta_hotel_text?: string | null
           cta_hotel_title?: string | null
+          destaques_home_subtitle?: string | null
+          destaques_home_title?: string | null
+          destaques_hotel_subtitle?: string | null
+          destaques_hotel_title?: string | null
           facebook_active?: boolean | null
           facebook_btn_text?: string | null
           facebook_handle?: string | null
@@ -568,6 +576,10 @@ export type Database = {
           cta_hotel_image_url?: string | null
           cta_hotel_text?: string | null
           cta_hotel_title?: string | null
+          destaques_home_subtitle?: string | null
+          destaques_home_title?: string | null
+          destaques_hotel_subtitle?: string | null
+          destaques_hotel_title?: string | null
           facebook_active?: boolean | null
           facebook_btn_text?: string | null
           facebook_handle?: string | null
