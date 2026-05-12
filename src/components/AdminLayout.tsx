@@ -9,6 +9,7 @@ const navItems = [
   { type: "separator", label: "CONTEÚDO" },
   { label: "Gerenciar Home", path: "/admin/home", icon: Home },
   { label: "Fotos", path: "/admin/fotos", icon: Image },
+  { label: "Destaques da Semana", path: "/admin/destaques", icon: Star },
   { label: "Vídeos", path: "/admin/videos", icon: Video },
   { label: "Hotelzinho", path: "/admin/hotelzinho", icon: Hotel },
   { label: "Venha Nos Conhecer", path: "/admin/conhecer", icon: Eye },
