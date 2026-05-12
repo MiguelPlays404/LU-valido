@@ -28,6 +28,7 @@ import AdminNavbarFooter from "./pages/admin/AdminNavbarFooter";
 import AdminBranding from "./pages/admin/AdminBranding";
 import AdminPageTexts from "./pages/admin/AdminPageTexts";
 import AdminGuia from "./pages/admin/AdminGuia";
+import AdminDestaques from "./pages/admin/AdminDestaques";
 import { useEffect } from "react";
 import { supabase } from "./integrations/supabase/client";
 
