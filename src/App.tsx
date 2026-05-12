@@ -86,6 +86,7 @@ const App = () => (
           <Route path="/admin/branding" element={<ProtectedRoute><AdminBranding /></ProtectedRoute>} />
           <Route path="/admin/textos-paginas" element={<ProtectedRoute><AdminPageTexts /></ProtectedRoute>} />
           <Route path="/admin/guia" element={<ProtectedRoute><AdminGuia /></ProtectedRoute>} />
+          <Route path="/admin/destaques" element={<ProtectedRoute><AdminDestaques /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
