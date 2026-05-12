@@ -98,7 +98,7 @@ const Hotelzinho = () => {
                 <button key={photo.id} data-animate="fade-scale" data-delay={String(Math.min(i, 5))} onClick={() => setLightboxIndex(i)}
                   className="group relative aspect-[4/3] rounded-[14px] overflow-hidden bg-[#333]">
                   <img src={photo.image_url} alt={photo.title}
-                    className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-[1.08] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                     loading="lazy"
                     onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.svg'; }}
                   />
