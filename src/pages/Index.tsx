@@ -151,6 +151,14 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ═══ DESTAQUES DA SEMANA — HOME ═══ */}
+      <DestaquesSection
+        locationKey="destaques_home"
+        title={c.destaques_home_title || "Destaques da Semana"}
+        subtitle={c.destaques_home_subtitle || "Os momentos mais especiais"}
+        background="#FAFAF8"
+      />
+
       {/* ═══ CARDS — CLARO (#F8F8F6) ═══ */}
       <section className="py-20 lg:py-24" style={{ background: '#F8F8F6' }}>
         <div className="container mx-auto px-6">
