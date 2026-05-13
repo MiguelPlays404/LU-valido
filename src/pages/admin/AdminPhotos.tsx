@@ -22,6 +22,7 @@ const LOCATIONS = [
   { key: "home", label: "Momentos da Home" },
   { key: "hotelzinho", label: "Hotelzinho" },
   { key: "conhecer", label: "Venha Nos Conhecer" },
+  { key: "transporte", label: "🚐 Transporte" },
   { key: "destaques_home", label: "⭐ Destaques Home" },
   { key: "destaques_hotel", label: "⭐ Destaques Hotelzinho" },
 ];

@@ -697,12 +697,24 @@ export type Database = {
       }
       transporte_content: {
         Row: {
+          coverage_neighborhoods: string | null
+          coverage_text: string | null
+          coverage_title: string | null
           cta_btn_text: string | null
           cta_title: string | null
           description_text: string | null
           driver_name: string | null
           driver_section_title: string | null
           driver_text: string | null
+          faq_a1: string | null
+          faq_a2: string | null
+          faq_a3: string | null
+          faq_a4: string | null
+          faq_q1: string | null
+          faq_q2: string | null
+          faq_q3: string | null
+          faq_q4: string | null
+          faq_title: string | null
           gallery_section_title: string | null
           hero_image_url: string | null
           highlight_1_icon: string | null
@@ -723,6 +735,8 @@ export type Database = {
           highlight_6_icon: string | null
           highlight_6_text: string | null
           highlight_6_title: string | null
+          how_it_works_subtitle: string | null
+          how_it_works_title: string | null
           id: string
           intro_text: string | null
           page_subtitle: string | null
@@ -731,16 +745,43 @@ export type Database = {
           photo_3_url: string | null
           photo_4_url: string | null
           photo_main_url: string | null
+          pricing_text: string | null
+          pricing_title: string | null
+          safety_text: string | null
+          safety_title: string | null
+          step_1_text: string | null
+          step_1_title: string | null
+          step_2_text: string | null
+          step_2_title: string | null
+          step_3_text: string | null
+          step_3_title: string | null
+          step_4_text: string | null
+          step_4_title: string | null
+          testimonial_author: string | null
+          testimonial_text: string | null
+          testimonial_title: string | null
           updated_at: string | null
           whatsapp_message: string | null
         }
         Insert: {
+          coverage_neighborhoods?: string | null
+          coverage_text?: string | null
+          coverage_title?: string | null
           cta_btn_text?: string | null
           cta_title?: string | null
           description_text?: string | null
           driver_name?: string | null
           driver_section_title?: string | null
           driver_text?: string | null
+          faq_a1?: string | null
+          faq_a2?: string | null
+          faq_a3?: string | null
+          faq_a4?: string | null
+          faq_q1?: string | null
+          faq_q2?: string | null
+          faq_q3?: string | null
+          faq_q4?: string | null
+          faq_title?: string | null
           gallery_section_title?: string | null
           hero_image_url?: string | null
           highlight_1_icon?: string | null
@@ -761,6 +802,8 @@ export type Database = {
           highlight_6_icon?: string | null
           highlight_6_text?: string | null
           highlight_6_title?: string | null
+          how_it_works_subtitle?: string | null
+          how_it_works_title?: string | null
           id?: string
           intro_text?: string | null
           page_subtitle?: string | null
@@ -769,16 +812,43 @@ export type Database = {
           photo_3_url?: string | null
           photo_4_url?: string | null
           photo_main_url?: string | null
+          pricing_text?: string | null
+          pricing_title?: string | null
+          safety_text?: string | null
+          safety_title?: string | null
+          step_1_text?: string | null
+          step_1_title?: string | null
+          step_2_text?: string | null
+          step_2_title?: string | null
+          step_3_text?: string | null
+          step_3_title?: string | null
+          step_4_text?: string | null
+          step_4_title?: string | null
+          testimonial_author?: string | null
+          testimonial_text?: string | null
+          testimonial_title?: string | null
           updated_at?: string | null
           whatsapp_message?: string | null
         }
         Update: {
+          coverage_neighborhoods?: string | null
+          coverage_text?: string | null
+          coverage_title?: string | null
           cta_btn_text?: string | null
           cta_title?: string | null
           description_text?: string | null
           driver_name?: string | null
           driver_section_title?: string | null
           driver_text?: string | null
+          faq_a1?: string | null
+          faq_a2?: string | null
+          faq_a3?: string | null
+          faq_a4?: string | null
+          faq_q1?: string | null
+          faq_q2?: string | null
+          faq_q3?: string | null
+          faq_q4?: string | null
+          faq_title?: string | null
           gallery_section_title?: string | null
           hero_image_url?: string | null
           highlight_1_icon?: string | null
@@ -799,6 +869,8 @@ export type Database = {
           highlight_6_icon?: string | null
           highlight_6_text?: string | null
           highlight_6_title?: string | null
+          how_it_works_subtitle?: string | null
+          how_it_works_title?: string | null
           id?: string
           intro_text?: string | null
           page_subtitle?: string | null
@@ -807,6 +879,21 @@ export type Database = {
           photo_3_url?: string | null
           photo_4_url?: string | null
           photo_main_url?: string | null
+          pricing_text?: string | null
+          pricing_title?: string | null
+          safety_text?: string | null
+          safety_title?: string | null
+          step_1_text?: string | null
+          step_1_title?: string | null
+          step_2_text?: string | null
+          step_2_title?: string | null
+          step_3_text?: string | null
+          step_3_title?: string | null
+          step_4_text?: string | null
+          step_4_title?: string | null
+          testimonial_author?: string | null
+          testimonial_text?: string | null
+          testimonial_title?: string | null
           updated_at?: string | null
           whatsapp_message?: string | null
         }
