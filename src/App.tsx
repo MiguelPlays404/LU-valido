@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import FaleConosco from "./pages/FaleConosco";
 import Hotelzinho from "./pages/Hotelzinho";
+import Transporte from "./pages/Transporte";
 import VenhaNosConhecer from "./pages/VenhaNosConhecer";
 import Localizacao from "./pages/Localizacao";
 import Fotos from "./pages/Fotos";
@@ -29,6 +30,7 @@ import AdminBranding from "./pages/admin/AdminBranding";
 import AdminPageTexts from "./pages/admin/AdminPageTexts";
 import AdminGuia from "./pages/admin/AdminGuia";
 import AdminDestaques from "./pages/admin/AdminDestaques";
+import AdminTransporte from "./pages/admin/AdminTransporte";
 import { useEffect } from "react";
 import { supabase } from "./integrations/supabase/client";
 
@@ -87,6 +89,7 @@ const App = () => (
           <Route path="/admin/textos-paginas" element={<ProtectedRoute><AdminPageTexts /></ProtectedRoute>} />
           <Route path="/admin/guia" element={<ProtectedRoute><AdminGuia /></ProtectedRoute>} />
           <Route path="/admin/destaques" element={<ProtectedRoute><AdminDestaques /></ProtectedRoute>} />
+          <Route path="/admin/transporte" element={<ProtectedRoute><AdminTransporte /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
