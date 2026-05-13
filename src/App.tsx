@@ -69,6 +69,7 @@ const App = () => (
           <Route path="/" element={<PageTransition><Index /></PageTransition>} />
           <Route path="/fale-conosco" element={<PageTransition><FaleConosco /></PageTransition>} />
           <Route path="/hotelzinho" element={<PageTransition><Hotelzinho /></PageTransition>} />
+          <Route path="/transporte" element={<PageTransition><Transporte /></PageTransition>} />
           <Route path="/venha-nos-conhecer" element={<PageTransition><VenhaNosConhecer /></PageTransition>} />
           <Route path="/localizacao" element={<PageTransition><Localizacao /></PageTransition>} />
           <Route path="/fotos" element={<PageTransition><Fotos /></PageTransition>} />
