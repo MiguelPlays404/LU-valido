@@ -695,6 +695,123 @@ export type Database = {
         }
         Relationships: []
       }
+      transporte_content: {
+        Row: {
+          cta_btn_text: string | null
+          cta_title: string | null
+          description_text: string | null
+          driver_name: string | null
+          driver_section_title: string | null
+          driver_text: string | null
+          gallery_section_title: string | null
+          hero_image_url: string | null
+          highlight_1_icon: string | null
+          highlight_1_text: string | null
+          highlight_1_title: string | null
+          highlight_2_icon: string | null
+          highlight_2_text: string | null
+          highlight_2_title: string | null
+          highlight_3_icon: string | null
+          highlight_3_text: string | null
+          highlight_3_title: string | null
+          highlight_4_icon: string | null
+          highlight_4_text: string | null
+          highlight_4_title: string | null
+          highlight_5_icon: string | null
+          highlight_5_text: string | null
+          highlight_5_title: string | null
+          highlight_6_icon: string | null
+          highlight_6_text: string | null
+          highlight_6_title: string | null
+          id: string
+          intro_text: string | null
+          page_subtitle: string | null
+          page_title: string | null
+          photo_2_url: string | null
+          photo_3_url: string | null
+          photo_4_url: string | null
+          photo_main_url: string | null
+          updated_at: string | null
+          whatsapp_message: string | null
+        }
+        Insert: {
+          cta_btn_text?: string | null
+          cta_title?: string | null
+          description_text?: string | null
+          driver_name?: string | null
+          driver_section_title?: string | null
+          driver_text?: string | null
+          gallery_section_title?: string | null
+          hero_image_url?: string | null
+          highlight_1_icon?: string | null
+          highlight_1_text?: string | null
+          highlight_1_title?: string | null
+          highlight_2_icon?: string | null
+          highlight_2_text?: string | null
+          highlight_2_title?: string | null
+          highlight_3_icon?: string | null
+          highlight_3_text?: string | null
+          highlight_3_title?: string | null
+          highlight_4_icon?: string | null
+          highlight_4_text?: string | null
+          highlight_4_title?: string | null
+          highlight_5_icon?: string | null
+          highlight_5_text?: string | null
+          highlight_5_title?: string | null
+          highlight_6_icon?: string | null
+          highlight_6_text?: string | null
+          highlight_6_title?: string | null
+          id?: string
+          intro_text?: string | null
+          page_subtitle?: string | null
+          page_title?: string | null
+          photo_2_url?: string | null
+          photo_3_url?: string | null
+          photo_4_url?: string | null
+          photo_main_url?: string | null
+          updated_at?: string | null
+          whatsapp_message?: string | null
+        }
+        Update: {
+          cta_btn_text?: string | null
+          cta_title?: string | null
+          description_text?: string | null
+          driver_name?: string | null
+          driver_section_title?: string | null
+          driver_text?: string | null
+          gallery_section_title?: string | null
+          hero_image_url?: string | null
+          highlight_1_icon?: string | null
+          highlight_1_text?: string | null
+          highlight_1_title?: string | null
+          highlight_2_icon?: string | null
+          highlight_2_text?: string | null
+          highlight_2_title?: string | null
+          highlight_3_icon?: string | null
+          highlight_3_text?: string | null
+          highlight_3_title?: string | null
+          highlight_4_icon?: string | null
+          highlight_4_text?: string | null
+          highlight_4_title?: string | null
+          highlight_5_icon?: string | null
+          highlight_5_text?: string | null
+          highlight_5_title?: string | null
+          highlight_6_icon?: string | null
+          highlight_6_text?: string | null
+          highlight_6_title?: string | null
+          id?: string
+          intro_text?: string | null
+          page_subtitle?: string | null
+          page_title?: string | null
+          photo_2_url?: string | null
+          photo_3_url?: string | null
+          photo_4_url?: string | null
+          photo_main_url?: string | null
+          updated_at?: string | null
+          whatsapp_message?: string | null
+        }
+        Relationships: []
+      }
       video_likes: {
         Row: {
           created_at: string | null

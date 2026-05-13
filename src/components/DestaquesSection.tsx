@@ -72,7 +72,7 @@ export function DestaquesSection({ locationKey, title, subtitle, background = "#
 
           <div
             ref={scrollerRef}
-            className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 -mx-6 px-6 scrollbar-hide"
+            className={`flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 -mx-6 px-6 scrollbar-hide ${photos.length <= 4 ? "lg:justify-center" : ""} ${photos.length === 1 ? "justify-center" : ""}`}
             style={{ scrollbarWidth: "none" }}
           >
             {photos.map((photo, i) => (
